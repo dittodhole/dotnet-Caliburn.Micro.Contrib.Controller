@@ -155,5 +155,18 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
       public bool SkipInvocationOfScreenMethod { get; set; }
     }
+
+    [CanBeNull]
+    public virtual IScreen CreateProxiedScreen()
+    {
+      var proxyGenerationOptions = new ProxyGenerationOptions();
+      var proxyGenerator = new ProxyGenerator();
+      var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
+                                                  proxyGenerationOptions,
+                                                  this);
+      var screen = (IScreen) proxy;
+
+      return screen;
+    }
   }
 }

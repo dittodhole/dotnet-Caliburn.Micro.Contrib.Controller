@@ -27,16 +27,10 @@ namespace Caliburn.Micro.Contrib.Controller
                                                  options) =>
                                                 {
                                                   var screenType = controller.GetScreenType(options);
-
                                                   var screenInterceptor = Controller.CreateScreenInterceptorFn?.Invoke(controller,
                                                                                                                        screenType);
-                                                  var proxyGenerationOptions = new ProxyGenerationOptions();
-                                                  var proxyGenerator = new ProxyGenerator();
-                                                  var proxy = proxyGenerator.CreateClassProxy(screenType,
-                                                                                              proxyGenerationOptions,
-                                                                                              screenInterceptor);
 
-                                                  var screen = (IScreen) proxy;
+                                                  var screen = screenInterceptor?.CreateProxiedScreen();
 
                                                   return screen;
                                                 };
