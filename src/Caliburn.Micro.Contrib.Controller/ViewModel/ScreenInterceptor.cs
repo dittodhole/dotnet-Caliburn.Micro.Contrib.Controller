@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.LibLog;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
@@ -56,7 +57,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     private ControllerBase Controller { get; }
 
     [NotNull]
-    public Type ScreenType { get; }
+    private Type ScreenType { get; }
 
     [NotNull]
     protected IDictionary<string, ControllerMethodInvocation> ScreenMethodMapping { get; }

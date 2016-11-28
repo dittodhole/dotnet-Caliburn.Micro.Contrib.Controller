@@ -99,6 +99,7 @@
     <Compile Include="ControllerRoutine\ControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\IConductorControllerRoutine.cs" />
     <Compile Include="ControllerRoutine\IControllerRoutine.cs" />
+    <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="IConductorController.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="IInterceptConductorEvents.cs" />

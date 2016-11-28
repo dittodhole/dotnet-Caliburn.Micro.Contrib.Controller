@@ -16,24 +16,11 @@ namespace Caliburn.Micro.Contrib.Controller
     public delegate IScreen CreateScreen([NotNull] ControllerBase controller,
                                          [CanBeNull] object options = null);
 
-    /// <exception cref="InvalidOperationException">The <paramref name="type" /> is an interface.</exception>
-    /// <exception cref="InvalidOperationException">The <paramref name="type" /> does not implement <see cref="IScreen" />.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    public static void CheckTypeForRealScreenType([NotNull] this Type type)
-    {
-      if (type == null)
-      {
-        throw new ArgumentNullException(nameof(type));
-      }
-      if (type.IsInterface)
-      {
-        throw new InvalidOperationException($"Cannot create proxy for interface {type}.");
-      }
-      if (!typeof(IScreen).IsAssignableFrom(type))
-      {
-        throw new InvalidOperationException($"Cannot create proxy for {type}, as this type does implement {nameof(IScreen)}.");
-      }
-    }
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    [NotNull]
+    public delegate ScreenInterceptor CreateScreenInterceptor([NotNull] ControllerBase controller,
+                                                              [NotNull] Type screenType);
 
     [CanBeNull]
     public static CreateScreen CreateScreenFn = (controller,
@@ -41,11 +28,11 @@ namespace Caliburn.Micro.Contrib.Controller
                                                 {
                                                   var screenType = controller.GetScreenType(options);
 
-                                                  var screenInterceptor = new ScreenInterceptor(controller,
-                                                                                                screenType);
+                                                  var screenInterceptor = Controller.CreateScreenInterceptorFn?.Invoke(controller,
+                                                                                                                       screenType);
                                                   var proxyGenerationOptions = new ProxyGenerationOptions();
                                                   var proxyGenerator = new ProxyGenerator();
-                                                  var proxy = proxyGenerator.CreateClassProxy(screenInterceptor.ScreenType,
+                                                  var proxy = proxyGenerator.CreateClassProxy(screenType,
                                                                                               proxyGenerationOptions,
                                                                                               screenInterceptor);
 
@@ -53,6 +40,16 @@ namespace Caliburn.Micro.Contrib.Controller
 
                                                   return screen;
                                                 };
+
+    [CanBeNull]
+    public static CreateScreenInterceptor CreateScreenInterceptorFn = (controller,
+                                                                       screenType) =>
+                                                                      {
+                                                                        var screenInterceptor = new ScreenInterceptor(controller,
+                                                                                                                      screenType);
+
+                                                                        return screenInterceptor;
+                                                                      };
 
     /// <exception cref="InvalidOperationException">If <typeparamref name="TController" />-instance did not create a screen.</exception>
     public static async Task<TController> ShowWindowAsync<TController>([CanBeNull] object options = null,
