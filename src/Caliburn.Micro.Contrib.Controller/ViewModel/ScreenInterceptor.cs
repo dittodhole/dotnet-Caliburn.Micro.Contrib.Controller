@@ -5,6 +5,7 @@ using System.Reflection;
 using Anotar.LibLog;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.DynamicProxy;
+using Castle.DynamicProxy.Internal;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
@@ -125,11 +126,11 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         invocation.Proceed();
       }
 
-      var methodInfo = controllerMethodInvocation.MethodInfo;
+      var methodInfo = controllerMethodInvocation.ControllerMethodInfo;
       if (methodInfo != null)
       {
         var parameters = new object[invocation.Arguments.Count() + 1];
-        parameters[0] = invocation.InvocationTarget;
+        parameters[0] = invocation.Proxy;
 
         Array.Copy(invocation.Arguments,
                    0,
@@ -171,46 +172,89 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
       return result;
     }
+
+    [CanBeNull]
+    public virtual IScreen CreateProxiedScreen()
+    {
+      var additionalInterfacesToProxy = this.Controller.GetType()
+                                            .GetAllInterfaces()
+                                            .Select(type => this.GetMappedHandleType(type))
+                                            .Where(type => type != null)
+                                            .Distinct()
+                                            .ToArray();
+
+      var proxyGenerationOptions = new ProxyGenerationOptions();
+      var proxyGenerator = new ProxyGenerator();
+      var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
+                                                  additionalInterfacesToProxy,
+                                                  proxyGenerationOptions,
+                                                  this);
+      var screen = (IScreen) proxy;
+
+      if (screen is IHandle)
       {
-        throw new InvalidOperationException($"Controller {controllerType} has multiple methods intercepting the same method of {this.ScreenType}.");
+        var eventAggregator = IoC.Get<IEventAggregator>();
+        eventAggregator.Subscribe(screen);
       }
 
-      var result = lookup.ToDictionary(arg => arg.Key,
-                                       arg => arg.Single());
+      return screen;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    [CanBeNull]
+    protected virtual Type GetMappedHandleType([NotNull] Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      var genericArgument = default(Type);
+      if (type.IsGenericType)
+      {
+        genericArgument = type.GetGenericArguments()
+                              .FirstOrDefault();
+        type = type.GetGenericTypeDefinition();
+      }
+
+      Type result;
+      if (type == typeof(IInterceptHandle<>))
+      {
+        result = typeof(IHandle<>).MakeGenericType(genericArgument);
+      }
+      else if (type == typeof(IInterceptHandleWithCoroutine<>))
+      {
+        result = typeof(IHandleWithCoroutine<>).MakeGenericType(genericArgument);
+      }
+      else if (type == typeof(IInterceptHandleWithTask<>))
+      {
+        result = typeof(IHandleWithTask<>).MakeGenericType(genericArgument);
+      }
+      else
+      {
+        result = null;
+      }
 
       return result;
     }
 
     protected struct ControllerMethodInvocation
     {
-      /// <exception cref="ArgumentNullException"><paramref name="methodInfo" /> is <see langword="null" /></exception>
-      public ControllerMethodInvocation([NotNull] MethodInfo methodInfo)
+      /// <exception cref="ArgumentNullException"><paramref name="controllerMethodInfo" /> is <see langword="null" /></exception>
+      public ControllerMethodInvocation([NotNull] MethodInfo controllerMethodInfo)
         : this()
       {
-        if (methodInfo == null)
+        if (controllerMethodInfo == null)
         {
-          throw new ArgumentNullException(nameof(methodInfo));
+          throw new ArgumentNullException(nameof(controllerMethodInfo));
         }
-        this.MethodInfo = methodInfo;
+        this.ControllerMethodInfo = controllerMethodInfo;
       }
 
       [CanBeNull]
-      public MethodInfo MethodInfo { get; }
+      public MethodInfo ControllerMethodInfo { get; }
 
       public bool SkipInvocationOfScreenMethod { get; set; }
-    }
-
-    [CanBeNull]
-    public virtual IScreen CreateProxiedScreen()
-    {
-      var proxyGenerationOptions = new ProxyGenerationOptions();
-      var proxyGenerator = new ProxyGenerator();
-      var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
-                                                  proxyGenerationOptions,
-                                                  this);
-      var screen = (IScreen) proxy;
-
-      return screen;
     }
   }
 }
