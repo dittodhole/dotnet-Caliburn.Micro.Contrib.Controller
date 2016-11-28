@@ -96,7 +96,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
                                                                                     var controllerParameterInfos = controllerMethodInfo.GetParameters();
                                                                                     if (controllerParameterInfos.ElementAtOrDefault(0)
-                                                                                                                ?.ParameterType != typeof(object))
+                                                                                                                ?.ParameterType != typeof(IScreen))
                                                                                     {
                                                                                       return false;
                                                                                     }
