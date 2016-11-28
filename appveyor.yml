@@ -13,7 +13,7 @@ before_build:
 assembly_info:
   patch: false
 build:
-  project: %solution_dir%Caliburn.Micro.Contrib.Controller.sln
+  project: '%solution_dir%Caliburn.Micro.Contrib.Controller.sln'
   publish_nuget: false
   publish_nuget_symbols: false
   verbosity: detailed
