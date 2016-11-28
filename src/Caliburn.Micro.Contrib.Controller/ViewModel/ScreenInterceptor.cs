@@ -11,6 +11,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
   public class ScreenInterceptor : IInterceptor
   {
+    public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+
     static ScreenInterceptor()
     {
       var locateTypeForModelType = ViewLocator.LocateTypeForModelType;
@@ -60,7 +62,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     private Type ScreenType { get; }
 
     [NotNull]
-    protected IDictionary<string, ControllerMethodInvocation> ScreenMethodMapping { get; }
+    protected IDictionary<string, ControllerMethodInvocation[]> ScreenMethodMapping { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept([NotNull] IInvocation invocation)
@@ -73,8 +75,45 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       var screenMethodName = invocation.Method.Name;
 
       ControllerMethodInvocation controllerMethodInvocation;
-      this.ScreenMethodMapping.TryGetValue(screenMethodName,
-                                           out controllerMethodInvocation);
+      {
+        ControllerMethodInvocation[] controllerMethodInvocations;
+        if (this.ScreenMethodMapping.TryGetValue(screenMethodName,
+                                                 out controllerMethodInvocations))
+        {
+          var screenMethodInfo = invocation.Method;
+          var screenParameterInfos = screenMethodInfo.GetParameters()
+                                                     .Select(parameterInfo => parameterInfo.ParameterType)
+                                                     .ToArray();
+
+          controllerMethodInvocation = controllerMethodInvocations.FirstOrDefault(arg =>
+                                                                                  {
+                                                                                    var controllerMethodInfo = arg.ControllerMethodInfo;
+                                                                                    if (controllerMethodInfo.ReturnType != screenMethodInfo.ReturnType)
+                                                                                    {
+                                                                                      return false;
+                                                                                    }
+
+                                                                                    var controllerParameterInfos = controllerMethodInfo.GetParameters();
+                                                                                    if (controllerParameterInfos.ElementAtOrDefault(0)
+                                                                                                                ?.ParameterType != typeof(object))
+                                                                                    {
+                                                                                      return false;
+                                                                                    }
+                                                                                    if (controllerParameterInfos.Skip(1)
+                                                                                                                .Select(parameterInfo => parameterInfo.ParameterType)
+                                                                                                                .SequenceEqual(screenParameterInfos))
+                                                                                    {
+                                                                                      return true;
+                                                                                    }
+
+                                                                                    return false;
+                                                                                  });
+        }
+        else
+        {
+          controllerMethodInvocation = default(ControllerMethodInvocation);
+        }
+      }
 
       if (controllerMethodInvocation.SkipInvocationOfScreenMethod)
       {
@@ -105,7 +144,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has multiple methods intercepting the same method of <see cref="ScreenType" /> defined.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" />.</exception>
     [NotNull]
-    protected virtual IDictionary<string, ControllerMethodInvocation> CreateScreenMethodMapping([NotNull] ControllerBase controller)
+    protected virtual IDictionary<string, ControllerMethodInvocation[]> CreateScreenMethodMapping([NotNull] ControllerBase controller)
     {
       if (controller == null)
       {
@@ -113,7 +152,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       }
 
       var controllerType = controller.GetType();
-      var lookup = controllerType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+      var lookup = controllerType.GetMethods(ScreenInterceptor.DefaultBindingFlags)
                                  .Select(methodInfo => new
                                                        {
                                                          ControllerMethodInfo = methodInfo,
@@ -126,7 +165,12 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                                   {
                                                     SkipInvocationOfScreenMethod = arg.ScreenMethodLinkAttribute.SkipInvocation
                                                   });
-      if (lookup.Any(group => group.Count() > 1))
+
+      var result = lookup.ToDictionary(arg => arg.Key,
+                                       arg => arg.ToArray());
+
+      return result;
+    }
       {
         throw new InvalidOperationException($"Controller {controllerType} has multiple methods intercepting the same method of {this.ScreenType}.");
       }
