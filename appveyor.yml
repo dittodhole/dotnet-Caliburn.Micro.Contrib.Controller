@@ -2,8 +2,8 @@ version: '{build}-{branch}'
 image: Visual Studio 2015
 configuration: Release
 environment:
-  solution_dir: $(APPVEYOR_BUILD_FOLDER)\src\
-  project_dir: $(solution_dir)Caliburn.Micro.Contrib.Controller\
+  solution_dir: '%APPVEYOR_BUILD_FOLDER%\src\'
+  project_dir: '%solution_dir%Caliburn.Micro.Contrib.Controller\'
 install:
 #- cmd: choco install gitversion.portable -pre -y
 - cmd: choco install gitversion.portable -y
