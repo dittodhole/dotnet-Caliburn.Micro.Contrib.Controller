@@ -8,13 +8,13 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    void OnActivateItem([NotNull] object screen,
+    void OnActivateItem([NotNull] IScreen screen,
                         [NotNull] IScreen item);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    void OnDeactivateItem([NotNull] object screen,
+    void OnDeactivateItem([NotNull] IScreen screen,
                           [NotNull] IScreen item,
                           bool close);
   }

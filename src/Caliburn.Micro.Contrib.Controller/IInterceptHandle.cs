@@ -8,7 +8,7 @@ namespace Caliburn.Micro.Contrib.Controller
   [PublicAPI]
   public interface IInterceptHandle<TMessage> : IInterceptHandle
   {
-    void Handle([NotNull] object screen,
+    void Handle([NotNull] IScreen screen,
                 [NotNull] TMessage message);
   }
 }

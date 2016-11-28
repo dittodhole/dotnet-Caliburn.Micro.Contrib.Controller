@@ -7,7 +7,7 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IInterceptHandleWithTask<TMessage> : IInterceptHandle
   {
     [NotNull]
-    Task Handle([NotNull] object screen,
+    Task Handle([NotNull] IScreen screen,
                 [NotNull] TMessage message);
   }
 }

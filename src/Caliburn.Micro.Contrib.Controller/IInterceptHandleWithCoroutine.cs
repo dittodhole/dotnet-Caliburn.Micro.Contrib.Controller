@@ -9,7 +9,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     [ItemNotNull]
     [ScreenMethodLink(SkipInvocation = true)]
-    IEnumerable<IResult> Handle([NotNull] object screen,
+    IEnumerable<IResult> Handle([NotNull] IScreen screen,
                                 [NotNull] TMessage message);
   }
 }
