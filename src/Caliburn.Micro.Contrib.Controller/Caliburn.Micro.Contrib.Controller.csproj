@@ -103,6 +103,9 @@
     <Compile Include="IConductorController.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="IInterceptConductorEvents.cs" />
+    <Compile Include="IInterceptHandle.cs" />
+    <Compile Include="IInterceptHandleWithCoroutine.cs" />
+    <Compile Include="IInterceptHandleWithTask.cs" />
     <Compile Include="IInterceptScreenEvents.cs" />
     <Compile Include="ScreenMethodLinkAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
