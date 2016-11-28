@@ -15,25 +15,36 @@ namespace Caliburn.Micro.Contrib.Controller
     public delegate IScreen CreateScreen([NotNull] ControllerBase controller,
                                          [CanBeNull] object options = null);
 
+    /// <exception cref="InvalidOperationException">The <paramref name="type" /> is an interface.</exception>
+    /// <exception cref="InvalidOperationException">The <paramref name="type" /> does not implement <see cref="IScreen" />.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    public static void CheckTypeForRealScreenType([NotNull] this Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+      if (type.IsInterface)
+      {
+        throw new InvalidOperationException($"Cannot create proxy for interface {type}.");
+      }
+      if (!typeof(IScreen).IsAssignableFrom(type))
+      {
+        throw new InvalidOperationException($"Cannot create proxy for {type}, as this type does implement {nameof(IScreen)}.");
+      }
+    }
+
     [CanBeNull]
     public static CreateScreen CreateScreenFn = (controller,
                                                  options) =>
                                                 {
                                                   var screenType = controller.GetScreenType(options);
-                                                  if (screenType.IsInterface)
-                                                  {
-                                                    throw new InvalidOperationException($"Cannot create proxy for interface {screenType}.");
-                                                  }
-                                                  if (!typeof(IScreen).IsAssignableFrom(screenType))
-                                                  {
-                                                    throw new InvalidOperationException($"Cannot create proxy for {screenType}, as this type does implement {nameof(IScreen)}.");
-                                                  }
 
                                                   var screenInterceptor = new ScreenInterceptor(controller,
                                                                                                 screenType);
                                                   var proxyGenerationOptions = new ProxyGenerationOptions();
                                                   var proxyGenerator = new ProxyGenerator();
-                                                  var proxy = proxyGenerator.CreateClassProxy(screenType,
+                                                  var proxy = proxyGenerator.CreateClassProxy(screenInterceptor.ScreenType,
                                                                                               proxyGenerationOptions,
                                                                                               screenInterceptor);
 

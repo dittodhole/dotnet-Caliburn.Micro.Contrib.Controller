@@ -32,6 +32,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    /// <exception cref="InvalidOperationException">The <paramref name="screenType" /> is an interface.</exception>
+    /// <exception cref="InvalidOperationException">The <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
     public ScreenInterceptor([NotNull] ControllerBase controller,
                              [NotNull] Type screenType)
     {
@@ -47,13 +49,14 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       this.ScreenType = screenType;
 
       this.ScreenMethodMapping = this.CreateScreenMethodMapping(this.Controller);
+      this.ScreenType.CheckTypeForRealScreenType();
     }
 
     [NotNull]
     private ControllerBase Controller { get; }
 
     [NotNull]
-    private Type ScreenType { get; }
+    public Type ScreenType { get; }
 
     [NotNull]
     protected IDictionary<string, ControllerMethodInvocation> ScreenMethodMapping { get; }
