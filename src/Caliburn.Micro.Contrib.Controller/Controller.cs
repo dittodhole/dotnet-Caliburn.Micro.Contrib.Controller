@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public static class Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
