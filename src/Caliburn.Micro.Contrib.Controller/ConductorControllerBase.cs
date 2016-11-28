@@ -22,7 +22,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidCastException" />
     [ScreenMethodLink(MethodName = nameof(IConductor.ActivateItem), SkipInvocation = false)]
     public void OnActivateItem(object screen,
-                               object item)
+                               IScreen item)
     {
       this.OnActivateItem((TScreen) screen,
                           (TItem) item);
@@ -33,7 +33,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidCastException" />
     [ScreenMethodLink(MethodName = nameof(IConductor.DeactivateItem), SkipInvocation = false)]
     public void OnDeactivateItem(object screen,
-                                 object item,
+                                 IScreen item,
                                  bool close)
     {
       this.OnDeactivateItem((TScreen) screen,
