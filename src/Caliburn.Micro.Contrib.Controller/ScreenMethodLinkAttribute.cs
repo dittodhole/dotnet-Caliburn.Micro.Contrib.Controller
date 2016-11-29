@@ -10,5 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [CanBeNull]
     public string MethodName { get; set; }
+
+    public Type InjectInterfaceDefinition { get; set; }
   }
 }
