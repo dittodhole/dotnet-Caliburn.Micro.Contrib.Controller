@@ -39,7 +39,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">The <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has a <see langword="null" /> destination on <paramref name="screenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has not declared as <see langword="virtual" /> on <paramref name="screenType" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has an invalid injection defined in <see cref="ScreenMethodLinkAttribute.InjectInterfaceDefinition"/>.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has an invalid injection defined in <see cref="ScreenMethodLinkAttribute.InjectInterfaceDefinition" />.</exception>
     public ScreenInterceptor([NotNull] ControllerBase controller,
                              [NotNull] Type screenType)
     {
@@ -77,28 +77,26 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
       var screenMethodName = invocation.Method.Name;
 
-      ControllerMethodInvocation controllerMethodInvocation;
+      ControllerMethodInvocation[] controllerMethodInvocations;
+      if (this.ScreenMethodMapping.TryGetValue(screenMethodName,
+                                               out controllerMethodInvocations))
       {
-        ControllerMethodInvocation[] controllerMethodInvocations;
-        if (this.ScreenMethodMapping.TryGetValue(screenMethodName,
-                                                 out controllerMethodInvocations))
-        {
-          var screenMethodInfo = invocation.Method;
-          var screenMethodParameterInfos = screenMethodInfo.GetParameters()
-                                                           .Select(parameterInfo => parameterInfo.ParameterType)
-                                                           .ToArray();
+        var screenMethodInfo = invocation.Method;
+        var screenMethodParameterInfos = screenMethodInfo.GetParameters()
+                                                         .Select(parameterInfo => parameterInfo.ParameterType)
+                                                         .ToArray();
 
-          controllerMethodInvocation = controllerMethodInvocations.FirstOrDefault(arg => this.AreMethodsIntertwined(arg.ControllerMethodInfo,
-                                                                                                                    screenMethodInfo,
-                                                                                                                    screenMethodParameterInfos));
-        }
-        else
-        {
-          controllerMethodInvocation = default(ControllerMethodInvocation);
-        }
+        controllerMethodInvocations = controllerMethodInvocations.Where(arg => this.AreMethodsIntertwined(arg.ControllerMethodInfo,
+                                                                                                          screenMethodInfo,
+                                                                                                          screenMethodParameterInfos))
+                                                                 .ToArray();
+      }
+      else
+      {
+        controllerMethodInvocations = new ControllerMethodInvocation[0];
       }
 
-      if (controllerMethodInvocation.SkipInvocationOfScreenMethod)
+      if (controllerMethodInvocations.Any(arg => arg.SkipInvocationOfScreenMethod))
       {
         LogTo.Debug($"Skipping {this.ScreenType}.{screenMethodName}.");
       }
@@ -108,21 +106,24 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         invocation.Proceed();
       }
 
-      var controllerMethodInfo = controllerMethodInvocation.ControllerMethodInfo;
-      if (controllerMethodInfo != null)
+      foreach (var controllerMethodInvocation in controllerMethodInvocations)
       {
-        var screenMethodParameters = invocation.Arguments;
+        var controllerMethodInfo = controllerMethodInvocation.ControllerMethodInfo;
+        if (controllerMethodInfo != null)
+        {
+          var screenMethodParameters = invocation.Arguments;
 
-        var controllerMethodParameters = new object[screenMethodParameters.Count() + 1];
-        controllerMethodParameters[0] = invocation.Proxy;
-        Array.Copy(screenMethodParameters,
-                   0,
-                   controllerMethodParameters,
-                   1,
-                   screenMethodParameters.Count());
+          var controllerMethodParameters = new object[screenMethodParameters.Count() + 1];
+          controllerMethodParameters[0] = invocation.Proxy;
+          Array.Copy(screenMethodParameters,
+                     0,
+                     controllerMethodParameters,
+                     1,
+                     screenMethodParameters.Count());
 
-        controllerMethodInfo.Invoke(this.Controller,
-                                    controllerMethodParameters);
+          controllerMethodInfo.Invoke(this.Controller,
+                                      controllerMethodParameters);
+        }
       }
     }
 
@@ -170,7 +171,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has a <see langword="null" /> destination on <see cref="ScreenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has not declared as <see langword="virtual" /> on <see cref="ScreenType" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has an invalid injection defined in <see cref="ScreenMethodLinkAttribute.InjectInterfaceDefinition"/>.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has an invalid injection defined in <see cref="ScreenMethodLinkAttribute.InjectInterfaceDefinition" />.</exception>
     [NotNull]
     protected virtual IDictionary<string, ControllerMethodInvocation[]> CreateScreenMethodMapping([NotNull] ControllerBase controller)
     {
@@ -250,7 +251,11 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     [CanBeNull]
     public virtual IScreen CreateProxiedScreen()
     {
-      var additionalInterfacesToProxy = this.GetAdditionalInterfacesToProxy(this.ScreenType);
+      var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)
+                                            .Select(arg => arg.InjectInterfaceDefinition)
+                                            .Where(arg => arg != null)
+                                            .Where(arg => arg.IsInterface)
+                                            .ToArray();
       var proxyGenerationOptions = new ProxyGenerationOptions();
       var proxyGenerator = new ProxyGenerator();
       var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
@@ -266,25 +271,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       }
 
       return screen;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    [NotNull]
-    [ItemNotNull]
-    protected virtual Type[] GetAdditionalInterfacesToProxy([NotNull] Type type)
-    {
-      if (type == null)
-      {
-        throw new ArgumentNullException(nameof(type));
-      }
-
-      var result = this.ScreenMethodMapping.Values.SelectMany(value => value)
-                       .Select(arg => arg.InjectInterfaceDefinition)
-                       .Where(arg => arg != null)
-                       .Where(arg => arg.IsInterface)
-                       .ToArray();
-
-      return result;
     }
 
     protected struct ControllerMethodInvocation
