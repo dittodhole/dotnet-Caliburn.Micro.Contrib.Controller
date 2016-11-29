@@ -182,13 +182,12 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
       var controllerType = controller.GetType();
       var lookup = controllerType.GetMethods(ScreenInterceptor.DefaultBindingFlags)
-                                 .Select(methodInfo => new
-                                                       {
-                                                         ControllerMethodInfo = methodInfo,
-                                                         ScreenMethodLinkAttribute = methodInfo.GetAttributes<ScreenMethodLinkAttribute>(true)
-                                                                                               .FirstOrDefault()
-                                                       })
-                                 .Where(arg => arg.ScreenMethodLinkAttribute != null)
+                                 .SelectMany(methodInfo => methodInfo.GetAttributes<ScreenMethodLinkAttribute>(true)
+                                                                     .Select(screenMethodLinkAttribute => new
+                                                                                                          {
+                                                                                                            ControllerMethodInfo = methodInfo,
+                                                                                                            ScreenMethodLinkAttribute = screenMethodLinkAttribute
+                                                                                                          }))
                                  .ToLookup(arg => arg.ScreenMethodLinkAttribute.MethodName ?? arg.ControllerMethodInfo.Name,
                                            arg => new ControllerMethodInvocation(arg.ControllerMethodInfo)
                                                   {
