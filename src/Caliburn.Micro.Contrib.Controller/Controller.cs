@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ViewModel;
-using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public static class Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
@@ -15,32 +15,34 @@ namespace Caliburn.Micro.Contrib.Controller
     public delegate IScreen CreateScreen([NotNull] ControllerBase controller,
                                          [CanBeNull] object options = null);
 
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    [NotNull]
+    public delegate ScreenInterceptor CreateScreenInterceptor([NotNull] ControllerBase controller,
+                                                              [NotNull] Type screenType);
+
     [CanBeNull]
     public static CreateScreen CreateScreenFn = (controller,
                                                  options) =>
                                                 {
                                                   var screenType = controller.GetScreenType(options);
-                                                  if (screenType.IsInterface)
-                                                  {
-                                                    throw new InvalidOperationException($"Cannot create proxy for interface {screenType}.");
-                                                  }
-                                                  if (!typeof(IScreen).IsAssignableFrom(screenType))
-                                                  {
-                                                    throw new InvalidOperationException($"Cannot create proxy for {screenType}, as this type does implement {nameof(IScreen)}.");
-                                                  }
+                                                  var screenInterceptor = Controller.CreateScreenInterceptorFn?.Invoke(controller,
+                                                                                                                       screenType);
 
-                                                  var screenInterceptor = new ScreenInterceptor(controller,
-                                                                                                screenType);
-                                                  var proxyGenerationOptions = new ProxyGenerationOptions();
-                                                  var proxyGenerator = new ProxyGenerator();
-                                                  var proxy = proxyGenerator.CreateClassProxy(screenType,
-                                                                                              proxyGenerationOptions,
-                                                                                              screenInterceptor);
-
-                                                  var screen = (IScreen) proxy;
+                                                  var screen = screenInterceptor?.CreateProxiedScreen();
 
                                                   return screen;
                                                 };
+
+    [CanBeNull]
+    public static CreateScreenInterceptor CreateScreenInterceptorFn = (controller,
+                                                                       screenType) =>
+                                                                      {
+                                                                        var screenInterceptor = new ScreenInterceptor(controller,
+                                                                                                                      screenType);
+
+                                                                        return screenInterceptor;
+                                                                      };
 
     /// <exception cref="InvalidOperationException">If <typeparamref name="TController" />-instance did not create a screen.</exception>
     public static async Task<TController> ShowWindowAsync<TController>([CanBeNull] object options = null,
@@ -58,7 +60,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
       await Execute.OnUIThreadAsync(() => windowManager.ShowWindow(screen,
                                                                    context,
-                                                                   settings));
+                                                                   settings))
+                   .ConfigureAwait(false);
 
       return controller;
     }
@@ -79,7 +82,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
       await Execute.OnUIThreadAsync(() => windowManager.ShowDialog(screen,
                                                                    context,
-                                                                   settings));
+                                                                   settings))
+                   .ConfigureAwait(false);
 
       return controller;
     }

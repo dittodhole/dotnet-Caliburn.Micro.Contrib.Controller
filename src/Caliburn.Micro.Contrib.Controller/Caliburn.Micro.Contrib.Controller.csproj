@@ -95,12 +95,16 @@
     <Compile Include="ConductorControllerBase.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="ControllerBase.cs" />
+    <Compile Include="ControllerNotHookedUpException.cs" />
     <Compile Include="ControllerRoutine\ConductorControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\ControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\IConductorControllerRoutine.cs" />
     <Compile Include="ControllerRoutine\IControllerRoutine.cs" />
+    <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
+    <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="IConductorController.cs" />
     <Compile Include="IController.cs" />
+    <Compile Include="Intercept.cs" />
     <Compile Include="IInterceptConductorEvents.cs" />
     <Compile Include="IInterceptScreenEvents.cs" />
     <Compile Include="ScreenMethodLinkAttribute.cs" />

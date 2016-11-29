@@ -5,7 +5,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
   public abstract class ControllerRoutineBase : IControllerRoutine
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    public virtual void OnInitialize(object screen)
+    public virtual void OnInitialize(IScreen screen)
     {
       if (screen == null)
       {
@@ -14,7 +14,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    public virtual void OnActivate(object screen)
+    public virtual void OnActivate(IScreen screen)
     {
       if (screen == null)
       {
@@ -23,7 +23,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    public virtual void OnDeactivate(object screen,
+    public virtual void OnDeactivate(IScreen screen,
                                      bool close)
     {
       if (screen == null)
@@ -34,7 +34,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    public virtual void OnViewReady(object screen,
+    public virtual void OnViewReady(IScreen screen,
                                     object view)
     {
       if (screen == null)
@@ -48,7 +48,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    public virtual void OnClose(object screen,
+    public virtual void OnClose(IScreen screen,
                                 bool? dialogResult = null)
     {
       if (screen == null)
