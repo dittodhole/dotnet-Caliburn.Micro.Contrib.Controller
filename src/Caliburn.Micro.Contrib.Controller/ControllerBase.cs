@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [UsedImplicitly]
+  [PublicAPI]
   public abstract class ControllerBase : IController
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
@@ -62,11 +62,9 @@ namespace Caliburn.Micro.Contrib.Controller
       this.Routines.Add(controllerRoutine);
     }
 
-    [NotNull]
-    public abstract Type GetScreenType([CanBeNull] object options = null);
+    public abstract Type GetScreenType(object options = null);
 
-    [CanBeNull]
-    public virtual IScreen CreateScreen([CanBeNull] object options = null)
+    public virtual IScreen CreateScreen(object options = null)
     {
       var screen = Controller.CreateScreenFn?.Invoke(this,
                                                      options);
@@ -75,6 +73,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
   }
 
+  [PublicAPI]
   public abstract class ControllerBase<TScreen> : ControllerBase
     where TScreen : IScreen
   {
