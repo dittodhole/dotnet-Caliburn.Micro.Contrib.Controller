@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [AttributeUsage(AttributeTargets.Method)]
+  [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
   public sealed class ScreenMethodLinkAttribute : Attribute
   {
     public bool SkipInvocation { get; set; }
