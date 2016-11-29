@@ -24,9 +24,9 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       {
         throw new InvalidOperationException($"Cannot create proxy for {type}, as this type does implement {nameof(IScreen)}.");
       }
-      if (type.IsSealed)
+      if (!type.IsAbstract)
       {
-        throw new InvalidOperationException($"Cannot create proxy for {type}, as this type is sealed.");
+        throw new InvalidOperationException($"Cannot create proxy for {type}, as this type is not defined as abstract.");
       }
     }
   }
