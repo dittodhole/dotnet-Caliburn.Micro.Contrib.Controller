@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [UsedImplicitly]
   public abstract class ControllerBase : IController
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>

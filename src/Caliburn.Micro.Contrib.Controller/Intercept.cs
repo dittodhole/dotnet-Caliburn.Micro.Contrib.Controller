@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public static class Intercept<TScreen>
     where TScreen : IScreen
   {

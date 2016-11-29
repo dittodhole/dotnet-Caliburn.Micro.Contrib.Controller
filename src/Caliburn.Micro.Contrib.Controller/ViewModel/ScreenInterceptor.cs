@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
+  [PublicAPI]
   public class ScreenInterceptor : IInterceptor
   {
     public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
@@ -69,7 +70,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     private IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
-    public virtual void Intercept([NotNull] IInvocation invocation)
+    public virtual void Intercept(IInvocation invocation)
     {
       if (invocation == null)
       {

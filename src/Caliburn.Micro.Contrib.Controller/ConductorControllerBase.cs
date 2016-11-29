@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public abstract class ConductorControllerBase<TScreen, TItem> : ControllerBase<TScreen>,
                                                                   IConductorController
     where TScreen : IScreen
