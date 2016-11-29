@@ -35,12 +35,12 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which has no parameters.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which cannot be found on <see cref="ScreenType" />.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which is not declared as <see langword="virtual" /> or <see langword="abstract" /> on <see cref="ScreenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is an interface.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed"/>.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has a <see langword="null" /> destination on <paramref name="screenType" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has not declared as <see langword="virtual" /> on <paramref name="screenType" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has an invalid injection defined in <see cref="ScreenMethodLinkAttribute.InjectInterfaceDefinition" />.</exception>
     public ScreenInterceptor([NotNull] ControllerBase controller,
                              [NotNull] Type screenType)
     {
@@ -55,8 +55,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       this.Controller = controller;
       this.ScreenType = screenType;
 
-      this.ScreenType.CheckTypeForRealScreenType();
       this.ScreenMethodMapping = this.CreateScreenMethodMapping(this.Controller);
+      this.ScreenType.CheckTypeForRealScreenType();
     }
 
     [NotNull]
@@ -66,7 +66,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     private Type ScreenType { get; }
 
     [NotNull]
-    protected IDictionary<string, ControllerMethodInvocation[]> ScreenMethodMapping { get; }
+    private IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept([NotNull] IInvocation invocation)
@@ -76,20 +76,35 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         throw new ArgumentNullException(nameof(invocation));
       }
 
-      var screenMethodName = invocation.Method.Name;
+      var screenMethod = invocation.Method;
+      var screenMethodName = screenMethod.Name;
 
-      ControllerMethodInvocation[] controllerMethodInvocations;
+      ICollection<ControllerMethodInvocation> controllerMethodInvocations;
       if (this.ScreenMethodMapping.TryGetValue(screenMethodName,
                                                out controllerMethodInvocations))
       {
-        var screenMethodInfo = invocation.Method;
-        var screenMethodParameterInfos = screenMethodInfo.GetParameters()
-                                                         .Select(parameterInfo => parameterInfo.ParameterType)
-                                                         .ToArray();
+        controllerMethodInvocations = controllerMethodInvocations.Where(arg =>
+                                                                        {
+                                                                          bool result;
 
-        controllerMethodInvocations = controllerMethodInvocations.Where(arg => this.AreMethodsIntertwined(arg.ControllerMethodInfo,
-                                                                                                          screenMethodInfo,
-                                                                                                          screenMethodParameterInfos))
+                                                                          var controllerMethodInfo = arg.ControllerMethodInfo;
+                                                                          if (controllerMethodInfo == null)
+                                                                          {
+                                                                            result = false;
+                                                                          }
+                                                                          else
+                                                                          {
+                                                                            var controllerMethodParameterTypes = controllerMethodInfo.GetParameters()
+                                                                                                                                     .Skip(1)
+                                                                                                                                     .Select(parameterInfo => parameterInfo.ParameterType)
+                                                                                                                                     .ToArray();
+                                                                            result = screenMethod.DoesMatch(screenMethodName,
+                                                                                                            controllerMethodInfo.ReturnType,
+                                                                                                            controllerMethodParameterTypes);
+                                                                          }
+
+                                                                          return result;
+                                                                        })
                                                                  .ToArray();
       }
       else
@@ -133,121 +148,94 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controllerMethodInfo" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="screenMethodInfo" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="screenMethodParameterTypes" /> is <see langword="null" /></exception>
-    protected virtual bool AreMethodsIntertwined([NotNull] MethodInfo controllerMethodInfo,
-                                                 [NotNull] MethodInfo screenMethodInfo,
-                                                 [NotNull] [ItemNotNull] Type[] screenMethodParameterTypes)
-    {
-      if (controllerMethodInfo == null)
-      {
-        throw new ArgumentNullException(nameof(controllerMethodInfo));
-      }
-      if (screenMethodInfo == null)
-      {
-        throw new ArgumentNullException(nameof(screenMethodInfo));
-      }
-      if (screenMethodParameterTypes == null)
-      {
-        throw new ArgumentNullException(nameof(screenMethodParameterTypes));
-      }
-
-      if (controllerMethodInfo.ReturnType != screenMethodInfo.ReturnType)
-      {
-        return false;
-      }
-
-      var controllerParameterInfos = controllerMethodInfo.GetParameters();
-      if (controllerParameterInfos.ElementAtOrDefault(0)
-                                  ?.ParameterType != typeof(IScreen))
-      {
-        return false;
-      }
-      if (controllerParameterInfos.Skip(1)
-                                  .Select(parameterInfo => parameterInfo.ParameterType)
-                                  .SequenceEqual(screenMethodParameterTypes))
-      {
-        return true;
-      }
-
-      return false;
-    }
-
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has a <see langword="null" /> destination on <see cref="ScreenType" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has not declared as <see langword="virtual" /> on <see cref="ScreenType" />.</exception>
-    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has an invalid injection defined in <see cref="ScreenMethodLinkAttribute.InjectInterfaceDefinition" />.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which has no parameters.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which cannot be found on <see cref="ScreenType" />.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which is not declared as <see langword="virtual" /> or <see langword="abstract" /> on <see cref="ScreenType" />.</exception>
     [NotNull]
-    protected virtual IDictionary<string, ControllerMethodInvocation[]> CreateScreenMethodMapping([NotNull] ControllerBase controller)
+    protected virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] ControllerBase controller)
     {
       if (controller == null)
       {
         throw new ArgumentNullException(nameof(controller));
       }
 
+      var result = new Dictionary<string, ICollection<ControllerMethodInvocation>>();
+
       var controllerType = controller.GetType();
-      var lookup = controllerType.GetMethods(ScreenInterceptor.DefaultBindingFlags)
-                                 .SelectMany(methodInfo => methodInfo.GetAttributes<ScreenMethodLinkAttribute>(true)
-                                                                     .Select(screenMethodLinkAttribute => new
-                                                                                                          {
-                                                                                                            ControllerMethodInfo = methodInfo,
-                                                                                                            ScreenMethodLinkAttribute = screenMethodLinkAttribute
-                                                                                                          }))
-                                 .ToLookup(arg => arg.ScreenMethodLinkAttribute.MethodName ?? arg.ControllerMethodInfo.Name,
-                                           arg => new ControllerMethodInvocation(arg.ControllerMethodInfo)
-                                                  {
-                                                    SkipInvocationOfScreenMethod = arg.ScreenMethodLinkAttribute.SkipInvocation,
-                                                    InjectInterfaceDefinition = arg.ScreenMethodLinkAttribute.InjectInterfaceDefinition
-                                                  });
-
-      var result = new Dictionary<string, ControllerMethodInvocation[]>();
-
-      foreach (var element in lookup)
+      var controllerMethodInfos = controllerType.GetMethods(ScreenInterceptor.DefaultBindingFlags);
+      foreach (var controllerMethodInfo in controllerMethodInfos)
       {
-        var screenMethodName = element.Key;
-
-        var controllerMethodInvocations = element.ToArray();
-
-        foreach (var controllerMethodInvocation in controllerMethodInvocations)
+        var screenMethodLinkAttributes = controllerMethodInfo.GetAttributes<ScreenMethodLinkAttribute>(true)
+                                                             .ToArray();
+        if (!screenMethodLinkAttributes.Any())
         {
-          var controllerMethodInfo = controllerMethodInvocation.ControllerMethodInfo;
-
-          var screenMethodParameterInfos = controllerMethodInfo.GetParameters()
-                                                               .Skip(1)
-                                                               .ToArray();
-          var screenMethodParameterTypes = screenMethodParameterInfos.Select(arg => arg.ParameterType)
-                                                                     .ToArray();
-          var screenMethodInfo = this.ScreenType.GetMethods(ScreenInterceptor.DefaultBindingFlags)
-                                     .FirstOrDefault(arg => arg.Name == screenMethodName);
-          if (screenMethodInfo == null)
-          {
-            var injectInterfaceDefinition = controllerMethodInvocation.InjectInterfaceDefinition;
-            if (injectInterfaceDefinition == null)
-            {
-              throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, but the corresponding method does not exist on {this.ScreenType}. (hint: try setting {nameof(ScreenMethodLinkAttribute.InjectInterfaceDefinition)})");
-            }
-            var interfaceMethodInfo = injectInterfaceDefinition.GetMethods(ScreenInterceptor.DefaultBindingFlags)
-                                                               .FirstOrDefault(arg => this.AreMethodsIntertwined(controllerMethodInfo,
-                                                                                                                 arg,
-                                                                                                                 screenMethodParameterTypes));
-            if (interfaceMethodInfo == null)
-            {
-              throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo} with {nameof(ScreenMethodLinkAttribute.InjectInterfaceDefinition)} set. {injectInterfaceDefinition} does not contain an applicable method for later injection.");
-            }
-          }
-          else if (this.AreMethodsIntertwined(controllerMethodInfo,
-                                              screenMethodInfo,
-                                              screenMethodParameterTypes))
-          {
-            if (!screenMethodInfo.IsVirtual)
-            {
-              throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, but the corresponding method is not declared as virtual on {this.ScreenType}.");
-            }
-          }
+          continue;
         }
 
-        result[screenMethodName] = controllerMethodInvocations;
+        var controllerMethodParameterInfos = controllerMethodInfo.GetParameters();
+        var screenParameter = controllerMethodParameterInfos.FirstOrDefault();
+        if (screenParameter == null)
+        {
+          throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, which has no parameters.");
+        }
+        if (!screenParameter.ParameterType.IsAssignableFrom(this.ScreenType))
+        {
+          continue;
+        }
+
+        var screenMethodParameterInfos = controllerMethodParameterInfos.Skip(1)
+                                                                       .ToArray();
+        var screenMethodParameterTypes = screenMethodParameterInfos.Select(arg => arg.ParameterType)
+                                                                   .ToArray();
+
+        foreach (var screenMethodLinkAttribute in screenMethodLinkAttributes)
+        {
+          var screenMethodName = screenMethodLinkAttribute.MethodName ?? controllerMethodInfo.Name;
+          var injectInterfaceDefinition = screenMethodLinkAttribute.InjectInterfaceDefinition;
+
+          var screenMethodInfo = this.ScreenType.GetMethod(screenMethodName,
+                                                           ScreenInterceptor.DefaultBindingFlags,
+                                                           controllerMethodInfo.ReturnType,
+                                                           screenMethodParameterTypes);
+          if (screenMethodInfo == null)
+          {
+            if (injectInterfaceDefinition != null)
+            {
+              screenMethodInfo = injectInterfaceDefinition.GetMethod(screenMethodName,
+                                                                     ScreenInterceptor.DefaultBindingFlags,
+                                                                     controllerMethodInfo.ReturnType,
+                                                                     screenMethodParameterTypes);
+            }
+          }
+          else
+          {
+            injectInterfaceDefinition = null;
+          }
+
+          if (screenMethodInfo == null)
+          {
+            throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, but the corresponding method does not exist on {this.ScreenType}. (hint: try setting {nameof(ScreenMethodLinkAttribute.InjectInterfaceDefinition)})");
+          }
+          if (!screenMethodInfo.IsVirtual)
+          {
+            throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, but the corresponding method is not declared as virtual on {this.ScreenType}.");
+          }
+
+          ICollection<ControllerMethodInvocation> controllerMethodInvocations;
+          if (!result.TryGetValue(screenMethodName,
+                                  out controllerMethodInvocations))
+          {
+            result[screenMethodName] = controllerMethodInvocations = new List<ControllerMethodInvocation>();
+          }
+
+          var controllerMethodInvocation = new ControllerMethodInvocation(controllerMethodInfo)
+                                           {
+                                             InjectInterfaceDefinition = injectInterfaceDefinition,
+                                             SkipInvocationOfScreenMethod = screenMethodLinkAttribute.SkipInvocation
+                                           };
+          controllerMethodInvocations.Add(controllerMethodInvocation);
+        }
       }
 
       return result;

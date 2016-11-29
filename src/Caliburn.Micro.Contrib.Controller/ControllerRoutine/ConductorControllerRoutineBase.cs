@@ -8,7 +8,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     public virtual void OnActivateItem(IScreen screen,
-                                       object item)
+                                       IScreen item)
     {
       if (screen == null)
       {
@@ -23,7 +23,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     public virtual void OnDeactivateItem(IScreen screen,
-                                         object item,
+                                         IScreen item,
                                          bool close)
     {
       if (screen == null)
