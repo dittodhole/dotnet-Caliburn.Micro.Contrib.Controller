@@ -22,11 +22,9 @@ https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Contr
     PM> nuget sources Add "dittodhole" https://www.myget.org/F/dittodhole/api/v3/index.json
     PM> Install-Package Caliburn.Micro.Contrib.Controller -pre
 
-## Example
+## Documentation
 
-```
-
-```
+Providing you with documentation and examples, which can be found in the [Wiki](//github.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller/wiki).
 
 ## License
 
