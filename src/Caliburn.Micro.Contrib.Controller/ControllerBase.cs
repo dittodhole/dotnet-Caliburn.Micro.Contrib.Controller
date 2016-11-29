@@ -28,25 +28,25 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
 
     [UsedImplicitly]
-    [ScreenMethodLink(SkipInvocation = true)]
+    [ScreenMethodLink]
     public abstract void OnInitialize(IScreen screen);
 
     [UsedImplicitly]
-    [ScreenMethodLink(SkipInvocation = true)]
+    [ScreenMethodLink]
     public abstract void OnActivate(IScreen screen);
 
     [UsedImplicitly]
-    [ScreenMethodLink(SkipInvocation = true)]
+    [ScreenMethodLink]
     public abstract void OnDeactivate(IScreen screen,
                                       bool close);
 
     [UsedImplicitly]
-    [ScreenMethodLink(SkipInvocation = true)]
+    [ScreenMethodLink]
     public abstract void OnViewReady(IScreen screen,
                                      object view);
 
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IClose.TryClose), SkipInvocation = false)]
+    [ScreenMethodLink(MethodName = nameof(IClose.TryClose))]
     public abstract void OnClose(IScreen screen,
                                  bool? dialogResult = null);
 

@@ -21,7 +21,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IConductor.ActivateItem), SkipInvocation = false)]
+    [ScreenMethodLink(MethodName = nameof(IConductor.ActivateItem))]
     public void OnActivateItem(IScreen screen,
                                IScreen item)
     {
@@ -33,7 +33,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IConductor.DeactivateItem), SkipInvocation = false)]
+    [ScreenMethodLink(MethodName = nameof(IConductor.DeactivateItem))]
     public void OnDeactivateItem(IScreen screen,
                                  IScreen item,
                                  bool close)
