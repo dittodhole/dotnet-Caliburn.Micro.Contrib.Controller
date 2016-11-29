@@ -66,6 +66,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     public abstract Type GetScreenType(object options = null);
 
+    /// <exception cref="InvalidOperationException" />
     public virtual IScreen CreateScreen(object options = null)
     {
       var screen = Controller.CreateScreenFn?.Invoke(this,
