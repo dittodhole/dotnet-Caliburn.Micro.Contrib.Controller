@@ -35,8 +35,9 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidOperationException">The <paramref name="screenType" /> is an interface.</exception>
-    /// <exception cref="InvalidOperationException">The <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is an interface.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
+    /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed"/>.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has a <see langword="null" /> destination on <paramref name="screenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has not declared as <see langword="virtual" /> on <paramref name="screenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined, which has an invalid injection defined in <see cref="ScreenMethodLinkAttribute.InjectInterfaceDefinition" />.</exception>
