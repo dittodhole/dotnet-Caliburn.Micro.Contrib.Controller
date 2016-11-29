@@ -60,7 +60,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
       await Execute.OnUIThreadAsync(() => windowManager.ShowWindow(screen,
                                                                    context,
-                                                                   settings));
+                                                                   settings))
+                   .ConfigureAwait(false);
 
       return controller;
     }
@@ -81,7 +82,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
       await Execute.OnUIThreadAsync(() => windowManager.ShowDialog(screen,
                                                                    context,
-                                                                   settings));
+                                                                   settings))
+                   .ConfigureAwait(false);
 
       return controller;
     }
