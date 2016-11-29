@@ -15,6 +15,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
+      [UsedImplicitly]
       void Handle([NotNull] TScreen screen,
                   [NotNull] TMessage message);
     }
@@ -23,6 +24,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
+      [UsedImplicitly]
       [NotNull]
       [ItemNotNull]
       IEnumerable<IResult> Handle([NotNull] TScreen screen,
@@ -33,6 +35,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
+      [UsedImplicitly]
       [NotNull]
       Task Handle([NotNull] TScreen screen,
                   [NotNull] TMessage message);
