@@ -12,14 +12,15 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidOperationException">The <see cref="Type" /> returned by <see cref="IController.GetScreenType" /> of <paramref name="controller" /> is an interface.</exception>
     /// <exception cref="InvalidOperationException">The <see cref="Type" /> returned by <see cref="IController.GetScreenType" /> of <paramref name="controller" /> does not implement <see cref="IScreen" />.</exception>
+    [CanBeNull]
     public delegate IScreen CreateScreen([NotNull] IController controller,
                                          [CanBeNull] object options = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     [NotNull]
-    public delegate ScreenInterceptor CreateScreenInterceptor([NotNull] IController controller,
-                                                              [NotNull] Type screenType);
+    public delegate IScreenInterceptor CreateScreenInterceptor([NotNull] IController controller,
+                                                               [NotNull] Type screenType);
 
     [CanBeNull]
     public static CreateScreen CreateScreenFn = (controller,

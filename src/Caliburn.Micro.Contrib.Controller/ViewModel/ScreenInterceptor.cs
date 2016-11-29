@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
   [PublicAPI]
-  public class ScreenInterceptor : IInterceptor
+  public class ScreenInterceptor : IScreenInterceptor
   {
     public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
@@ -242,7 +242,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       return result;
     }
 
-    [CanBeNull]
     public virtual IScreen CreateProxiedScreen()
     {
       var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)

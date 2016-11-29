@@ -26,7 +26,9 @@ namespace Caliburn.Micro.Contrib.Controller
     [ItemNotNull]
     private ICollection<IControllerRoutine> Routines { get; } = new List<IControllerRoutine>();
 
-    public virtual IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
+    [NotNull]
+    [ItemNotNull]
+    protected IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
 
     [UsedImplicitly]
     [ScreenMethodLink]
@@ -52,7 +54,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                  bool? dialogResult = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    protected virtual void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
+    protected void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
     {
       if (controllerRoutine == null)
       {
