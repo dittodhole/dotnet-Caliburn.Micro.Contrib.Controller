@@ -122,8 +122,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                      1,
                      screenMethodParameters.Count());
 
-          controllerMethodInfo.Invoke(this.Controller,
-                                      controllerMethodParameters);
+          invocation.ReturnValue = controllerMethodInfo.Invoke(this.Controller,
+                                                               controllerMethodParameters);
         }
       }
     }
