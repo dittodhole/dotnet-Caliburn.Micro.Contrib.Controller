@@ -97,7 +97,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         controllerMethodInvocations = new ControllerMethodInvocation[0];
       }
 
-      if (controllerMethodInvocations.Any(arg => arg.SkipInvocationOfScreenMethod))
+      var skipInvocationOfScreenMethod = controllerMethodInvocations.Any(arg => arg.SkipInvocationOfScreenMethod);
+      if (skipInvocationOfScreenMethod)
       {
         LogTo.Debug($"Skipping {this.ScreenType}.{screenMethodName}.");
       }
@@ -122,8 +123,12 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                      1,
                      screenMethodParameters.Count());
 
-          invocation.ReturnValue = controllerMethodInfo.Invoke(this.Controller,
-                                                               controllerMethodParameters);
+          var returnValue = controllerMethodInfo.Invoke(this.Controller,
+                                                        controllerMethodParameters);
+          if (skipInvocationOfScreenMethod)
+          {
+            invocation.ReturnValue = returnValue;
+          }
         }
       }
     }
