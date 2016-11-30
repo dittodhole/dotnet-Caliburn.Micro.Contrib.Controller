@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 {
-  [PublicAPI]
   public static class TypeExtensions
   {
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>

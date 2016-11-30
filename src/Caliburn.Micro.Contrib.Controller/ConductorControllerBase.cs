@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public abstract class ConductorControllerBase<TScreen, TItem> : ControllerBase<TScreen>,
                                                                   IConductorController
     where TScreen : IScreen
@@ -22,8 +23,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
     [ScreenMethodLink(MethodName = nameof(IConductor.ActivateItem))]
-    public void OnActivateItem(IScreen screen,
-                               IScreen item)
+    public virtual void OnActivateItem(IScreen screen,
+                                       IScreen item)
     {
       this.OnActivateItem((TScreen) screen,
                           (TItem) item);
@@ -34,9 +35,9 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
     [ScreenMethodLink(MethodName = nameof(IConductor.DeactivateItem))]
-    public void OnDeactivateItem(IScreen screen,
-                                 IScreen item,
-                                 bool close)
+    public virtual void OnDeactivateItem(IScreen screen,
+                                         IScreen item,
+                                         bool close)
     {
       this.OnDeactivateItem((TScreen) screen,
                             (TItem) item,

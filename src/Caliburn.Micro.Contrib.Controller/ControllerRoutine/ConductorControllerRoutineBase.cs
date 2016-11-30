@@ -1,7 +1,9 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
+  [PublicAPI]
   public abstract class ConductorControllerRoutineBase : ControllerRoutineBase,
                                                          IConductorControllerRoutine
   {

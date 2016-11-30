@@ -9,7 +9,8 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
-  public class ScreenInterceptor : IInterceptor
+  [PublicAPI]
+  public class ScreenInterceptor : IScreenInterceptor
   {
     public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
@@ -41,7 +42,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is an interface.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
-    public ScreenInterceptor([NotNull] ControllerBase controller,
+    public ScreenInterceptor([NotNull] IController controller,
                              [NotNull] Type screenType)
     {
       if (controller == null)
@@ -60,7 +61,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     [NotNull]
-    private ControllerBase Controller { get; }
+    private IController Controller { get; }
 
     [NotNull]
     private Type ScreenType { get; }
@@ -69,7 +70,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     private IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
-    public virtual void Intercept([NotNull] IInvocation invocation)
+    public virtual void Intercept(IInvocation invocation)
     {
       if (invocation == null)
       {
@@ -153,7 +154,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which cannot be found on <see cref="ScreenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which is not declared as <see langword="virtual" /> or <see langword="abstract" /> on <see cref="ScreenType" />.</exception>
     [NotNull]
-    protected virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] ControllerBase controller)
+    protected virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] IController controller)
     {
       if (controller == null)
       {
@@ -241,7 +242,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       return result;
     }
 
-    [CanBeNull]
     public virtual IScreen CreateProxiedScreen()
     {
       var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)

@@ -10,16 +10,17 @@ namespace Caliburn.Micro.Contrib.Controller
   public static class Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidOperationException">The <see cref="Type" /> returned by <see cref="ControllerBase.GetScreenType" /> of <paramref name="controller" /> is an interface.</exception>
-    /// <exception cref="InvalidOperationException">The <see cref="Type" /> returned by <see cref="ControllerBase.GetScreenType" /> of <paramref name="controller" /> does not implement <see cref="IScreen" />.</exception>
-    public delegate IScreen CreateScreen([NotNull] ControllerBase controller,
+    /// <exception cref="InvalidOperationException" />
+    [CanBeNull]
+    public delegate IScreen CreateScreen([NotNull] IController controller,
                                          [CanBeNull] object options = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    /// <exception cref="InvalidOperationException" />
     [NotNull]
-    public delegate ScreenInterceptor CreateScreenInterceptor([NotNull] ControllerBase controller,
-                                                              [NotNull] Type screenType);
+    public delegate IScreenInterceptor CreateScreenInterceptor([NotNull] IController controller,
+                                                               [NotNull] Type screenType);
 
     [CanBeNull]
     public static CreateScreen CreateScreenFn = (controller,
@@ -44,10 +45,10 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                         return screenInterceptor;
                                                                       };
 
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TController" />-instance did not create a screen.</exception>
+    /// <exception cref="InvalidOperationException" />
     public static async Task<TController> ShowWindowAsync<TController>([CanBeNull] object options = null,
                                                                        [CanBeNull] object context = null,
-                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
+                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
     {
       var controller = IoC.Get<TController>();
       var screen = controller.CreateScreen(options);
@@ -66,10 +67,10 @@ namespace Caliburn.Micro.Contrib.Controller
       return controller;
     }
 
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TController" />-instance did not create a screen.</exception>
+    /// <exception cref="InvalidOperationException" />
     public static async Task<TController> ShowDialogAsync<TController>([CanBeNull] object options = null,
                                                                        [CanBeNull] object context = null,
-                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
+                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
     {
       var controller = IoC.Get<TController>();
       var screen = controller.CreateScreen(options);

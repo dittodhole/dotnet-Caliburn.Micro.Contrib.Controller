@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public abstract class ControllerBase : IController
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
@@ -25,7 +26,9 @@ namespace Caliburn.Micro.Contrib.Controller
     [ItemNotNull]
     private ICollection<IControllerRoutine> Routines { get; } = new List<IControllerRoutine>();
 
-    public virtual IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
+    [NotNull]
+    [ItemNotNull]
+    protected IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
 
     [UsedImplicitly]
     [ScreenMethodLink]
@@ -51,7 +54,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                  bool? dialogResult = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    protected virtual void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
+    protected void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
     {
       if (controllerRoutine == null)
       {
@@ -61,11 +64,10 @@ namespace Caliburn.Micro.Contrib.Controller
       this.Routines.Add(controllerRoutine);
     }
 
-    [NotNull]
-    public abstract Type GetScreenType([CanBeNull] object options = null);
+    public abstract Type GetScreenType(object options = null);
 
-    [CanBeNull]
-    public virtual IScreen CreateScreen([CanBeNull] object options = null)
+    /// <exception cref="InvalidOperationException" />
+    public virtual IScreen CreateScreen(object options = null)
     {
       var screen = Controller.CreateScreenFn?.Invoke(this,
                                                      options);
@@ -74,6 +76,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
   }
 
+  [PublicAPI]
   public abstract class ControllerBase<TScreen> : ControllerBase
     where TScreen : IScreen
   {
@@ -86,8 +89,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    public sealed override void OnViewReady(IScreen screen,
-                                            object view)
+    public override void OnViewReady(IScreen screen,
+                                     object view)
     {
       this.OnViewReady((TScreen) screen,
                        view);
@@ -95,15 +98,15 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    public sealed override void OnActivate(IScreen screen)
+    public override void OnActivate(IScreen screen)
     {
       this.OnActivate((TScreen) screen);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    public sealed override void OnDeactivate(IScreen screen,
-                                             bool close)
+    public override void OnDeactivate(IScreen screen,
+                                      bool close)
     {
       this.OnDeactivate((TScreen) screen,
                         close);
@@ -111,15 +114,15 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    public sealed override void OnInitialize(IScreen screen)
+    public override void OnInitialize(IScreen screen)
     {
       this.OnInitialize((TScreen) screen);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    public sealed override void OnClose(IScreen screen,
-                                        bool? dialogResult = null)
+    public override void OnClose(IScreen screen,
+                                 bool? dialogResult = null)
     {
       this.OnClose((TScreen) screen,
                    dialogResult);
