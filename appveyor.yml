@@ -26,7 +26,7 @@ build:
 after_build:
 - cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
-- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols -IncludeReferencedProjects
+- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"
 test: off
 deploy:
