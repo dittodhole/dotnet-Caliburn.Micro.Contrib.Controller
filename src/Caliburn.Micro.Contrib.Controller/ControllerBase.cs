@@ -65,7 +65,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    public virtual void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
+    public virtual T RegisterRoutine<T>([NotNull] T controllerRoutine) where T : IControllerRoutine
     {
       if (controllerRoutine == null)
       {
@@ -73,6 +73,8 @@ namespace Caliburn.Micro.Contrib.Controller
       }
 
       this.Routines.Add(controllerRoutine);
+
+      return controllerRoutine;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
