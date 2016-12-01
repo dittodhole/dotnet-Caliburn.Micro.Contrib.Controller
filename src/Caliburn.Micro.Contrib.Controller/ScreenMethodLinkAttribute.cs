@@ -7,7 +7,7 @@ namespace Caliburn.Micro.Contrib.Controller
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
   public sealed class ScreenMethodLinkAttribute : Attribute
   {
-    public bool SkipInvocation { get; set; }
+    public bool CallBase { get; set; } = true;
 
     [CanBeNull]
     public string MethodName { get; set; }

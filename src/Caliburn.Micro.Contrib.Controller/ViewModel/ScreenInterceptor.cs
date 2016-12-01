@@ -113,15 +113,15 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         controllerMethodInvocations = new ControllerMethodInvocation[0];
       }
 
-      var skipInvocationOfScreenMethod = controllerMethodInvocations.Any(arg => arg.SkipInvocationOfScreenMethod);
-      if (skipInvocationOfScreenMethod)
-      {
-        LogTo.Debug($"Skipping {this.ScreenType}.{screenMethodName}.");
-      }
-      else
+      var callBase = controllerMethodInvocations.Any(arg => arg.CallBase);
+      if (callBase)
       {
         LogTo.Debug($"Calling {this.ScreenType}.{screenMethodName}");
         invocation.Proceed();
+      }
+      else
+      {
+        LogTo.Debug($"Skipping {this.ScreenType}.{screenMethodName}.");
       }
 
       foreach (var controllerMethodInvocation in controllerMethodInvocations)
@@ -141,7 +141,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
           var returnValue = controllerMethodInfo.Invoke(this.Controller,
                                                         controllerMethodParameters);
-          if (skipInvocationOfScreenMethod)
+          if (!callBase)
           {
             invocation.ReturnValue = returnValue;
           }
@@ -257,7 +257,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
           var controllerMethodInvocation = new ControllerMethodInvocation(controllerMethodInfo)
                                            {
                                              InjectInterfaceDefinition = injectInterfaceDefinition,
-                                             SkipInvocationOfScreenMethod = screenMethodLinkAttribute.SkipInvocation
+                                             CallBase = screenMethodLinkAttribute.CallBase
                                            };
           controllerMethodInvocations.Add(controllerMethodInvocation);
         }
@@ -277,12 +277,13 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
           throw new ArgumentNullException(nameof(controllerMethodInfo));
         }
         this.ControllerMethodInfo = controllerMethodInfo;
+        this.CallBase = true;
       }
 
       [CanBeNull]
       public MethodInfo ControllerMethodInfo { get; }
 
-      public bool SkipInvocationOfScreenMethod { get; set; }
+      public bool CallBase { get; set; }
 
       [CanBeNull]
       public Type InjectInterfaceDefinition { get; set; }
