@@ -149,12 +149,36 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       }
     }
 
+    public virtual IScreen CreateProxiedScreen()
+    {
+      var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)
+                                            .Select(arg => arg.InjectInterfaceDefinition)
+                                            .Where(arg => arg != null)
+                                            .Where(arg => arg.IsInterface)
+                                            .ToArray();
+      var proxyGenerationOptions = new ProxyGenerationOptions();
+      var proxyGenerator = new ProxyGenerator();
+      var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
+                                                  additionalInterfacesToProxy,
+                                                  proxyGenerationOptions,
+                                                  this);
+      var screen = (IScreen) proxy;
+
+      if (screen is IHandle)
+      {
+        var eventAggregator = IoC.Get<IEventAggregator>();
+        eventAggregator.Subscribe(screen);
+      }
+
+      return screen;
+    }
+
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which has no parameters.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which cannot be found on <see cref="ScreenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which is not declared as <see langword="virtual" /> or <see langword="abstract" /> on <see cref="ScreenType" />.</exception>
     [NotNull]
-    protected virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] IController controller)
+    public virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] IController controller)
     {
       if (controller == null)
       {
@@ -242,31 +266,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       return result;
     }
 
-    public virtual IScreen CreateProxiedScreen()
-    {
-      var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)
-                                            .Select(arg => arg.InjectInterfaceDefinition)
-                                            .Where(arg => arg != null)
-                                            .Where(arg => arg.IsInterface)
-                                            .ToArray();
-      var proxyGenerationOptions = new ProxyGenerationOptions();
-      var proxyGenerator = new ProxyGenerator();
-      var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
-                                                  additionalInterfacesToProxy,
-                                                  proxyGenerationOptions,
-                                                  this);
-      var screen = (IScreen) proxy;
-
-      if (screen is IHandle)
-      {
-        var eventAggregator = IoC.Get<IEventAggregator>();
-        eventAggregator.Subscribe(screen);
-      }
-
-      return screen;
-    }
-
-    protected struct ControllerMethodInvocation
+    public struct ControllerMethodInvocation
     {
       /// <exception cref="ArgumentNullException"><paramref name="controllerMethodInfo" /> is <see langword="null" /></exception>
       public ControllerMethodInvocation([NotNull] MethodInfo controllerMethodInfo)

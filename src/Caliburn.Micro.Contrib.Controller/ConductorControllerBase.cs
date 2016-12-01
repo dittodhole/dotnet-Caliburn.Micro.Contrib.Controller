@@ -46,8 +46,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    protected virtual void OnActivateItem([NotNull] TScreen screen,
-                                          [NotNull] TItem item)
+    public virtual void OnActivateItem([NotNull] TScreen screen,
+                                       [NotNull] TItem item)
     {
       if (screen == null)
       {
@@ -67,9 +67,9 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    protected virtual void OnDeactivateItem([NotNull] TScreen screen,
-                                            [NotNull] TItem item,
-                                            bool close)
+    public virtual void OnDeactivateItem([NotNull] TScreen screen,
+                                         [NotNull] TItem item,
+                                         bool close)
     {
       if (screen == null)
       {

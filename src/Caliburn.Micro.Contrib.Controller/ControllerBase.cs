@@ -28,7 +28,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     [ItemNotNull]
-    protected IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
+    public virtual IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
 
     [UsedImplicitly]
     [ScreenMethodLink]
@@ -53,8 +53,19 @@ namespace Caliburn.Micro.Contrib.Controller
     public abstract void OnClose(IScreen screen,
                                  bool? dialogResult = null);
 
+    public abstract Type GetScreenType(object options = null);
+
+    /// <exception cref="InvalidOperationException" />
+    public virtual IScreen CreateScreen(object options = null)
+    {
+      var screen = Controller.CreateScreenFn?.Invoke(this,
+                                                     options);
+
+      return screen;
+    }
+
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    protected virtual void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
+    public virtual void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
     {
       if (controllerRoutine == null)
       {
@@ -64,8 +75,8 @@ namespace Caliburn.Micro.Contrib.Controller
       this.Routines.Add(controllerRoutine);
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines"/> is <see langword="null"/></exception>
-    protected virtual void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<IControllerRoutine> controllerRoutines)
+    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    public virtual void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<IControllerRoutine> controllerRoutines)
     {
       if (controllerRoutines == null)
       {
@@ -76,17 +87,6 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         this.RegisterRoutine(controllerRoutine);
       }
-    }
-
-  public abstract Type GetScreenType(object options = null);
-
-    /// <exception cref="InvalidOperationException" />
-    public virtual IScreen CreateScreen(object options = null)
-    {
-      var screen = Controller.CreateScreenFn?.Invoke(this,
-                                                     options);
-
-      return screen;
     }
   }
 
@@ -143,8 +143,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    protected virtual void OnClose([NotNull] TScreen screen,
-                                   bool? dialogResult = null)
+    public virtual void OnClose([NotNull] TScreen screen,
+                                bool? dialogResult = null)
     {
       if (screen == null)
       {
@@ -159,7 +159,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    protected virtual void OnInitialize([NotNull] TScreen screen)
+    public virtual void OnInitialize([NotNull] TScreen screen)
     {
       if (screen == null)
       {
@@ -174,8 +174,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    protected virtual void OnViewReady([NotNull] TScreen screen,
-                                       [NotNull] object view)
+    public virtual void OnViewReady([NotNull] TScreen screen,
+                                    [NotNull] object view)
     {
       if (screen == null)
       {
@@ -194,7 +194,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    protected virtual void OnActivate([NotNull] TScreen screen)
+    public virtual void OnActivate([NotNull] TScreen screen)
     {
       if (screen == null)
       {
@@ -208,8 +208,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    protected virtual void OnDeactivate([NotNull] TScreen screen,
-                                        bool close)
+    public virtual void OnDeactivate([NotNull] TScreen screen,
+                                     bool close)
     {
       if (screen == null)
       {
