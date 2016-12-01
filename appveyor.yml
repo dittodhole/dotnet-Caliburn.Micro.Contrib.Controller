@@ -2,25 +2,34 @@ version: '{build}-{branch}'
 image: Visual Studio 2015
 configuration: Release
 environment:
+  solution_name: Caliburn.Micro.Contrib.Controller
   solution_dir: '%APPVEYOR_BUILD_FOLDER%\src\'
-  project_dir: '%solution_dir%Caliburn.Micro.Contrib.Controller\'
+  solution_file: '%solution_dir%%solution_name%.sln'
+  project_name: '%solution_name%'
+  project_dir: '%solution_dir%%project_name%\'
+  project_file: '%project_dir%%project_name%.csproj'
+  extras_project_name: Caliburn.Micro.Contrib.Controller.Extras
+  extras_project_dir: '%solution_dir%%extras_project_name%\'
+  extras_project_file: '%extras_project_dir%%extras_project_name%.csproj'
 install:
-#- cmd: choco install gitversion.portable -pre -y
 - cmd: choco install gitversion.portable -y
 before_build:
-- ps: nuget restore "$($env:solution_dir)Caliburn.Micro.Contrib.Controller.sln"
-- ps: gitversion /l console /output buildserver /updateAssemblyInfo
+- cmd: nuget restore "%solution_file%"
+- cmd: gitversion /l console /output buildserver /updateAssemblyInfo
 assembly_info:
   patch: false
 build:
-  project: '%solution_dir%Caliburn.Micro.Contrib.Controller.sln'
+  project: '%solution_file%'
   publish_nuget: false
   publish_nuget_symbols: false
   verbosity: detailed
 after_build:
-- cmd: ECHO nuget pack "%project_dir%Caliburn.Micro.Contrib.Controller.csproj" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
-- cmd: nuget pack "%project_dir%Caliburn.Micro.Contrib.Controller.csproj" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
-- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\Caliburn.Micro.Contrib.Controller.%GitVersion_NuGetVersion%.nupkg"
+- cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
+#- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
+#- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"
+#- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 test: off
 deploy:
 - provider: NuGet
@@ -39,3 +48,10 @@ deploy:
   skip_symbols: true
   on:
     branch: master
+- provider: NuGet
+  name: NuGet
+  api_key:
+    secure: U6199dIr+h5NLeO9aWtxR2ihfMjDX3rrhqjdN3ByzlLzU9t3T00+MtjNQPkfrToY
+  skip_symbols: true
+  on:
+    branch: release

@@ -164,12 +164,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                                   this);
       var screen = (IScreen) proxy;
 
-      if (screen is IHandle)
-      {
-        var eventAggregator = IoC.Get<IEventAggregator>();
-        eventAggregator.Subscribe(screen);
-      }
-
       return screen;
     }
 
