@@ -81,37 +81,37 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       var screenMethodName = screenMethod.Name;
 
       ICollection<ControllerMethodInvocation> controllerMethodInvocations;
-      if (this.ScreenMethodMapping.TryGetValue(screenMethodName,
-                                               out controllerMethodInvocations))
+      if (!this.ScreenMethodMapping.TryGetValue(screenMethodName,
+                                                out controllerMethodInvocations))
       {
-        controllerMethodInvocations = controllerMethodInvocations.Where(arg =>
+        LogTo.Debug($"Calling {this.ScreenType}.{screenMethodName}");
+        invocation.Proceed();
+        return;
+      }
+
+      controllerMethodInvocations = controllerMethodInvocations.Where(arg =>
+                                                                      {
+                                                                        bool result;
+
+                                                                        var controllerMethodInfo = arg.ControllerMethodInfo;
+                                                                        if (controllerMethodInfo == null)
                                                                         {
-                                                                          bool result;
+                                                                          result = false;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                          var controllerMethodParameterTypes = controllerMethodInfo.GetParameters()
+                                                                                                                                   .Skip(1)
+                                                                                                                                   .Select(parameterInfo => parameterInfo.ParameterType)
+                                                                                                                                   .ToArray();
+                                                                          result = screenMethod.DoesMatch(screenMethodName,
+                                                                                                          controllerMethodInfo.ReturnType,
+                                                                                                          controllerMethodParameterTypes);
+                                                                        }
 
-                                                                          var controllerMethodInfo = arg.ControllerMethodInfo;
-                                                                          if (controllerMethodInfo == null)
-                                                                          {
-                                                                            result = false;
-                                                                          }
-                                                                          else
-                                                                          {
-                                                                            var controllerMethodParameterTypes = controllerMethodInfo.GetParameters()
-                                                                                                                                     .Skip(1)
-                                                                                                                                     .Select(parameterInfo => parameterInfo.ParameterType)
-                                                                                                                                     .ToArray();
-                                                                            result = screenMethod.DoesMatch(screenMethodName,
-                                                                                                            controllerMethodInfo.ReturnType,
-                                                                                                            controllerMethodParameterTypes);
-                                                                          }
-
-                                                                          return result;
-                                                                        })
-                                                                 .ToArray();
-      }
-      else
-      {
-        controllerMethodInvocations = new ControllerMethodInvocation[0];
-      }
+                                                                        return result;
+                                                                      })
+                                                               .ToArray();
 
       var callBase = controllerMethodInvocations.Any(arg => arg.CallBase);
       if (callBase)
