@@ -64,7 +64,21 @@ namespace Caliburn.Micro.Contrib.Controller
       this.Routines.Add(controllerRoutine);
     }
 
-    public abstract Type GetScreenType(object options = null);
+    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines"/> is <see langword="null"/></exception>
+    protected void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<IControllerRoutine> controllerRoutines)
+    {
+      if (controllerRoutines == null)
+      {
+        throw new ArgumentNullException(nameof(controllerRoutines));
+      }
+
+      foreach (var controllerRoutine in controllerRoutines)
+      {
+        this.RegisterRoutine(controllerRoutine);
+      }
+    }
+
+  public abstract Type GetScreenType(object options = null);
 
     /// <exception cref="InvalidOperationException" />
     public virtual IScreen CreateScreen(object options = null)
