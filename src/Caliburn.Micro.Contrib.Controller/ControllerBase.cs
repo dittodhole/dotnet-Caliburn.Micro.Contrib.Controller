@@ -54,7 +54,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                  bool? dialogResult = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    protected void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
+    protected virtual void RegisterRoutine([NotNull] IControllerRoutine controllerRoutine)
     {
       if (controllerRoutine == null)
       {
@@ -65,7 +65,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines"/> is <see langword="null"/></exception>
-    protected void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<IControllerRoutine> controllerRoutines)
+    protected virtual void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<IControllerRoutine> controllerRoutines)
     {
       if (controllerRoutines == null)
       {
