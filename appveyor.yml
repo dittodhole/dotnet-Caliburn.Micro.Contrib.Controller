@@ -14,7 +14,7 @@ environment:
 install:
 - cmd: choco install gitversion.portable -y
 before_build:
-- cmd: nuget restore "$($env:solution_file)"
+- cmd: nuget restore "%solution_file%"
 - cmd: gitversion /l console /output buildserver /updateAssemblyInfo
 assembly_info:
   patch: false
