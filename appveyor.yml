@@ -60,4 +60,4 @@ deploy:
     secure: U6199dIr+h5NLeO9aWtxR2ihfMjDX3rrhqjdN3ByzlLzU9t3T00+MtjNQPkfrToY
 #  skip_symbols: true
   on:
-    branch: release
+    branch: /release\/.*/

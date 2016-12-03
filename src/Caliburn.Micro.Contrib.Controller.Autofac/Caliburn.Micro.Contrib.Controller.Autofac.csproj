@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Caliburn.Micro.Contrib.Controller.Autofac.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
