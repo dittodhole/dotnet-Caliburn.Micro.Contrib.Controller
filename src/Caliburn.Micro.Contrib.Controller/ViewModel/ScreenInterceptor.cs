@@ -61,7 +61,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     [NotNull]
-    private IController Controller { get; }
+    protected IController Controller { get; }
 
     [NotNull]
     protected Type ScreenType { get; }

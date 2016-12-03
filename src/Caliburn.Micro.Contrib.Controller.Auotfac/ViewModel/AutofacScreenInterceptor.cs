@@ -6,16 +6,17 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
+using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
-  public class AutofacScreenInterceptor : ScreenInterceptor
+  public class AutofacScreenInterceptor : ScreenInterceptor,
+                                          IDisposable
   {
     protected const string InjectPropertiesMethodName = "InjectProperties";
     protected const string GetConstructorBindingsMethodName = "GetConstructorBindings";
-    private const BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
@@ -27,6 +28,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
     public AutofacScreenInterceptor([NotNull] ILifetimeScope lifetimeScope,
+                                    bool enableLifetimeScopesForViewModels,
                                     [NotNull] IController controller,
                                     [NotNull] Type screenType)
       : base(controller,
@@ -37,10 +39,25 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         throw new ArgumentNullException(nameof(lifetimeScope));
       }
       this.LifetimeScope = lifetimeScope;
+      this.EnableLifetimeScopesForViewModels = enableLifetimeScopesForViewModels;
+      this.LifetimeDisposalRoutine = new LifetimeDisposalRoutine();
+
+      this.Controller.RegisterRoutine(this.LifetimeDisposalRoutine);
     }
 
     [NotNull]
     private ILifetimeScope LifetimeScope { get; }
+
+    private bool EnableLifetimeScopesForViewModels { get; }
+
+    [NotNull]
+    private LifetimeDisposalRoutine LifetimeDisposalRoutine { get; }
+
+    public void Dispose()
+    {
+      this.LifetimeDisposalRoutine.Dispose();
+      this.Controller.UnregisterRoutine(this.LifetimeDisposalRoutine);
+    }
 
     /// <exception cref="InvalidOperationException">If the activator for <see cref="ScreenInterceptor.ScreenType" /> has no method 'InjectProperties' defined.</exception>
     /// <exception cref="TargetException" />
@@ -88,17 +105,27 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         var reflectionActivator = (ReflectionActivator) registration.Activator;
         var activatorType = reflectionActivator.GetType();
         var methodInfo = activatorType.GetMethod(AutofacScreenInterceptor.InjectPropertiesMethodName,
-                                                 AutofacScreenInterceptor.DefaultBindingFlags);
+                                                 ScreenInterceptor.DefaultBindingFlags);
         if (methodInfo == null)
         {
           throw new InvalidOperationException($"{activatorType} has no method {AutofacScreenInterceptor.InjectPropertiesMethodName} defined.");
+        }
+
+        var lifetimeScope = this.LifetimeScope;
+
+        if (this.EnableLifetimeScopesForViewModels)
+        {
+          lifetimeScope = lifetimeScope.BeginLifetimeScope();
+
+          this.LifetimeDisposalRoutine.RegisterLifetimeScope(screen,
+                                                             lifetimeScope);
         }
 
         methodInfo.Invoke(reflectionActivator,
                           new object[]
                           {
                             screen,
-                            this.LifetimeScope
+                            lifetimeScope
                           });
       }
 
@@ -133,7 +160,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       var constructors = reflectionActivator.ConstructorFinder.FindConstructors(this.ScreenType);
 
       var constructorBindings = (IEnumerable<ConstructorParameterBinding>) activatorType.GetMethod(AutofacScreenInterceptor.GetConstructorBindingsMethodName,
-                                                                                                   AutofacScreenInterceptor.DefaultBindingFlags)
+                                                                                                   ScreenInterceptor.DefaultBindingFlags)
                                                                                         .Invoke(activatorType,
                                                                                                 new object[]
                                                                                                 {

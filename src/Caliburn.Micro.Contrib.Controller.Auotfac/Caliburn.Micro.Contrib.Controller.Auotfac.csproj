@@ -100,6 +100,7 @@
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="AutofacBootstrapper.cs" />
+    <Compile Include="ControllerRoutine\LifetimeDisposalRoutine.cs" />
     <Compile Include="LocatorAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AutofacScreenInterceptor.cs" />

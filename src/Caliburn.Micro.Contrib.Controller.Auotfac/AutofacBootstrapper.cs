@@ -11,15 +11,19 @@ namespace Caliburn.Micro.Contrib.Controller
   public abstract class AutofacBootstrapper<TRootController> : Autofac.AutofacBootstrapper<TRootController>
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
+    public bool EnableLifetimeScopesForViewModels { get; set; }
 
     protected override void Configure()
     {
       base.Configure();
 
+      // TODO implement cache
+
       Controller.CreateScreenInterceptorFn = (controller,
                                               type) =>
                                              {
                                                var autofacScreenInterceptor = new AutofacScreenInterceptor(this.Container,
+                                                                                                           this.EnableLifetimeScopesForViewModels,
                                                                                                            controller,
                                                                                                            type);
 
@@ -32,6 +36,7 @@ namespace Caliburn.Micro.Contrib.Controller
       base.ConfigureBootstrapper();
 
       this.AutoSubscribeEventAggegatorHandlers = false;
+      this.EnableLifetimeScopesForViewModels = true;
     }
 
     protected override void ConfigureContainer(ContainerBuilder builder)
