@@ -11,16 +11,26 @@
 
 ## Installing
 
+### Releases
+
 [![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller/)
 https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller/
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller
 
+### Pre Releases
+
+    PM> nuget sources Add "dittodhole" https://www.myget.org/F/dittodhole/api/v3/index.json
+
 [![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.svg)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller)
 https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller
 
-    PM> nuget sources Add "dittodhole" https://www.myget.org/F/dittodhole/api/v3/index.json
     PM> Install-Package Caliburn.Micro.Contrib.Controller -pre
+
+[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Extras.svg)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras)
+https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras
+
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.Extras -pre
 
 ## Documentation
 
