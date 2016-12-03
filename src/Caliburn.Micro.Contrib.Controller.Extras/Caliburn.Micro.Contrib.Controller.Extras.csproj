@@ -81,7 +81,6 @@
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="ControllerRoutine\AutomaticRegistrationHandlingForHandlersRoutine.cs" />
     <Compile Include="ILocator.cs" />
-    <Compile Include="Locator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
