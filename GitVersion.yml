@@ -1,7 +1,4 @@
 assembly-informational-format: '{LegacySemVerPadded}'
-branches:
-  develop:
-#    mode: ContinuousDeployment
-    mode: ContinuousDelivery
+branches: {}
 ignore:
   sha: []
