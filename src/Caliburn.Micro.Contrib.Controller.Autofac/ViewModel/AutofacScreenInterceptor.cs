@@ -162,9 +162,10 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
 
       var constructorBindings = (IEnumerable<ConstructorParameterBinding>) activatorType.GetMethod(AutofacScreenInterceptor.GetConstructorBindingsMethodName,
                                                                                                    ScreenInterceptor.DefaultBindingFlags)
-                                                                                        .Invoke(activatorType,
+                                                                                        .Invoke(reflectionActivator,
                                                                                                 new object[]
                                                                                                 {
+                                                                                                  this.LifetimeScope,
                                                                                                   Enumerable.Empty<global::Autofac.Core.Parameter>(),
                                                                                                   constructors
                                                                                                 });

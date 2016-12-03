@@ -11,6 +11,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
   public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
+    where TRootController : IController
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
     public bool EnableLifetimeScopesForViewModels { get; set; }
@@ -53,6 +54,19 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
                .As<IControllerRoutine>();
       }
+    }
+
+    /// <summary>
+    ///   Locates the controller for <typeparamref name="TRootController"/>, locates view model, locates the associate view, binds them and shows it as the root view.
+    /// </summary>
+    /// <param name="options">The optional view model settings.</param>
+    /// <param name="settings">The optional window settings.</param>
+    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
+    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
+    protected void DisplayRootViewFor([CanBeNull] object options = null,
+                                      [CanBeNull] IDictionary<string, object> settings = null)
+    {
+      this.DisplayRootViewFor<TRootController>();
     }
 
     /// <summary>
