@@ -6,11 +6,12 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
-using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.Autofac.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.ViewModel
+namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
 {
   public class AutofacScreenInterceptor : ScreenInterceptor,
                                           IDisposable

@@ -1,8 +1,9 @@
 ﻿using System;
 using Anotar.LibLog;
+using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
+namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class AutomaticRegistrationHandlingForHandlersRoutine : ControllerRoutineBase
   {

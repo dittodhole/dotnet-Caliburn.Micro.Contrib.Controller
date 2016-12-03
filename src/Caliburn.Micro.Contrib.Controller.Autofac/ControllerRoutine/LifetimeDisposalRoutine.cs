@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
+using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
+namespace Caliburn.Micro.Contrib.Controller.Autofac.ControllerRoutine
 {
   public class LifetimeDisposalRoutine : ControllerRoutineBase,
                                          IDisposable
