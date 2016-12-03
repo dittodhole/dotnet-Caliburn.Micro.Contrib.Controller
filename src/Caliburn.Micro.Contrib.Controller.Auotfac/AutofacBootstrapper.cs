@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autofac;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -10,6 +11,21 @@ namespace Caliburn.Micro.Contrib.Controller
   public abstract class AutofacBootstrapper<TRootController> : Autofac.AutofacBootstrapper<TRootController>
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
+
+    protected override void Configure()
+    {
+      base.Configure();
+
+      Controller.CreateScreenInterceptorFn = (controller,
+                                              type) =>
+                                             {
+                                               var autofacScreenInterceptor = new AutofacScreenInterceptor(this.Container,
+                                                                                                           controller,
+                                                                                                           type);
+
+                                               return autofacScreenInterceptor;
+                                             };
+    }
 
     protected override void ConfigureBootstrapper()
     {
