@@ -9,8 +9,10 @@
     <iconUrl>https://raw.githubusercontent.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller/master/assets/noun_710304_cc.png</iconUrl>
     <description>$description$</description>
     <tags>Caliburn Micro MVVM Controller WPF</tags>
+    <!--
     <dependencies>
       <dependency id="Caliburn.Micro.Contrib.Controller" version="$version$" />
     </dependencies>
+    -->
   </metadata>
 </package>
