@@ -25,7 +25,7 @@ build:
   verbosity: detailed
 after_build:
 - cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%;version=%GitVersion_NuGetVersion%" -version "%GitVersion_NuGetVersion%" -symbols
-- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%;version=%GitVersion_NuGetVersion%" -version "%GitVersion_NuGetVersion%" -symbols
+- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%;version=%GitVersion_NuGetVersion%;project_name=%project_name%" -version "%GitVersion_NuGetVersion%" -symbols
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"

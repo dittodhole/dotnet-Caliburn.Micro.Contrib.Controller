@@ -10,7 +10,7 @@
     <description>$description$</description>
     <tags>Caliburn Micro MVVM Controller WPF</tags>
     <dependencies>
-      <dependency id="Caliburn.Micro.Contrib.Controller" version="$version$" />
+      <dependency id="$project_name$" version="$version$" />
     </dependencies>
   </metadata>
 </package>
