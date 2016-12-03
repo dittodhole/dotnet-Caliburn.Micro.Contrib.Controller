@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller
+namespace Caliburn.Micro.Contrib.Controller.Extras
 {
   public interface ILocator<T>
   {

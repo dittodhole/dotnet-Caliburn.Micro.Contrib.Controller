@@ -7,7 +7,7 @@
     <ProjectGuid>{CD07B998-7390-4570-8F42-ED74FB98DCA2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Caliburn.Micro.Contrib.Controller</RootNamespace>
+    <RootNamespace>Caliburn.Micro.Contrib.Controller.Autofac</RootNamespace>
     <AssemblyName>Caliburn.Micro.Contrib.Controller.Autofac</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

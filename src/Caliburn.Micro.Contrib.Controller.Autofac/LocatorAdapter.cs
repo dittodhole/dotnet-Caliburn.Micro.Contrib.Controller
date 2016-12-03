@@ -2,9 +2,10 @@
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
+using Caliburn.Micro.Contrib.Controller.Extras;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller
+namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   public class LocatorAdapter<T> : ILocator<T>
   {

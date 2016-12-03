@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
+using Caliburn.Micro.Contrib.Controller.Autofac.ViewModel;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.ViewModel;
+using Caliburn.Micro.Contrib.Controller.Extras;
+using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller
+namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
-  public abstract class AutofacBootstrapper<TRootController> : Autofac.AutofacBootstrapper<TRootController>
+  public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
     public bool EnableLifetimeScopesForViewModels { get; set; }
