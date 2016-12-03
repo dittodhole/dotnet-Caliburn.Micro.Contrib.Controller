@@ -11,6 +11,9 @@ environment:
   extras_project_name: Caliburn.Micro.Contrib.Controller.Extras
   extras_project_dir: '%solution_dir%%extras_project_name%\'
   extras_project_file: '%extras_project_dir%%extras_project_name%.csproj'
+  autofac_project_name: Caliburn.Micro.Contrib.Controller.Auotfac
+  autofac_project_dir: '%solution_dir%%autofac_project_name%'
+  autofac_project_file: '%autofac_project_dir%%autofac_project_name%.csproj'
 install:
 - cmd: choco install gitversion.portable -y
 before_build:
@@ -26,10 +29,13 @@ build:
 after_build:
 - cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -symbols
 - cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
+- cmd: nuget pack "%autofac_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%autofac_project_name%.%GitVersion_NuGetVersion%.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%autofac_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 test: off
 deploy:
 - provider: NuGet

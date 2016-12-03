@@ -13,10 +13,20 @@
 
 ### Releases
 
-[![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller/)
-https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller/
+[![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller)
+https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller
+
+[![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Extras.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras)
+https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras
+
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.Extras
+
+[![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Autofac.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Autofac)
+https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Autofac
+
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.Autofac
 
 ### Pre Releases
 
@@ -31,6 +41,11 @@ https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Contr
 https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller.Extras -pre
+
+[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Autofac.svg)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac)
+https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac
+
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.Autofac -pre
 
 ## Documentation
 

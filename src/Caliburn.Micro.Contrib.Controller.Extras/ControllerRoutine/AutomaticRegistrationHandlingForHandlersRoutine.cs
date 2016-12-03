@@ -1,12 +1,13 @@
 ﻿using System;
+using Anotar.LibLog;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
-  public class AutomaticRegistrationHandlingForHandlers : ControllerRoutineBase
+  public class AutomaticRegistrationHandlingForHandlersRoutine : ControllerRoutineBase
   {
     /// <exception cref="ArgumentNullException"><paramref name="eventAggregatorLocator" /> is <see langword="null" /></exception>
-    public AutomaticRegistrationHandlingForHandlers([NotNull] ILocator<IEventAggregator> eventAggregatorLocator)
+    public AutomaticRegistrationHandlingForHandlersRoutine([NotNull] ILocator<IEventAggregator> eventAggregatorLocator)
     {
       if (eventAggregatorLocator == null)
       {
@@ -23,7 +24,17 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
     {
       base.OnInitialize(screen);
 
-      var eventAggregator = this.EventAggregatorLocator.Locate();
+      IEventAggregator eventAggregator;
+      try
+      {
+        eventAggregator = this.EventAggregatorLocator.Locate();
+      }
+      catch (Exception exception)
+      {
+        LogTo.WarnException($"Could not locate {nameof(IEventAggregator)}, skipping subscribing {screen.GetType()}.",
+                            exception);
+        return;
+      }
 
       eventAggregator.Subscribe(screen);
     }
@@ -35,7 +46,17 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       base.OnDeactivate(screen,
                         close);
 
-      var eventAggregator = this.EventAggregatorLocator.Locate();
+      IEventAggregator eventAggregator;
+      try
+      {
+        eventAggregator = this.EventAggregatorLocator.Locate();
+      }
+      catch (Exception exception)
+      {
+        LogTo.WarnException($"Could not locate {nameof(IEventAggregator)}, skipping unsubscribing {screen.GetType()}.",
+                            exception);
+        return;
+      }
 
       eventAggregator.Unsubscribe(screen);
     }
