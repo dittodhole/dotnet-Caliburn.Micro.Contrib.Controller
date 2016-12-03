@@ -8,6 +8,6 @@
     <projectUrl>https://github.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller/master/assets/noun_710304_cc.png</iconUrl>
     <description>$description$</description>
-    <tags>Caliburn Micro MVVM Controller WPF</tags>
+    <tags>Caliburn Micro MVVM Controller WPF Autofac</tags>
   </metadata>
 </package>

@@ -61,13 +61,13 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     [NotNull]
-    private IController Controller { get; }
+    protected IController Controller { get; }
 
     [NotNull]
-    private Type ScreenType { get; }
+    protected Type ScreenType { get; }
 
     [NotNull]
-    private IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
+    protected IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept(IInvocation invocation)

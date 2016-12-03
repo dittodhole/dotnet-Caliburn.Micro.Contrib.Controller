@@ -11,6 +11,9 @@ environment:
   extras_project_name: Caliburn.Micro.Contrib.Controller.Extras
   extras_project_dir: '%solution_dir%%extras_project_name%\'
   extras_project_file: '%extras_project_dir%%extras_project_name%.csproj'
+  autofac_project_name: Caliburn.Micro.Contrib.Controller.Autofac
+  autofac_project_dir: '%solution_dir%%autofac_project_name%\'
+  autofac_project_file: '%autofac_project_dir%%autofac_project_name%.csproj'
 install:
 - cmd: choco install gitversion.portable -y
 before_build:
@@ -24,12 +27,15 @@ build:
   publish_nuget_symbols: false
   verbosity: detailed
 after_build:
-- cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
-#- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -version "%GitVersion_NuGetVersion%" -symbols
+- cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -symbols
+- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
+- cmd: nuget pack "%autofac_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
-#- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"
-#- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%autofac_project_name%.%GitVersion_NuGetVersion%.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%autofac_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 test: off
 deploy:
 - provider: NuGet
@@ -37,7 +43,7 @@ deploy:
   server: https://www.myget.org/F/dittodhole/api/v2/package
   api_key:
     secure: c9r6oyxFOqnfj0xezZcLIoopgoBUb5ib9nrTYMkXDTqzvMrrXmprbHgyldag6NZ4
-  skip_symbols: true
+#  skip_symbols: true
   symbol_server: https://www.myget.org/F/dittodhole/symbols/api/v2/package
   on:
     branch: develop
@@ -45,13 +51,13 @@ deploy:
   name: NuGet
   api_key:
     secure: U6199dIr+h5NLeO9aWtxR2ihfMjDX3rrhqjdN3ByzlLzU9t3T00+MtjNQPkfrToY
-  skip_symbols: true
+#  skip_symbols: true
   on:
     branch: master
 - provider: NuGet
-  name: NuGet
+  name: NuGet (pre release)
   api_key:
     secure: U6199dIr+h5NLeO9aWtxR2ihfMjDX3rrhqjdN3ByzlLzU9t3T00+MtjNQPkfrToY
-  skip_symbols: true
+#  skip_symbols: true
   on:
-    branch: release
+    branch: /release\/.*/
