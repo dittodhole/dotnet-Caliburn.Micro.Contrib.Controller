@@ -67,5 +67,14 @@ namespace Caliburn.Micro.Contrib.Controller
       Controller.ShowWindowAsync<TController>(options,
                                               settings);
     }
+
+    protected override void OnExit(object sender,
+                                   EventArgs e)
+    {
+      base.OnExit(sender,
+                  e);
+
+      this.Container.Dispose();
+    }
   }
 }
