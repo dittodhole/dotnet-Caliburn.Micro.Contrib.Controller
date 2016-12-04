@@ -100,7 +100,9 @@
     <Compile Include="ControllerRoutine\ControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\IConductorControllerRoutine.cs" />
     <Compile Include="ControllerRoutine\IControllerRoutine.cs" />
+    <Compile Include="ControllerRoutine\IMixinControllerRoutine.cs" />
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
+    <Compile Include="ExtensionMethods\MixinControllerRoutineExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="IConductorController.cs" />
     <Compile Include="IController.cs" />
@@ -109,6 +111,8 @@
     <Compile Include="IInterceptScreenEvents.cs" />
     <Compile Include="ScreenMethodLinkAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\ScreenMetaTypesFinder.cs" />
+    <Compile Include="ViewModel\IScreenMetaTypesFinder.cs" />
     <Compile Include="ViewModel\IScreenInterceptor.cs" />
     <Compile Include="ViewModel\ScreenInterceptor.cs" />
   </ItemGroup>

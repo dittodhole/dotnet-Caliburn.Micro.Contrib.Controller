@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
@@ -17,6 +19,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       {
         throw new ArgumentNullException(nameof(type));
       }
+
       if (type.IsInterface)
       {
         throw new InvalidOperationException($"Cannot create proxy for interface {type}.");
@@ -25,9 +28,9 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       {
         throw new InvalidOperationException($"Cannot create proxy for {type}, as this type is not defined as abstract.");
       }
-      if (!typeof(IScreen).IsAssignableFrom(type))
+      if (!type.IsDescendant<IScreen>())
       {
-        throw new InvalidOperationException($"Cannot create proxy for {type}, as this type does implement {nameof(IScreen)}.");
+        throw new InvalidOperationException($"Cannot create proxy for {type}, as this type does not implement {nameof(IScreen)}.");
       }
     }
 
@@ -66,6 +69,84 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
                            .FirstOrDefault();
 
       return methodInfo;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    public static bool IsDescendant<T>([NotNull] this Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      return type.IsDescendant(typeof(T));
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="parentType" /> is <see langword="null" /></exception>
+    public static bool IsDescendant([NotNull] this Type type,
+                                    [NotNull] Type parentType)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+      if (parentType == null)
+      {
+        throw new ArgumentNullException(nameof(parentType));
+      }
+
+      if (type == parentType)
+      {
+        return false;
+      }
+
+      if (parentType.IsAssignableFrom(type))
+      {
+        return true;
+      }
+
+      return false;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="types"/> is <see langword="null"/></exception>
+    [NotNull]
+    [ItemNotNull]
+    public static IEnumerable<Type> FilterNotifyInterfaces([NotNull] [ItemNotNull] this IEnumerable<Type> types)
+    {
+      if (types == null)
+      {
+        throw new ArgumentNullException(nameof(types));
+      }
+
+      foreach (var type in types)
+      {
+        if (type == typeof(INotifyPropertyChanged))
+        {
+          continue;
+        }
+        if (type.IsDescendant<INotifyPropertyChanged>())
+        {
+          continue;
+        }
+        if (type == typeof(INotifyPropertyChangedEx))
+        {
+          continue;
+        }
+        if (type.IsDescendant<INotifyPropertyChangedEx>())
+        {
+          continue;
+        }
+        if (type == typeof(INotifyPropertyChanging))
+        {
+          continue;
+        }
+        if (type.IsDescendant<INotifyPropertyChanging>())
+        {
+          continue;
+        }
+        yield return type;
+      }
     }
   }
 }

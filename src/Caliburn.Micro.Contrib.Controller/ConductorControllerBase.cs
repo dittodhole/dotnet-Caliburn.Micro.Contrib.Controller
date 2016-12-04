@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -12,10 +13,18 @@ namespace Caliburn.Micro.Contrib.Controller
     where TScreen : IScreen
     where TItem : IScreen
   {
+    /// <exception cref="ArgumentNullException"><paramref name="screenMetaTypesFinder" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    protected ConductorControllerBase([NotNull] IScreenMetaTypesFinder screenMetaTypesFinder,
+                                      [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
+      : base(screenMetaTypesFinder,
+             controllerRoutines) {}
+
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
       : base(controllerRoutines) {}
 
+    [NotNull]
     public virtual IEnumerable<IConductorControllerRoutine> ConductorControllerRoutines => this.ControllerRoutines.OfType<IConductorControllerRoutine>();
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
