@@ -60,14 +60,14 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       return result;
     }
 
-    public interface ICanBeBlocked
+    internal interface ICanBeBlocked
     {
       bool IsBlocked { get; set; }
     }
 
-    public class CanBeBlocked : ICanBeBlocked
+    internal class CanBeBlocked : ICanBeBlocked
     {
-      public virtual bool IsBlocked { get; set; }
+      public bool IsBlocked { get; set; }
     }
 
     public class DisposeAction : IDisposable
