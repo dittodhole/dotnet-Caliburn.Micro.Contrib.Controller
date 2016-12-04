@@ -27,6 +27,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
                                                                     })
                                                      .Where(arg => arg.GenericTypeDefinition == typeof(IMixinControllerRoutine<>))
                                                      .SelectMany(arg => arg.GenericArguments)
+                                                     .Where(arg => arg.IsClass)
                                                      .ToArray();
 
       return concreteMixinTypes;
