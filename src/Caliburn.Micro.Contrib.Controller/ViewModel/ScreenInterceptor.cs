@@ -151,17 +151,25 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
     public virtual IScreen CreateProxiedScreen()
     {
-      var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)
-                                            .Select(arg => arg.InjectInterfaceDefinition)
-                                            .Where(arg => arg != null)
-                                            .Where(arg => arg.IsInterface)
-                                            .ToArray();
+      var screenMetaTypesFinder = this.Controller.ScreenMetaTypesFinder;
+
       var proxyGenerationOptions = new ProxyGenerationOptions();
+
+      foreach (var mixinInstance in screenMetaTypesFinder.GetMixinInstances(this.Controller.ScreenBaseType))
+      {
+        proxyGenerationOptions.AddMixinInstance(mixinInstance);
+      }
+
       var proxyGenerator = new ProxyGenerator();
+
+      var controllerMethodInvocations = this.ScreenMethodMapping.Values.SelectMany(value => value);
+      var additionalInterfacesToProxy = screenMetaTypesFinder.GetAdditionalInterfacesToProxy(this.Controller.ScreenBaseType,
+                                                                                             controllerMethodInvocations);
       var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
                                                   additionalInterfacesToProxy,
                                                   proxyGenerationOptions,
                                                   this);
+
       var screen = (IScreen) proxy;
 
       return screen;
@@ -198,7 +206,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         {
           throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, which has no parameters.");
         }
-        if (!screenParameter.ParameterType.IsAssignableFrom(this.ScreenType))
+        if (!this.ScreenType.IsDescendant(screenParameter.ParameterType))
         {
           continue;
         }

@@ -86,13 +86,20 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
         constructorArguments = null;
       }
 
-      var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)
-                                            .Select(arg => arg.InjectInterfaceDefinition)
-                                            .Where(arg => arg != null)
-                                            .Where(arg => arg.IsInterface)
-                                            .ToArray();
+      var screenMetaTypesFinder = this.Controller.ScreenMetaTypesFinder;
+
       var proxyGenerationOptions = new ProxyGenerationOptions();
+
+      foreach (var mixinInstance in screenMetaTypesFinder.GetMixinInstances(this.Controller.ScreenBaseType))
+      {
+        proxyGenerationOptions.AddMixinInstance(mixinInstance);
+      }
+
       var proxyGenerator = new ProxyGenerator();
+
+      var controllerMethodInvocations = this.ScreenMethodMapping.Values.SelectMany(value => value);
+      var additionalInterfacesToProxy = screenMetaTypesFinder.GetAdditionalInterfacesToProxy(this.Controller.ScreenBaseType,
+                                                                                             controllerMethodInvocations);
       var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
                                                   additionalInterfacesToProxy,
                                                   proxyGenerationOptions,
@@ -114,6 +121,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
 
         var lifetimeScope = this.LifetimeScope;
 
+        // TODO this should be extracted ... to ... dunno yet
         if (this.EnableLifetimeScopesForViewModels)
         {
           lifetimeScope = lifetimeScope.BeginLifetimeScope();

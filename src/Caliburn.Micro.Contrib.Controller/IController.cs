@@ -1,5 +1,6 @@
 ﻿using System;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -21,5 +22,11 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
     bool UnregisterRoutine([NotNull] IControllerRoutine controllerRoutine);
+
+    [NotNull]
+    IScreenMetaTypesFinder ScreenMetaTypesFinder { get; }
+
+    [NotNull]
+    Type ScreenBaseType { get; }
   }
 }

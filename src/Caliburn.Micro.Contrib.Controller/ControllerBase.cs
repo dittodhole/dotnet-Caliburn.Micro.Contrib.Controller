@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -10,11 +12,24 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
+      : this(new ScreenMetaTypesFinder(),
+             controllerRoutines) {}
+
+    /// <exception cref="ArgumentNullException"><paramref name="screenMetaTypesFinder" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    protected ControllerBase([NotNull] IScreenMetaTypesFinder screenMetaTypesFinder,
+                             [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
     {
+      if (screenMetaTypesFinder == null)
+      {
+        throw new ArgumentNullException(nameof(screenMetaTypesFinder));
+      }
       if (controllerRoutines == null)
       {
         throw new ArgumentNullException(nameof(controllerRoutines));
       }
+
+      this.ScreenMetaTypesFinder = screenMetaTypesFinder;
 
       foreach (var controllerRoutine in controllerRoutines)
       {
@@ -29,6 +44,11 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     [ItemNotNull]
     public virtual IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
+
+    public abstract Type ScreenBaseType { get; }
+
+    [NotNull]
+    public virtual IScreenMetaTypesFinder ScreenMetaTypesFinder { get; }
 
     [UsedImplicitly]
     [ScreenMethodLink]
@@ -72,6 +92,15 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(controllerRoutine));
       }
 
+      var mixinControllerRoutine = controllerRoutine as IMixinControllerRoutine;
+      if (mixinControllerRoutine != null)
+      {
+        var screenBaseType = this.ScreenBaseType;
+        var mixins = mixinControllerRoutine.GetMixins();
+        this.ScreenMetaTypesFinder.RegisterMixinsForType(screenBaseType,
+                                                                     mixins);
+      }
+
       this.Routines.Add(controllerRoutine);
 
       return controllerRoutine;
@@ -107,9 +136,18 @@ namespace Caliburn.Micro.Contrib.Controller
   public abstract class ControllerBase<TScreen> : ControllerBase
     where TScreen : IScreen
   {
+    /// <exception cref="ArgumentNullException"><paramref name="screenMetaTypesFinder" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    protected ControllerBase([NotNull] IScreenMetaTypesFinder screenMetaTypesFinder,
+                             [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
+      : base(screenMetaTypesFinder,
+             controllerRoutines) {}
+
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
       : base(controllerRoutines) {}
+
+    public override Type ScreenBaseType => typeof(TScreen);
 
     public override Type GetScreenType(object options = null) => typeof(TScreen);
 
