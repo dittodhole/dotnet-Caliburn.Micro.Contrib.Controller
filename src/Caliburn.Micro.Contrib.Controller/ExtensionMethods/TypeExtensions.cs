@@ -73,6 +73,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
+    [Pure]
     public static bool IsDescendantOrMatches<T>([NotNull] this Type type)
     {
       if (type == null)
@@ -84,6 +85,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    [Pure]
     public static bool IsDescendant<T>([NotNull] this Type type)
     {
       if (type == null)
@@ -96,6 +98,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="parentType" /> is <see langword="null" /></exception>
+    [Pure]
     public static bool IsDescendant([NotNull] this Type type,
                                     [NotNull] Type parentType)
     {
@@ -118,6 +121,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 
     /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
     /// <exception cref="ArgumentNullException"><paramref name="parentType"/> is <see langword="null"/></exception>
+    [Pure]
     public static bool IsDescendantOrMatches([NotNull] this Type type,
                                              [NotNull] Type parentType)
     {
@@ -139,6 +143,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="types"/> is <see langword="null"/></exception>
+    [Pure]
     [NotNull]
     [ItemNotNull]
     public static IEnumerable<Type> FilterNotifyInterfaces([NotNull] [ItemNotNull] this IEnumerable<Type> types)

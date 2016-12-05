@@ -15,6 +15,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
                                  [NotNull] string name,
                                  [NotNull] Type returnType,
                                  [NotNull] [ItemNotNull] Type[] parameterTypes)
+    [Pure]
     {
       if (methodInfo == null)
       {
