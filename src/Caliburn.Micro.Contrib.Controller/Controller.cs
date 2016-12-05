@@ -11,7 +11,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidOperationException" />
     public static async Task<TController> ShowWindowAsync<TController>([CanBeNull] object options = null,
                                                                        [CanBeNull] object context = null,
-                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
     {
       var controller = IoC.Get<TController>();
       var screen = controller.CreateScreen(options);
@@ -33,7 +33,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidOperationException" />
     public static async Task<TController> ShowDialogAsync<TController>([CanBeNull] object options = null,
                                                                        [CanBeNull] object context = null,
-                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+                                                                       [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
     {
       var controller = IoC.Get<TController>();
       var screen = controller.CreateScreen(options);

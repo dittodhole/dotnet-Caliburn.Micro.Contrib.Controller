@@ -26,7 +26,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
     public AutofacScreenInterceptor([NotNull] ILifetimeScope lifetimeScope,
-                                    [NotNull] IController controller,
+                                    [NotNull] ControllerBase controller,
                                     [NotNull] Type screenType)
       : base(controller,
              screenType)

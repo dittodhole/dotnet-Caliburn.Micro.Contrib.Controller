@@ -6,13 +6,13 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller
 {
   [PublicAPI]
-  public abstract class ControllerBase : IController,
-                                         IDisposable
+  public abstract class ControllerBase : IDisposable,
+                                         IInterceptScreenEvents
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] IScreenFactory screenFactory,
-                             [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
+                             [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
     {
       if (screenFactory == null)
       {
@@ -32,16 +32,14 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     [ItemNotNull]
-    private ICollection<IControllerRoutine> Routines { get; } = new List<IControllerRoutine>();
+    public ICollection<ControllerRoutineBase> ControllerRoutines { get; } = new List<ControllerRoutineBase>();
 
     [NotNull]
     [ItemNotNull]
-    public virtual IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
+    public virtual IEnumerable<ControllerRoutineBase> Routines => this.ControllerRoutines;
 
     [NotNull]
     public virtual IScreenFactory ScreenFactory { get; }
-
-    IEnumerable<IControllerRoutine> IController.Routines => this.Routines;
 
     [UsedImplicitly]
     [ScreenMethodLink]
@@ -77,31 +75,31 @@ namespace Caliburn.Micro.Contrib.Controller
     public abstract Type GetScreenType(object options = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    public virtual T RegisterRoutine<T>(T controllerRoutine) where T : IControllerRoutine
+    public virtual T RegisterRoutine<T>(T controllerRoutine) where T : ControllerRoutineBase
     {
       if (controllerRoutine == null)
       {
         throw new ArgumentNullException(nameof(controllerRoutine));
       }
 
-      this.Routines.Add(controllerRoutine);
+      this.ControllerRoutines.Add(controllerRoutine);
 
       return controllerRoutine;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    public virtual bool UnregisterRoutine(IControllerRoutine controllerRoutine)
+    public virtual bool UnregisterRoutine(ControllerRoutineBase controllerRoutine)
     {
       if (controllerRoutine == null)
       {
         throw new ArgumentNullException(nameof(controllerRoutine));
       }
 
-      return this.Routines.Remove(controllerRoutine);
+      return this.ControllerRoutines.Remove(controllerRoutine);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    public virtual void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<IControllerRoutine> controllerRoutines)
+    public virtual void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<ControllerRoutineBase> controllerRoutines)
     {
       if (controllerRoutines == null)
       {
@@ -116,7 +114,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     public virtual void Dispose()
     {
-      foreach (var routine in this.Routines)
+      foreach (var routine in this.ControllerRoutines)
       {
         var disposable = routine as IDisposable;
         if (disposable != null)
@@ -134,7 +132,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] IScreenFactory screenFactory,
-                             [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
+                             [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
       : base(screenFactory,
              controllerRoutines) {}
 

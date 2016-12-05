@@ -50,7 +50,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is an interface.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
-    public ScreenInterceptor([NotNull] IController controller,
+    public ScreenInterceptor([NotNull] ControllerBase controller,
                              [NotNull] Type screenType)
     {
       if (controller == null)
@@ -70,7 +70,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     [NotNull]
-    protected IController Controller { get; }
+    protected ControllerBase Controller { get; }
 
     [NotNull]
     protected Type ScreenType { get; }
@@ -240,7 +240,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which is not declared as <see langword="virtual" /> or <see langword="abstract" /> on <see cref="ScreenType" />.</exception>
     [Pure]
     [NotNull]
-    public virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] IController controller)
+    public virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] ControllerBase controller)
     {
       if (controller == null)
       {
@@ -339,7 +339,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     [Pure]
     [NotNull]
     [ItemNotNull]
-    public virtual ICollection<Type> GetMixinTypes([NotNull] IController controller)
+    public virtual ICollection<Type> GetMixinTypes([NotNull] ControllerBase controller)
     {
       if (controller == null)
       {
@@ -349,22 +349,22 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       var result = new HashSet<Type>();
       foreach (var controllerRoutine in controller.Routines)
       {
-        var mixinControllerRoutine = controllerRoutine as IMixinControllerRoutine;
-        if (mixinControllerRoutine == null)
+        var controllerRoutineMixin = controllerRoutine as IControllerRoutineMixin;
+        if (controllerRoutineMixin == null)
         {
           continue;
         }
 
-        var mixinTypes = mixinControllerRoutine.GetType()
+        var mixinTypes = controllerRoutineMixin.GetType()
                                                .GetInterfaces()
-                                               .Where(arg => arg.IsDescendant<IMixinControllerRoutine>())
+                                               .Where(arg => arg.IsDescendant<IControllerRoutineMixin>())
                                                .Where(arg => arg.IsGenericType)
                                                .Select(arg => new
                                                               {
                                                                 GenericTypeDefinition = arg.GetGenericTypeDefinition(),
                                                                 GenericArguments = arg.GetGenericArguments()
                                                               })
-                                               .Where(arg => arg.GenericTypeDefinition == typeof(IMixinControllerRoutine<>))
+                                               .Where(arg => arg.GenericTypeDefinition == typeof(IControllerRoutineMixin<>))
                                                .SelectMany(arg => arg.GenericArguments)
                                                .Where(arg => arg.IsClass);
         foreach (var mixinType in mixinTypes)

@@ -10,7 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidOperationException" />
     [Pure]
     [CanBeNull]
-    IScreen Create([NotNull] IController controller,
+    IScreen Create([NotNull] ControllerBase controller,
                    [CanBeNull] object options = null);
   }
 
@@ -18,7 +18,7 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidOperationException" />
-    public IScreen Create(IController controller,
+    public IScreen Create(ControllerBase controller,
                           object options = null)
     {
       if (controller == null)

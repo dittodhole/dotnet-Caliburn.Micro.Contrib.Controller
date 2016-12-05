@@ -21,7 +21,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     private ILifetimeScope LifetimeScope { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    public IScreen Create(IController controller,
+    public IScreen Create(ControllerBase controller,
                           object options = null)
     {
       if (controller == null)

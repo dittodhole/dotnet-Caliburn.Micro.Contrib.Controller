@@ -10,7 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
   public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
-    where TRootController : IController
+    where TRootController : ControllerBase
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
 
@@ -38,7 +38,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
-               .As<IControllerRoutine>()
+               .As<ControllerRoutineBase>()
                .InstancePerDependency();
       }
     }
@@ -49,7 +49,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="options">The optional view model options.</param>
     /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
+    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
     protected void DisplayRootView([CanBeNull] object options = null,
                                    [CanBeNull] object context = null,
@@ -67,11 +67,11 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="options">The optional view model options.</param>
     /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
+    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
     protected void DisplayViewFor<TController>([CanBeNull] object options = null,
                                                [CanBeNull] object context = null,
-                                               [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+                                               [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
     {
       Controller.ShowWindowAsync<TController>(options,
                                               context,

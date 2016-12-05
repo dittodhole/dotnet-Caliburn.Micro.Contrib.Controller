@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
-                                 IMixinControllerRoutine<BlockingRoutine.CanBeBlocked>
+                                 IControllerRoutineMixin<BlockingRoutine.CanBeBlocked>
   {
     public override void OnViewReady(IScreen screen,
                                      object view)
