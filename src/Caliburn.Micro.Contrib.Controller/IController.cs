@@ -9,10 +9,12 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IController : IInterceptScreenEvents
   {
     /// <exception cref="InvalidOperationException" />
+    [Pure]
     [CanBeNull]
     IScreen CreateScreen([CanBeNull] object options = null);
 
     /// <exception cref="InvalidOperationException" />
+    [Pure]
     [NotNull]
     Type GetScreenType([CanBeNull] object options = null);
 

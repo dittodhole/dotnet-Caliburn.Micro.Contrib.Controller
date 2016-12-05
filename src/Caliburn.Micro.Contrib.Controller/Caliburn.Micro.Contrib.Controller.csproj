@@ -102,6 +102,7 @@
     <Compile Include="ControllerRoutine\IControllerRoutine.cs" />
     <Compile Include="ControllerRoutine\IMixinControllerRoutine.cs" />
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
+    <Compile Include="ExtensionMethods\ObjectExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="IConductorController.cs" />
     <Compile Include="IController.cs" />
