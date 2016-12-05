@@ -18,7 +18,6 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       var concreteMixinTypes = mixinControllerRoutine.GetType()
                                                      .GetInterfaces()
                                                      .Where(arg => arg.IsDescendant<IMixinControllerRoutine>())
-                                                     .Where(arg => arg != typeof(IMixinControllerRoutine))
                                                      .Where(arg => arg.IsGenericType)
                                                      .Select(arg => new
                                                                     {
