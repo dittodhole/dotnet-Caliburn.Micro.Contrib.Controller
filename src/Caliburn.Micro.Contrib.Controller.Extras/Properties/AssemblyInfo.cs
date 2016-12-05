@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -22,3 +23,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
 [assembly: Guid("2f4a6caf-52a9-452b-9079-3a1b605c6d3a")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

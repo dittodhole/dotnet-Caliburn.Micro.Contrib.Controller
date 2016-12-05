@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using Caliburn.Micro.Contrib.Controller.Autofac.ViewModel;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Extras;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
@@ -14,73 +13,68 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     where TRootController : IController
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
-    public bool EnableLifetimeScopesForViewModels { get; set; }
-
-    protected override void Configure()
-    {
-      base.Configure();
-
-      // TODO implement cache
-
-      Controller.CreateScreenInterceptorFn = (controller,
-                                              type) =>
-                                             {
-                                               var autofacScreenInterceptor = new AutofacScreenInterceptor(this.Container,
-                                                                                                           this.EnableLifetimeScopesForViewModels,
-                                                                                                           controller,
-                                                                                                           type);
-
-                                               return autofacScreenInterceptor;
-                                             };
-    }
 
     protected override void ConfigureBootstrapper()
     {
       base.ConfigureBootstrapper();
 
       this.AutoSubscribeEventAggegatorHandlers = false;
-      this.EnableLifetimeScopesForViewModels = true;
     }
 
     protected override void ConfigureContainer(ContainerBuilder builder)
     {
       base.ConfigureContainer(builder);
 
+      builder.RegisterType<AutofacScreenFactory>()
+             .As<IScreenFactory>()
+             .InstancePerDependency();
+
       builder.RegisterGeneric(typeof(LocatorAdapter<>))
-             .As(typeof(ILocator<>));
+             .As(typeof(ILocator<>))
+             .InstancePerDependency();
+      builder.RegisterType<BlockingRoutine>()
+             .InstancePerDependency();
 
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
-               .As<IControllerRoutine>();
+               .As<IControllerRoutine>()
+               .InstancePerDependency();
       }
     }
 
     /// <summary>
-    ///   Locates the controller for <typeparamref name="TRootController"/>, locates view model, locates the associate view, binds them and shows it as the root view.
+    ///   Locates the controller for <typeparamref name="TRootController" />, locates view model, locates the associate view, binds them and shows it as the root view.
     /// </summary>
-    /// <param name="options">The optional view model settings.</param>
+    /// <param name="options">The optional view model options.</param>
+    /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected void DisplayRootViewFor([CanBeNull] object options = null,
-                                      [CanBeNull] IDictionary<string, object> settings = null)
+    protected void DisplayRootView([CanBeNull] object options = null,
+                                   [CanBeNull] object context = null,
+                                   [CanBeNull] IDictionary<string, object> settings = null)
     {
-      this.DisplayRootViewFor<TRootController>();
+      this.DisplayViewFor<TRootController>(options,
+                                           context,
+                                           settings);
     }
 
     /// <summary>
     ///   Locates the controller, locates view model, locates the associate view, binds them and shows it as the root view.
     /// </summary>
     /// <typeparam name="TController">The controller model type.</typeparam>
-    /// <param name="options">The optional view model settings.</param>
+    /// <param name="options">The optional view model options.</param>
+    /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected void DisplayRootViewFor<TController>([CanBeNull] object options = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+    protected void DisplayViewFor<TController>([CanBeNull] object options = null,
+                                               [CanBeNull] object context = null,
+                                               [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
     {
       Controller.ShowWindowAsync<TController>(options,
+                                              context,
                                               settings);
     }
 
