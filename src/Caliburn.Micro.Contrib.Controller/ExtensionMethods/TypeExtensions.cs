@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 {
+  [PublicAPI]
   public static class TypeExtensions
   {
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
@@ -149,27 +150,15 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 
       foreach (var type in types)
       {
-        if (type == typeof(INotifyPropertyChanged))
+        if (type.IsDescendantOrMatches<INotifyPropertyChanged>())
         {
           continue;
         }
-        if (type.IsDescendant<INotifyPropertyChanged>())
+        if (type.IsDescendantOrMatches<INotifyPropertyChangedEx>())
         {
           continue;
         }
-        if (type == typeof(INotifyPropertyChangedEx))
-        {
-          continue;
-        }
-        if (type.IsDescendant<INotifyPropertyChangedEx>())
-        {
-          continue;
-        }
-        if (type == typeof(INotifyPropertyChanging))
-        {
-          continue;
-        }
-        if (type.IsDescendant<INotifyPropertyChanging>())
+        if (type.IsDescendantOrMatches<INotifyPropertyChanging>())
         {
           continue;
         }

@@ -78,7 +78,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     protected IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
 
     [NotNull]
-    protected ICollection<Type> MixinTypes { get; } = new List<Type>();
+    [ItemNotNull]
+    protected ICollection<Type> MixinTypes { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept(IInvocation invocation)
@@ -164,8 +165,9 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     {
       var proxyGenerationOptions = new ProxyGenerationOptions();
 
-      foreach (var mixinInstance in this.MixinTypes.Select(this.CreateMixinInstance))
+      foreach (var mixinType in this.MixinTypes)
       {
+        var mixinInstance = this.CreateMixinInstance(mixinType);
         proxyGenerationOptions.AddMixinInstance(mixinInstance);
       }
 
@@ -202,8 +204,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     {
       var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)
                                             .Select(arg => arg.InjectInterfaceDefinition)
-                                            .Concat(this.MixinTypes.SelectMany(arg => arg.GetInterfaces()))
                                             .Where(arg => arg != null)
+                                            .Concat(this.MixinTypes.SelectMany(arg => arg.GetInterfaces()))
                                             .Where(arg => arg.IsInterface)
                                             .FilterNotifyInterfaces()
                                             .ToArray();
@@ -305,6 +307,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    [NotNull]
+    [ItemNotNull]
     public virtual ICollection<Type> GetMixinTypes([NotNull] IController controller)
     {
       if (controller == null)
