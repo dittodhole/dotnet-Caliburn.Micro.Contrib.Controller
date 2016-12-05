@@ -11,11 +11,11 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
     /// <exception cref="ArgumentNullException"><paramref name="name" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="returnType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="parameterTypes" /> is <see langword="null" /></exception>
-    public static bool DoesMatch([NotNull] this MethodInfo methodInfo,
-                                 [NotNull] string name,
-                                 [NotNull] Type returnType,
-                                 [NotNull] [ItemNotNull] Type[] parameterTypes)
     [Pure]
+    public static bool DoesSignatureMatch([NotNull] this MethodInfo methodInfo,
+                                          [NotNull] string name,
+                                          [NotNull] Type returnType,
+                                          [NotNull] [ItemNotNull] Type[] parameterTypes)
     {
       if (methodInfo == null)
       {

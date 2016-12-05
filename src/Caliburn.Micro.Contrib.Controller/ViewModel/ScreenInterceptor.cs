@@ -10,6 +10,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
+  [PublicAPI]
   public interface IScreenInterceptor : IInterceptor
   {
     /// <exception cref="Exception" />
@@ -116,14 +117,26 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                                                                                                                    .Skip(1)
                                                                                                                                    .Select(parameterInfo => parameterInfo.ParameterType)
                                                                                                                                    .ToArray();
-                                                                          result = screenMethod.DoesMatch(screenMethodName,
-                                                                                                          controllerMethodInfo.ReturnType,
-                                                                                                          controllerMethodParameterTypes);
+                                                                          var returnType = controllerMethodInfo.ReturnType;
+                                                                          if (arg.CallAsync)
+                                                                          {
+                                                                            returnType = returnType.GetTaskReturnType();
+                                                                          }
+
+                                                                          result = screenMethod.DoesSignatureMatch(screenMethodName,
+                                                                                                                   returnType,
+                                                                                                                   controllerMethodParameterTypes);
                                                                         }
 
                                                                         return result;
                                                                       })
                                                                .ToArray();
+      if (!controllerMethodInvocations.Any())
+      {
+        LogTo.Debug($"Calling {this.ScreenType}.{screenMethodName}");
+        invocation.Proceed();
+        return;
+      }
 
       var callBase = controllerMethodInvocations.Any(arg => arg.CallBase);
       if (callBase)
@@ -153,6 +166,11 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
           var returnValue = controllerMethodInfo.Invoke(this.Controller,
                                                         controllerMethodParameters);
+          if (controllerMethodInvocation.CallAsync)
+          {
+            returnValue = returnValue.WaitForResultIfTaskWithResult();
+          }
+
           if (!callBase)
           {
             invocation.ReturnValue = returnValue;
@@ -263,18 +281,24 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
           var screenMethodName = screenMethodLinkAttribute.MethodName ?? controllerMethodInfo.Name;
           var injectInterfaceDefinition = screenMethodLinkAttribute.InjectInterfaceDefinition;
 
-          var screenMethodInfo = this.ScreenType.GetMethod(screenMethodName,
-                                                           ScreenInterceptor.DefaultBindingFlags,
-                                                           controllerMethodInfo.ReturnType,
-                                                           screenMethodParameterTypes);
+          var returnType = controllerMethodInfo.ReturnType;
+          if (screenMethodLinkAttribute.CallAsync)
+          {
+            returnType = returnType.GetTaskReturnType();
+          }
+
+          var screenMethodInfo = this.ScreenType.GetMethods(ScreenInterceptor.DefaultBindingFlags)
+                                     .FirstOrDefault(arg => arg.DoesSignatureMatch(screenMethodName,
+                                                                                   returnType,
+                                                                                   screenMethodParameterTypes));
           if (screenMethodInfo == null)
           {
             if (injectInterfaceDefinition != null)
             {
-              screenMethodInfo = injectInterfaceDefinition.GetMethod(screenMethodName,
-                                                                     ScreenInterceptor.DefaultBindingFlags,
-                                                                     controllerMethodInfo.ReturnType,
-                                                                     screenMethodParameterTypes);
+              screenMethodInfo = injectInterfaceDefinition.GetMethods(ScreenInterceptor.DefaultBindingFlags)
+                                                          .FirstOrDefault(arg => arg.DoesSignatureMatch(screenMethodName,
+                                                                                                        returnType,
+                                                                                                        screenMethodParameterTypes));
             }
           }
           else
@@ -288,7 +312,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
           }
           if (!screenMethodInfo.IsVirtual)
           {
-            throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, but the corresponding method is not declared as virtual on {this.ScreenType}.");
+            throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, but the corresponding method is not declared as virtual or abstract on {this.ScreenType}.");
           }
 
           ICollection<ControllerMethodInvocation> controllerMethodInvocations;
@@ -301,7 +325,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
           var controllerMethodInvocation = new ControllerMethodInvocation(controllerMethodInfo)
                                            {
                                              InjectInterfaceDefinition = injectInterfaceDefinition,
-                                             CallBase = screenMethodLinkAttribute.CallBase
+                                             CallBase = screenMethodLinkAttribute.CallBase,
+                                             CallAsync = screenMethodLinkAttribute.CallAsync
                                            };
           controllerMethodInvocations.Add(controllerMethodInvocation);
         }
@@ -369,6 +394,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       public MethodInfo ControllerMethodInfo { get; }
 
       public bool CallBase { get; set; }
+
+      public bool CallAsync { get; set; }
 
       [CanBeNull]
       public Type InjectInterfaceDefinition { get; set; }

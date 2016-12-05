@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
@@ -10,6 +10,8 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
   [PublicAPI]
   public static class TypeExtensions
   {
+    public static BindingFlags TaskResultBindingFlags = BindingFlags.Instance | BindingFlags.Public;
+
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidOperationException">If <paramref name="type" /> is an interface.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="type" /> is <see langword="sealed" />.</exception>
@@ -36,43 +38,6 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="name" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="returnType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="parameterTypes" /> is <see langword="null" /></exception>
-    [CanBeNull]
-    public static MethodInfo GetMethod([NotNull] this Type type,
-                                       [NotNull] string name,
-                                       BindingFlags bindingFlags,
-                                       [NotNull] Type returnType,
-                                       [NotNull] [ItemNotNull] Type[] parameterTypes)
-    {
-      if (type == null)
-      {
-        throw new ArgumentNullException(nameof(type));
-      }
-      if (name == null)
-      {
-        throw new ArgumentNullException(nameof(name));
-      }
-      if (returnType == null)
-      {
-        throw new ArgumentNullException(nameof(returnType));
-      }
-      if (parameterTypes == null)
-      {
-        throw new ArgumentNullException(nameof(parameterTypes));
-      }
-
-      var methodInfo = type.GetMethods(bindingFlags)
-                           .Where(arg => arg.DoesMatch(name,
-                                                       returnType,
-                                                       parameterTypes))
-                           .FirstOrDefault();
-
-      return methodInfo;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
     [Pure]
     public static bool IsDescendantOrMatches<T>([NotNull] this Type type)
     {
@@ -169,6 +134,35 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
         }
         yield return type;
       }
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    [Pure]
+    [CanBeNull]
+    public static Type GetTaskReturnType([NotNull] this Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      Type taskReturnType;
+      if (!type.IsDescendantOrMatches<Task>())
+      {
+        taskReturnType = null;
+      }
+      else if (type == typeof(Task))
+      {
+        taskReturnType = typeof(void);
+      }
+      else
+      {
+        taskReturnType = type.GetProperty(nameof(Task<object>.Result),
+                                          TypeExtensions.TaskResultBindingFlags)
+                             .PropertyType;
+      }
+
+      return taskReturnType;
     }
   }
 }
