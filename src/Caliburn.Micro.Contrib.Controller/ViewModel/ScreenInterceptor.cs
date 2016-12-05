@@ -206,7 +206,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
         {
           throw new InvalidOperationException($"{controllerType} has a {nameof(ScreenMethodLinkAttribute)} defined on {controllerMethodInfo}, which has no parameters.");
         }
-        if (!this.ScreenType.IsDescendant(screenParameter.ParameterType))
+        if (!this.ScreenType.IsDescendantOrMatches(screenParameter.ParameterType))
         {
           continue;
         }
