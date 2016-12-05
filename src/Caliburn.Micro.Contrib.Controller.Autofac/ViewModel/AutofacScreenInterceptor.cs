@@ -131,12 +131,23 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
                                                                                                 });
       var array = constructorBindings.Where(arg => arg.CanInstantiate)
                                      .ToArray();
-      var constructorBinding = reflectionActivator.ConstructorSelector.SelectConstructorBinding(array);
-      var constructorArguments = constructorBinding.TargetConstructor.GetParameters()
-                                                   .Select(parameterInfo => parameterInfo.ParameterType)
-                                                   .Select(parameterType => new TypedService(parameterType))
-                                                   .Select(service => this.LifetimeScope.ResolveService(service))
-                                                   .ToArray();
+
+      object[] constructorArguments;
+      var constructorSelector = reflectionActivator.ConstructorSelector;
+      if (constructorSelector is MostParametersConstructorSelector
+          && !array.Any())
+      {
+        constructorArguments = new object[0];
+      }
+      else
+      {
+        var constructorBinding = constructorSelector.SelectConstructorBinding(array);
+        constructorArguments = constructorBinding.TargetConstructor.GetParameters()
+                                                 .Select(parameterInfo => parameterInfo.ParameterType)
+                                                 .Select(parameterType => new TypedService(parameterType))
+                                                 .Select(service => this.LifetimeScope.ResolveService(service))
+                                                 .ToArray();
+      }
 
       return constructorArguments;
     }
