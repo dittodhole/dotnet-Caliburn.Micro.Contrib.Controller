@@ -39,8 +39,6 @@ namespace Caliburn.Micro.Contrib.Controller
     [ItemNotNull]
     public virtual IEnumerable<IControllerRoutine> ControllerRoutines => this.Routines;
 
-    public abstract Type ScreenBaseType { get; }
-
     [NotNull]
     public virtual IScreenFactory ScreenFactory { get; }
 
@@ -140,8 +138,6 @@ namespace Caliburn.Micro.Contrib.Controller
                              [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
       : base(screenFactory,
              controllerRoutines) {}
-
-    public override Type ScreenBaseType => typeof(TScreen);
 
     public override Type GetScreenType(object options = null) => typeof(TScreen);
 

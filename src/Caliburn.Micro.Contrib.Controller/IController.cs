@@ -26,8 +26,5 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
     bool UnregisterRoutine([NotNull] IControllerRoutine controllerRoutine);
-
-    [NotNull]
-    Type ScreenBaseType { get; }
   }
 }
