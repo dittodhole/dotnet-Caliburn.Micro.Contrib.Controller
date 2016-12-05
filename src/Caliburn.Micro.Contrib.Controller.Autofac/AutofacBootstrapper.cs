@@ -40,7 +40,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       base.ConfigureBootstrapper();
 
       this.AutoSubscribeEventAggegatorHandlers = false;
-      this.EnableLifetimeScopesForViewModels = true;
+      this.EnableLifetimeScopesForViewModels = false;
     }
 
     protected override void ConfigureContainer(ContainerBuilder builder)
