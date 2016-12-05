@@ -31,7 +31,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     [CanBeNull]
-    public IDisposable Block([NotNull] IScreen screen)
+    public virtual IDisposable Block([NotNull] IScreen screen)
     {
       if (screen == null)
       {
