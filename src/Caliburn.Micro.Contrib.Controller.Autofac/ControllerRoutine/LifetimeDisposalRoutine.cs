@@ -12,7 +12,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ControllerRoutine
     [NotNull]
     private LinkedList<ScreenWithLifetimeScope> ScreenWithLifetimeScopes { get; } = new LinkedList<ScreenWithLifetimeScope>();
 
-    public void Dispose()
+    public virtual void Dispose()
     {
       LinkedListNode<ScreenWithLifetimeScope> node;
       while ((node = this.ScreenWithLifetimeScopes.First) != null)
@@ -52,8 +52,8 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ControllerRoutine
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
-    public void RegisterLifetimeScope([NotNull] IScreen screen,
-                                      [NotNull] ILifetimeScope lifetimeScope)
+    public virtual void RegisterLifetimeScope([NotNull] IScreen screen,
+                                              [NotNull] ILifetimeScope lifetimeScope)
     {
       if (screen == null)
       {
