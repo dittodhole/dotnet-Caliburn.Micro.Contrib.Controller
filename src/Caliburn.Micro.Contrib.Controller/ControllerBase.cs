@@ -32,7 +32,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     [ItemNotNull]
-    public ICollection<ControllerRoutineBase> ControllerRoutines { get; } = new List<ControllerRoutineBase>();
+    private ICollection<ControllerRoutineBase> ControllerRoutines { get; } = new List<ControllerRoutineBase>();
 
     [NotNull]
     [ItemNotNull]
@@ -65,17 +65,20 @@ namespace Caliburn.Micro.Contrib.Controller
                                  bool? dialogResult = null);
 
     /// <exception cref="InvalidOperationException" />
-    public virtual IScreen CreateScreen(object options = null)
+    [CanBeNull]
+    public virtual IScreen CreateScreen([CanBeNull] object options = null)
     {
       var screen = this.ScreenFactory.Create(this,
                                              options);
       return screen;
     }
 
-    public abstract Type GetScreenType(object options = null);
+    [NotNull]
+    public abstract Type GetScreenType([CanBeNull] object options = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    public virtual T RegisterRoutine<T>(T controllerRoutine) where T : ControllerRoutineBase
+    [NotNull]
+    public virtual T RegisterRoutine<T>([NotNull] T controllerRoutine) where T : ControllerRoutineBase
     {
       if (controllerRoutine == null)
       {
@@ -88,7 +91,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    public virtual bool UnregisterRoutine(ControllerRoutineBase controllerRoutine)
+    public virtual bool UnregisterRoutine([NotNull] ControllerRoutineBase controllerRoutine)
     {
       if (controllerRoutine == null)
       {
@@ -189,7 +192,7 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.ControllerRoutines)
+      foreach (var controllerRoutine in this.Routines)
       {
         controllerRoutine.OnClose(screen,
                                   dialogResult);
@@ -204,7 +207,7 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.ControllerRoutines)
+      foreach (var controllerRoutine in this.Routines)
       {
         controllerRoutine.OnInitialize(screen);
       }
@@ -224,7 +227,7 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(view));
       }
 
-      foreach (var controllerRoutine in this.ControllerRoutines)
+      foreach (var controllerRoutine in this.Routines)
       {
         controllerRoutine.OnViewReady(screen,
                                       view);
@@ -239,7 +242,7 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.ControllerRoutines)
+      foreach (var controllerRoutine in this.Routines)
       {
         controllerRoutine.OnActivate(screen);
       }
@@ -254,7 +257,7 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.ControllerRoutines)
+      foreach (var controllerRoutine in this.Routines)
       {
         controllerRoutine.OnDeactivate(screen,
                                        close);

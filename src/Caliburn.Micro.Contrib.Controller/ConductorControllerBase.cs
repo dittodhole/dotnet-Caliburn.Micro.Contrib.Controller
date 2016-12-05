@@ -20,7 +20,7 @@ namespace Caliburn.Micro.Contrib.Controller
              controllerRoutines) {}
 
     [NotNull]
-    public virtual IEnumerable<ConductorControllerRoutineBase> ConductorControllerRoutines => this.ControllerRoutines.OfType<ConductorControllerRoutineBase>();
+    public virtual IEnumerable<ConductorControllerRoutineBase> ConductorControllerRoutines => this.Routines.OfType<ConductorControllerRoutineBase>();
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>

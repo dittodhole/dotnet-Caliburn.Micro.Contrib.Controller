@@ -105,6 +105,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
     /// <exception cref="DependencyResolutionException" />
     /// <exception cref="ComponentNotRegisteredException" />
     [Pure]
+    [NotNull]
     protected virtual object[] GetResolvedConstructorArgumentsFromRegistration([NotNull] IComponentRegistration registration)
     {
       if (registration == null)
