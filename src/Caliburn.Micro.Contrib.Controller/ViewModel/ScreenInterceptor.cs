@@ -161,6 +161,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       }
     }
 
+    [Pure]
     public virtual IScreen CreateProxiedScreen()
     {
       var proxyGenerationOptions = new ProxyGenerationOptions();
@@ -185,6 +186,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    [Pure]
     [NotNull]
     public virtual object CreateMixinInstance([NotNull] Type type)
     {
@@ -198,6 +200,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       return instance;
     }
 
+    [Pure]
     [ItemNotNull]
     [NotNull]
     public virtual Type[] GetAdditionalInterfacesToProxy()
@@ -217,6 +220,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which has no parameters.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which cannot be found on <see cref="ScreenType" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which is not declared as <see langword="virtual" /> or <see langword="abstract" /> on <see cref="ScreenType" />.</exception>
+    [Pure]
     [NotNull]
     public virtual IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] IController controller)
     {
@@ -307,6 +311,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    [Pure]
     [NotNull]
     [ItemNotNull]
     public virtual ICollection<Type> GetMixinTypes([NotNull] IController controller)

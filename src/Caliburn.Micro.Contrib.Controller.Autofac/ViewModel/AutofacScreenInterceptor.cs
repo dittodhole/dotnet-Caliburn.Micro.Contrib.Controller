@@ -104,6 +104,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
     /// <exception cref="AmbiguousMatchException" />
     /// <exception cref="DependencyResolutionException" />
     /// <exception cref="ComponentNotRegisteredException" />
+    [Pure]
     protected virtual object[] GetResolvedConstructorArgumentsFromRegistration([NotNull] IComponentRegistration registration)
     {
       if (registration == null)
