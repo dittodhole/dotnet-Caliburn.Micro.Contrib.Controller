@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
+using Caliburn.Micro.Contrib.Controller.Autofac.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Autofac.ViewModel;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Extras;
@@ -55,6 +56,12 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
                .As<IControllerRoutine>();
+
+      if (this.EnableLifetimeScopesForViewModels)
+      {
+        builder.RegisterType<LifetimeDisposalRoutine>()
+               .As<IControllerRoutine>()
+               .InstancePerDependency();
       }
     }
 
