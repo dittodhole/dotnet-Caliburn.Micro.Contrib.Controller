@@ -117,13 +117,9 @@ namespace Caliburn.Micro.Contrib.Controller
 
     public virtual void Dispose()
     {
-      foreach (var routine in this.ControllerRoutines)
+      foreach (var controllerRoutine in this.ControllerRoutines)
       {
-        var disposable = routine as IDisposable;
-        if (disposable != null)
-        {
-          disposable.Dispose();
-        }
+        controllerRoutine.Dispose();
       }
     }
   }
