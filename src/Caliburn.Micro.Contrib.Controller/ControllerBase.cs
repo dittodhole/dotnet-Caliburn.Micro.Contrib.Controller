@@ -8,7 +8,9 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller
 {
   [PublicAPI]
-  public abstract class ControllerBase : IController
+  public abstract class ControllerBase : IController,
+                                         IDisposable
+
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
@@ -98,7 +100,7 @@ namespace Caliburn.Micro.Contrib.Controller
         var screenBaseType = this.ScreenBaseType;
         var mixins = mixinControllerRoutine.GetMixins();
         this.ScreenMetaTypesFinder.RegisterMixinsForType(screenBaseType,
-                                                                     mixins);
+                                                         mixins);
       }
 
       this.Routines.Add(controllerRoutine);
@@ -128,6 +130,18 @@ namespace Caliburn.Micro.Contrib.Controller
       foreach (var controllerRoutine in controllerRoutines)
       {
         this.RegisterRoutine(controllerRoutine);
+      }
+    }
+
+    public virtual void Dispose()
+    {
+      foreach (var routine in this.Routines)
+      {
+        var disposable = routine as IDisposable;
+        if (disposable != null)
+        {
+          disposable.Dispose();
+        }
       }
     }
   }
