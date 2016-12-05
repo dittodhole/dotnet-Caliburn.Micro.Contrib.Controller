@@ -13,14 +13,12 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     where TRootController : IController
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
-    public bool EnableLifetimeScopesForViewModels { get; set; }
 
     protected override void ConfigureBootstrapper()
     {
       base.ConfigureBootstrapper();
 
       this.AutoSubscribeEventAggegatorHandlers = false;
-      this.EnableLifetimeScopesForViewModels = false;
     }
 
     protected override void ConfigureContainer(ContainerBuilder builder)
