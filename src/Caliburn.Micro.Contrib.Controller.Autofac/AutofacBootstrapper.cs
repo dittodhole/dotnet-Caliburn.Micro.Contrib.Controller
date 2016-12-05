@@ -48,6 +48,8 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
 
       builder.RegisterGeneric(typeof(LocatorAdapter<>))
              .As(typeof(ILocator<>));
+      builder.RegisterType<BlockingRoutine>()
+             .InstancePerDependency();
 
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
