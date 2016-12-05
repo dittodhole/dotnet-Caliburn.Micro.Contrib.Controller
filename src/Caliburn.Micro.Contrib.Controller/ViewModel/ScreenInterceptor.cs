@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.LibLog;
+using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
-  [PublicAPI]
+  public interface IScreenInterceptor : IInterceptor
+  {
+    /// <exception cref="Exception" />
+    [NotNull]
+    IScreen CreateProxiedScreen();
+  }
+
   public class ScreenInterceptor : IScreenInterceptor
   {
     public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
@@ -57,6 +64,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       this.ScreenType = screenType;
 
       this.ScreenMethodMapping = this.CreateScreenMethodMapping(this.Controller);
+      this.MixinTypes = this.GetMixinTypes(this.Controller);
       this.ScreenType.CheckTypeForRealScreenType();
     }
 
@@ -68,6 +76,9 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
     [NotNull]
     protected IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
+
+    [NotNull]
+    protected ICollection<Type> MixinTypes { get; } = new List<Type>();
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept(IInvocation invocation)
@@ -151,20 +162,16 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
     public virtual IScreen CreateProxiedScreen()
     {
-      var screenMetaTypesFinder = this.Controller.ScreenMetaTypesFinder;
-
       var proxyGenerationOptions = new ProxyGenerationOptions();
 
-      foreach (var mixinInstance in screenMetaTypesFinder.GetMixinInstances(this.Controller.ScreenBaseType))
+      foreach (var mixinInstance in this.MixinTypes.Select(this.CreateMixinInstance))
       {
         proxyGenerationOptions.AddMixinInstance(mixinInstance);
       }
 
       var proxyGenerator = new ProxyGenerator();
 
-      var controllerMethodInvocations = this.ScreenMethodMapping.Values.SelectMany(value => value);
-      var additionalInterfacesToProxy = screenMetaTypesFinder.GetAdditionalInterfacesToProxy(this.Controller.ScreenBaseType,
-                                                                                             controllerMethodInvocations);
+      var additionalInterfacesToProxy = this.GetAdditionalInterfacesToProxy();
       var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
                                                   additionalInterfacesToProxy,
                                                   proxyGenerationOptions,
@@ -173,6 +180,35 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       var screen = (IScreen) proxy;
 
       return screen;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    [NotNull]
+    public virtual object CreateMixinInstance([NotNull] Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      var instance = Activator.CreateInstance(type);
+
+      return instance;
+    }
+
+    [ItemNotNull]
+    [NotNull]
+    public virtual Type[] GetAdditionalInterfacesToProxy()
+    {
+      var additionalInterfacesToProxy = this.ScreenMethodMapping.Values.SelectMany(value => value)
+                                            .Select(arg => arg.InjectInterfaceDefinition)
+                                            .Concat(this.MixinTypes.SelectMany(arg => arg.GetInterfaces()))
+                                            .Where(arg => arg != null)
+                                            .Where(arg => arg.IsInterface)
+                                            .FilterNotifyInterfaces()
+                                            .ToArray();
+
+      return additionalInterfacesToProxy;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" />.</exception>
@@ -262,6 +298,44 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                              CallBase = screenMethodLinkAttribute.CallBase
                                            };
           controllerMethodInvocations.Add(controllerMethodInvocation);
+        }
+      }
+
+      return result;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    public virtual ICollection<Type> GetMixinTypes([NotNull] IController controller)
+    {
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+
+      var result = new HashSet<Type>();
+      foreach (var controllerRoutine in controller.Routines)
+      {
+        var mixinControllerRoutine = controllerRoutine as IMixinControllerRoutine;
+        if (mixinControllerRoutine == null)
+        {
+          continue;
+        }
+
+        var mixinTypes = mixinControllerRoutine.GetType()
+                                               .GetInterfaces()
+                                               .Where(arg => arg.IsDescendant<IMixinControllerRoutine>())
+                                               .Where(arg => arg.IsGenericType)
+                                               .Select(arg => new
+                                                              {
+                                                                GenericTypeDefinition = arg.GetGenericTypeDefinition(),
+                                                                GenericArguments = arg.GetGenericArguments()
+                                                              })
+                                               .Where(arg => arg.GenericTypeDefinition == typeof(IMixinControllerRoutine<>))
+                                               .SelectMany(arg => arg.GenericArguments)
+                                               .Where(arg => arg.IsClass);
+        foreach (var mixinType in mixinTypes)
+        {
+          result.Add(mixinType);
         }
       }
 

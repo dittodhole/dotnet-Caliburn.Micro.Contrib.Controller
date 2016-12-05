@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
-using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -11,26 +10,20 @@ namespace Caliburn.Micro.Contrib.Controller
   public abstract class ControllerBase : IController,
                                          IDisposable
   {
+    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
-      : this(new ScreenMetaTypesFinder(),
-             controllerRoutines) {}
-
-    /// <exception cref="ArgumentNullException"><paramref name="screenMetaTypesFinder" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] IScreenMetaTypesFinder screenMetaTypesFinder,
+    protected ControllerBase([NotNull] IScreenFactory screenFactory,
                              [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
     {
-      if (screenMetaTypesFinder == null)
+      if (screenFactory == null)
       {
-        throw new ArgumentNullException(nameof(screenMetaTypesFinder));
+        throw new ArgumentNullException(nameof(screenFactory));
       }
       if (controllerRoutines == null)
       {
         throw new ArgumentNullException(nameof(controllerRoutines));
       }
-
-      this.ScreenMetaTypesFinder = screenMetaTypesFinder;
+      this.ScreenFactory = screenFactory;
 
       foreach (var controllerRoutine in controllerRoutines)
       {
@@ -49,7 +42,9 @@ namespace Caliburn.Micro.Contrib.Controller
     public abstract Type ScreenBaseType { get; }
 
     [NotNull]
-    public virtual IScreenMetaTypesFinder ScreenMetaTypesFinder { get; }
+    public virtual IScreenFactory ScreenFactory { get; }
+
+    IEnumerable<IControllerRoutine> IController.Routines => this.Routines;
 
     [UsedImplicitly]
     [ScreenMethodLink]
@@ -74,16 +69,15 @@ namespace Caliburn.Micro.Contrib.Controller
     public abstract void OnClose(IScreen screen,
                                  bool? dialogResult = null);
 
-    public abstract Type GetScreenType(object options = null);
-
     /// <exception cref="InvalidOperationException" />
     public virtual IScreen CreateScreen(object options = null)
     {
-      var screen = Controller.CreateScreenFn?.Invoke(this,
-                                                     options);
-
+      var screen = this.ScreenFactory.Create(this,
+                                             options);
       return screen;
     }
+
+    public abstract Type GetScreenType(object options = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
     public virtual T RegisterRoutine<T>(T controllerRoutine) where T : IControllerRoutine
@@ -91,15 +85,6 @@ namespace Caliburn.Micro.Contrib.Controller
       if (controllerRoutine == null)
       {
         throw new ArgumentNullException(nameof(controllerRoutine));
-      }
-
-      var mixinControllerRoutine = controllerRoutine as IMixinControllerRoutine;
-      if (mixinControllerRoutine != null)
-      {
-        var screenBaseType = this.ScreenBaseType;
-        var mixins = mixinControllerRoutine.GetMixins();
-        this.ScreenMetaTypesFinder.RegisterMixinsForType(screenBaseType,
-                                                         mixins);
       }
 
       this.Routines.Add(controllerRoutine);
@@ -149,16 +134,12 @@ namespace Caliburn.Micro.Contrib.Controller
   public abstract class ControllerBase<TScreen> : ControllerBase
     where TScreen : IScreen
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenMetaTypesFinder" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] IScreenMetaTypesFinder screenMetaTypesFinder,
+    protected ControllerBase([NotNull] IScreenFactory screenFactory,
                              [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
-      : base(screenMetaTypesFinder,
+      : base(screenFactory,
              controllerRoutines) {}
-
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
-      : base(controllerRoutines) {}
 
     public override Type ScreenBaseType => typeof(TScreen);
 

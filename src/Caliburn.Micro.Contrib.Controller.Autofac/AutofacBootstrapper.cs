@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using Caliburn.Micro.Contrib.Controller.Autofac.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.Autofac.ViewModel;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Extras;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
@@ -17,24 +15,6 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
     public bool EnableLifetimeScopesForViewModels { get; set; }
 
-    protected override void Configure()
-    {
-      base.Configure();
-
-      // TODO implement cache
-
-      Controller.CreateScreenInterceptorFn = (controller,
-                                              type) =>
-                                             {
-                                               var autofacScreenInterceptor = new AutofacScreenInterceptor(this.Container,
-                                                                                                           this.EnableLifetimeScopesForViewModels,
-                                                                                                           controller,
-                                                                                                           type);
-
-                                               return autofacScreenInterceptor;
-                                             };
-    }
-
     protected override void ConfigureBootstrapper()
     {
       base.ConfigureBootstrapper();
@@ -47,6 +27,10 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     {
       base.ConfigureContainer(builder);
 
+      builder.RegisterType<AutofacScreenFactory>()
+             .As<IScreenFactory>()
+             .InstancePerDependency();
+
       builder.RegisterGeneric(typeof(LocatorAdapter<>))
              .As(typeof(ILocator<>))
              .InstancePerDependency();
@@ -56,13 +40,6 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
-               .As<IControllerRoutine>()
-               .InstancePerDependency();
-      }
-
-      if (this.EnableLifetimeScopesForViewModels)
-      {
-        builder.RegisterType<LifetimeDisposalRoutine>()
                .As<IControllerRoutine>()
                .InstancePerDependency();
       }

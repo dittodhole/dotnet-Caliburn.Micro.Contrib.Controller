@@ -6,17 +6,14 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
-using Caliburn.Micro.Contrib.Controller.Autofac.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.ViewModel;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
 {
-  public class AutofacScreenInterceptor : ScreenInterceptor,
-                                          IDisposable
+  public class AutofacScreenInterceptor : ScreenInterceptor
   {
-    protected const string InjectPropertiesMethodName = "InjectProperties";
     protected const string GetConstructorBindingsMethodName = "GetConstructorBindings";
 
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
@@ -29,7 +26,6 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
     public AutofacScreenInterceptor([NotNull] ILifetimeScope lifetimeScope,
-                                    bool enableLifetimeScopesForViewModels,
                                     [NotNull] IController controller,
                                     [NotNull] Type screenType)
       : base(controller,
@@ -40,25 +36,10 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
         throw new ArgumentNullException(nameof(lifetimeScope));
       }
       this.LifetimeScope = lifetimeScope;
-      this.EnableLifetimeScopesForViewModels = enableLifetimeScopesForViewModels;
-      this.LifetimeDisposalRoutine = new LifetimeDisposalRoutine();
-
-      this.Controller.RegisterRoutine(this.LifetimeDisposalRoutine);
     }
 
     [NotNull]
     private ILifetimeScope LifetimeScope { get; }
-
-    private bool EnableLifetimeScopesForViewModels { get; }
-
-    [NotNull]
-    private LifetimeDisposalRoutine LifetimeDisposalRoutine { get; }
-
-    public void Dispose()
-    {
-      this.LifetimeDisposalRoutine.Dispose();
-      this.Controller.UnregisterRoutine(this.LifetimeDisposalRoutine);
-    }
 
     /// <exception cref="InvalidOperationException">If the activator for <see cref="ScreenInterceptor.ScreenType" /> has no method 'InjectProperties' defined.</exception>
     /// <exception cref="TargetException" />
@@ -86,20 +67,16 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
         constructorArguments = null;
       }
 
-      var screenMetaTypesFinder = this.Controller.ScreenMetaTypesFinder;
-
       var proxyGenerationOptions = new ProxyGenerationOptions();
 
-      foreach (var mixinInstance in screenMetaTypesFinder.GetMixinInstances(this.Controller.ScreenBaseType))
+      foreach (var mixinInstance in this.MixinTypes.Select(this.CreateMixinInstance))
       {
         proxyGenerationOptions.AddMixinInstance(mixinInstance);
       }
 
       var proxyGenerator = new ProxyGenerator();
 
-      var controllerMethodInvocations = this.ScreenMethodMapping.Values.SelectMany(value => value);
-      var additionalInterfacesToProxy = screenMetaTypesFinder.GetAdditionalInterfacesToProxy(this.Controller.ScreenBaseType,
-                                                                                             controllerMethodInvocations);
+      var additionalInterfacesToProxy = this.GetAdditionalInterfacesToProxy();
       var proxy = proxyGenerator.CreateClassProxy(this.ScreenType,
                                                   additionalInterfacesToProxy,
                                                   proxyGenerationOptions,
@@ -110,32 +87,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
 
       if (registration != null)
       {
-        var reflectionActivator = (ReflectionActivator) registration.Activator;
-        var activatorType = reflectionActivator.GetType();
-        var methodInfo = activatorType.GetMethod(AutofacScreenInterceptor.InjectPropertiesMethodName,
-                                                 ScreenInterceptor.DefaultBindingFlags);
-        if (methodInfo == null)
-        {
-          throw new InvalidOperationException($"{activatorType} has no method {AutofacScreenInterceptor.InjectPropertiesMethodName} defined.");
-        }
-
-        var lifetimeScope = this.LifetimeScope;
-
-        // TODO this should be extracted ... to ... dunno yet
-        if (this.EnableLifetimeScopesForViewModels)
-        {
-          lifetimeScope = lifetimeScope.BeginLifetimeScope();
-
-          this.LifetimeDisposalRoutine.RegisterLifetimeScope(screen,
-                                                             lifetimeScope);
-        }
-
-        methodInfo.Invoke(reflectionActivator,
-                          new object[]
-                          {
-                            screen,
-                            lifetimeScope
-                          });
+        this.LifetimeScope.InjectProperties(screen);
       }
 
       return screen;
@@ -187,6 +139,27 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
                                                    .ToArray();
 
       return constructorArguments;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    public override object CreateMixinInstance(Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      object instance;
+      if (this.LifetimeScope.IsRegistered(type))
+      {
+        instance = this.LifetimeScope.Resolve(type);
+      }
+      else
+      {
+        instance = base.CreateMixinInstance(type);
+      }
+
+      return instance;
     }
   }
 }

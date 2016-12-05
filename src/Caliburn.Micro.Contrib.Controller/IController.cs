@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -16,15 +16,16 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     Type GetScreenType([CanBeNull] object options = null);
 
+    [NotNull]
+    [ItemNotNull]
+    IEnumerable<IControllerRoutine> Routines { get; }
+
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
     [NotNull]
     T RegisterRoutine<T>([NotNull] T controllerRoutine) where T : IControllerRoutine;
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
     bool UnregisterRoutine([NotNull] IControllerRoutine controllerRoutine);
-
-    [NotNull]
-    IScreenMetaTypesFinder ScreenMetaTypesFinder { get; }
 
     [NotNull]
     Type ScreenBaseType { get; }
