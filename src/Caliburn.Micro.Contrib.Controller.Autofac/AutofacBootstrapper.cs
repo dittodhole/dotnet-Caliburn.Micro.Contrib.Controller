@@ -44,30 +44,37 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     }
 
     /// <summary>
-    ///   Locates the controller for <typeparamref name="TRootController"/>, locates view model, locates the associate view, binds them and shows it as the root view.
+    ///   Locates the controller for <typeparamref name="TRootController" />, locates view model, locates the associate view, binds them and shows it as the root view.
     /// </summary>
-    /// <param name="options">The optional view model settings.</param>
+    /// <param name="options">The optional view model options.</param>
+    /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected void DisplayRootViewFor([CanBeNull] object options = null,
-                                      [CanBeNull] IDictionary<string, object> settings = null)
+    protected void DisplayRootView([CanBeNull] object options = null,
+                                   [CanBeNull] object context = null,
+                                   [CanBeNull] IDictionary<string, object> settings = null)
     {
-      this.DisplayRootViewFor<TRootController>();
+      this.DisplayViewFor<TRootController>(options,
+                                           context,
+                                           settings);
     }
 
     /// <summary>
     ///   Locates the controller, locates view model, locates the associate view, binds them and shows it as the root view.
     /// </summary>
     /// <typeparam name="TController">The controller model type.</typeparam>
-    /// <param name="options">The optional view model settings.</param>
+    /// <param name="options">The optional view model options.</param>
+    /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected void DisplayRootViewFor<TController>([CanBeNull] object options = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+    protected void DisplayViewFor<TController>([CanBeNull] object options = null,
+                                               [CanBeNull] object context = null,
+                                               [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
     {
       Controller.ShowWindowAsync<TController>(options,
+                                              context,
                                               settings);
     }
 
