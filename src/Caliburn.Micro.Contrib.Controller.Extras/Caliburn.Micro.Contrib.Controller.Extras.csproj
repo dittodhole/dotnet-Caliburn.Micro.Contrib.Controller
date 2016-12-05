@@ -85,6 +85,7 @@
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="ControllerRoutine\AutomaticRegistrationHandlingForHandlersRoutine.cs" />
     <Compile Include="ControllerRoutine\BlockingRoutine.cs" />
+    <Compile Include="DisposeAction.cs" />
     <Compile Include="Converters\NegateBoolConverter.cs" />
     <Compile Include="ILocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
