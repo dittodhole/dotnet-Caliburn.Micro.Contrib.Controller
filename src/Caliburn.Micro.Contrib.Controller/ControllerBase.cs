@@ -10,7 +10,6 @@ namespace Caliburn.Micro.Contrib.Controller
   [PublicAPI]
   public abstract class ControllerBase : IController,
                                          IDisposable
-
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
