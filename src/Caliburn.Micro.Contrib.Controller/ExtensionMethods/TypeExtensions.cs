@@ -71,6 +71,17 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       return methodInfo;
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
+    public static bool IsDescendantOrMatches<T>([NotNull] this Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      return type.IsDescendantOrMatches(typeof(T));
+    }
+
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     public static bool IsDescendant<T>([NotNull] this Type type)
     {
@@ -99,6 +110,23 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       if (type == parentType)
       {
         return false;
+      }
+
+      return type.IsDescendantOrMatches(parentType);
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="parentType"/> is <see langword="null"/></exception>
+    public static bool IsDescendantOrMatches([NotNull] this Type type,
+                                             [NotNull] Type parentType)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+      if (parentType == null)
+      {
+        throw new ArgumentNullException(nameof(parentType));
       }
 
       if (parentType.IsAssignableFrom(type))
