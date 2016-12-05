@@ -48,14 +48,17 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       base.ConfigureContainer(builder);
 
       builder.RegisterGeneric(typeof(LocatorAdapter<>))
-             .As(typeof(ILocator<>));
+             .As(typeof(ILocator<>))
+             .InstancePerDependency();
       builder.RegisterType<BlockingRoutine>()
              .InstancePerDependency();
 
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
-               .As<IControllerRoutine>();
+               .As<IControllerRoutine>()
+               .InstancePerDependency();
+      }
 
       if (this.EnableLifetimeScopesForViewModels)
       {
