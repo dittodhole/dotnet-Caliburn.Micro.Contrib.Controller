@@ -172,6 +172,8 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
         instance = base.CreateMixinInstance(type);
       }
 
+      // TODO should dispose instance somewhere or let take the ioc over ... hmm ... :dragon:
+
       return instance;
     }
   }

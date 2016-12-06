@@ -6,7 +6,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras
   public class DisposeAction : IDisposable
   {
     /// <exception cref="ArgumentNullException"><paramref name="action" /> is <see langword="null" /></exception>
-    public DisposeAction([NotNull] Action action)
+    public DisposeAction([NotNull] Action<DisposeAction> action)
     {
       if (action == null)
       {
@@ -16,11 +16,11 @@ namespace Caliburn.Micro.Contrib.Controller.Extras
     }
 
     [CanBeNull]
-    private Action Action { get; set; }
+    private Action<DisposeAction> Action { get; set; }
 
     public void Dispose()
     {
-      this.Action?.Invoke();
+      this.Action?.Invoke(this);
       this.Action = null;
     }
   }

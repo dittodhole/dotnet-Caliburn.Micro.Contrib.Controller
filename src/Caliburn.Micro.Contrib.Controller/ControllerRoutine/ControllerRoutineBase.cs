@@ -4,10 +4,11 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
   [PublicAPI]
-  public abstract class ControllerRoutineBase : IInterceptScreenEvents,
-                                                IDisposable
+  public abstract class ControllerRoutineBase : IInterceptScreenEvents//,
+                                                //IDisposable
   {
-    public virtual void Dispose() {}
+    // TODO clarify the need for this :beers:
+    //public virtual void Dispose() {}
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     public virtual void OnInitialize(IScreen screen)

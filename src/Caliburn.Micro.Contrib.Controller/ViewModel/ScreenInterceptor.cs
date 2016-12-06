@@ -11,7 +11,8 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.ViewModel
 {
   [PublicAPI]
-  public interface IScreenInterceptor : IInterceptor
+  public interface IScreenInterceptor : IInterceptor,
+                                        IDisposable
   {
     /// <exception cref="Exception" />
     [NotNull]
@@ -81,6 +82,9 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     [NotNull]
     [ItemNotNull]
     protected ICollection<Type> MixinTypes { get; }
+
+    [NotNull]
+    private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept(IInvocation invocation)
@@ -200,7 +204,24 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
       var screen = (IScreen) proxy;
 
+      this.Screens.Add(screen);
+
+      screen.Deactivated += (sender,
+                             args) =>
+                            {
+                              if (args.WasClosed)
+                              {
+                                this.Screens.Remove(screen);
+                              }
+                            };
+
       return screen;
+    }
+
+    public virtual void Dispose()
+    {
+      this.ScreenMethodMapping.Clear();
+      this.MixinTypes.Clear();
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>

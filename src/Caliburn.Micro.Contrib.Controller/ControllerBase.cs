@@ -70,6 +70,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       var screen = this.ScreenFactory.Create(this,
                                              options);
+
       return screen;
     }
 
@@ -117,10 +118,11 @@ namespace Caliburn.Micro.Contrib.Controller
 
     public virtual void Dispose()
     {
-      foreach (var controllerRoutine in this.ControllerRoutines)
-      {
-        controllerRoutine.Dispose();
-      }
+      // TODO clarify: is this really needed?
+      //foreach (var controllerRoutine in this.ControllerRoutines)
+      //{
+      //  controllerRoutine.Dispose();
+      //}
     }
   }
 

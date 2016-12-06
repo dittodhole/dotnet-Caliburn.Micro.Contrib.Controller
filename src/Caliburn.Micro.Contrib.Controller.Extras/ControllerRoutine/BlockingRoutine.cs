@@ -8,8 +8,11 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
-                                 IControllerRoutineMixin<BlockingRoutine.CanBeBlocked>
+                                 IControllerRoutineMixin<BlockingRoutine.CanBeBlocked>, IDisposable
   {
+    [NotNull]
+    private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
+
     public override void OnViewReady(IScreen screen,
                                      object view)
     {
@@ -38,7 +41,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
         throw new ArgumentNullException(nameof(screen));
       }
 
-      IDisposable result;
+      DisposeAction result;
 
       var canBeBlocked = screen as ICanBeBlocked;
       if (canBeBlocked != null)
@@ -46,11 +49,13 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
         canBeBlocked.IsBlocked = true;
         screen.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
 
-        result = new DisposeAction(() =>
+        result = new DisposeAction(instance =>
                                    {
                                      canBeBlocked.IsBlocked = false;
                                      screen.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
                                    });
+
+        this.DisposeActions.Add(result);
       }
       else
       {
@@ -68,6 +73,11 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
     internal class CanBeBlocked : ICanBeBlocked
     {
       public bool IsBlocked { get; set; }
+    }
+
+    public void Dispose()
+    {
+      this.DisposeActions.Dispose();
     }
   }
 }
