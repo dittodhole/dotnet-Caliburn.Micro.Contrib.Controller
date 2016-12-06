@@ -17,6 +17,18 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     T Locate([NotNull] Type type);
+
+    /// <exception cref="Exception" />
+    [Pure]
+    [CanBeNull]
+    T LocateOptional();
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="type" /> is neither of type <typeparamref name="T" /> nor implements it.</exception>
+    /// <exception cref="Exception" />
+    [Pure]
+    [CanBeNull]
+    T LocateOptional([NotNull] Type type);
   }
 
   public class Locator<T> : ILocator<T>
@@ -38,6 +50,16 @@ namespace Caliburn.Micro.Contrib.Controller
       var instance = (T) obj;
 
       return instance;
+    }
+
+    public virtual T LocateOptional()
+    {
+      return this.Locate();
+    }
+
+    public virtual T LocateOptional(Type type)
+    {
+      return this.Locate(type);
     }
   }
 }

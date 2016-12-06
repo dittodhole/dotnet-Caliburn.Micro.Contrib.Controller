@@ -97,7 +97,6 @@
     <Compile Include="ControllerManager.cs" />
     <Compile Include="ControllerRoutine\ConductorControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\ControllerRoutineBase.cs" />
-    <Compile Include="ControllerRoutine\IControllerRoutineMixin.cs" />
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
     <Compile Include="ExtensionMethods\ObjectExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
@@ -105,11 +104,13 @@
     <Compile Include="Intercept.cs" />
     <Compile Include="IInterceptConductorEvents.cs" />
     <Compile Include="IInterceptScreenEvents.cs" />
+    <Compile Include="IScreenMixin.cs" />
+    <Compile Include="IScreenAttributesMixin.cs" />
     <Compile Include="WeakCollection.cs" />
     <Compile Include="ScreenFactory.cs" />
     <Compile Include="ScreenMethodLinkAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\ScreenInterceptor.cs" />
+    <Compile Include="RerouteToControllerInterceptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Caliburn.Micro.Contrib.Controller.nuspec" />

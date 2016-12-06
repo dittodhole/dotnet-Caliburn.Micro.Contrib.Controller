@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
-using Caliburn.Micro.Contrib.Controller.Autofac.ViewModel;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
@@ -31,18 +29,17 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
              .As<IControllerManager>()
              .SingleInstance();
 
-      builder.RegisterType<AutofacScreenInterceptor>()
-             .As<IScreenInterceptor>()
-             .InstancePerDependency();
-
       builder.RegisterType<AutofacScreenFactory>()
              .As<IScreenFactory>()
-             .InstancePerDependency();
+             .SingleInstance();
 
       builder.RegisterGeneric(typeof(LocatorAdapter<>))
              .As(typeof(ILocator<>))
              .InstancePerDependency();
+
       builder.RegisterType<BlockingRoutine>()
+             .InstancePerDependency();
+      builder.RegisterType<BlockingRoutine.CanBeBlocked>()
              .InstancePerDependency();
 
       if (this.AutoSubscribeEventAggegatorHandlers)

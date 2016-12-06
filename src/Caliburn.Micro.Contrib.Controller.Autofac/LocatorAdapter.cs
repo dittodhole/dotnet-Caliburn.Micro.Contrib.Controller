@@ -43,5 +43,26 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
 
       return instance;
     }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="type" /> is neither of type <typeparamref name="T" /> nor implements it.</exception>
+    /// <exception cref="DependencyResolutionException" />
+    public override T LocateOptional(Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+      if (!type.IsDescendantOrMatches<T>())
+      {
+        throw new ArgumentOutOfRangeException(nameof(type),
+                                              $"{nameof(type)} is neither of type {typeof(T)} nor implements it.");
+      }
+
+      var obj = this.LifetimeScope.ResolveOptional(type);
+      var instance = (T) obj;
+
+      return instance;
+    }
   }
 }
