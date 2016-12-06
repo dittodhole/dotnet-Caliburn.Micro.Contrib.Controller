@@ -136,27 +136,6 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="types"/> is <see langword="null"/></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    public static IEnumerable<Type> FilterInternalMixinInterface([NotNull] [ItemNotNull] this IEnumerable<Type> types)
-    {
-      if (types == null)
-      {
-        throw new ArgumentNullException(nameof(types));
-      }
-
-      foreach (var type in types)
-      {
-        if (type.IsDescendantOrMatches<IMixin>())
-        {
-          continue;
-        }
-        yield return type;
-      }
-    }
-
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     [Pure]
     [CanBeNull]
