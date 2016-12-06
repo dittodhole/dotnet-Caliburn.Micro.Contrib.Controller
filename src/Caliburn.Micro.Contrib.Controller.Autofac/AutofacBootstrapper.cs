@@ -28,6 +28,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       base.ConfigureContainer(builder);
 
       builder.RegisterType<ControllerManager>()
+             .As<IControllerManager>()
              .SingleInstance();
 
       builder.RegisterType<AutofacScreenInterceptor>()
