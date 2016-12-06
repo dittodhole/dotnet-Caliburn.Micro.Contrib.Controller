@@ -83,9 +83,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     [ItemNotNull]
     protected ICollection<Type> MixinTypes { get; }
 
-    [NotNull]
-    private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
-
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept(IInvocation invocation)
     {
@@ -210,17 +207,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                                   this);
 
       var screen = (IScreen) proxy;
-
-      this.Screens.Add(screen);
-
-      screen.Deactivated += (sender,
-                             args) =>
-                            {
-                              if (args.WasClosed)
-                              {
-                                this.Screens.Remove(screen);
-                              }
-                            };
 
       return screen;
     }
