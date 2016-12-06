@@ -118,11 +118,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     public virtual void Dispose()
     {
-      // TODO clarify: is this really needed?
-      //foreach (var controllerRoutine in this.ControllerRoutines)
-      //{
-      //  controllerRoutine.Dispose();
-      //}
+      this.ControllerRoutines.Clear();
     }
   }
 
