@@ -16,7 +16,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
-    object Locate([NotNull] Type type);
+    T Locate([NotNull] Type type);
   }
 
   public class Locator<T> : ILocator<T>
@@ -26,15 +26,16 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       var type = typeof(T);
       var obj = this.Locate(type);
-      var instance = (T) obj;
+      var instance = obj;
 
       return instance;
     }
 
-    public virtual object Locate(Type type)
+    public virtual T Locate(Type type)
     {
-      var instance = IoC.GetInstance(type,
-                                     null);
+      var obj = IoC.GetInstance(type,
+                                null);
+      var instance = (T) obj;
 
       return instance;
     }

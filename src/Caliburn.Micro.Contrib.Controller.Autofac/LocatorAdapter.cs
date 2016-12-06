@@ -27,7 +27,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="type" /> is neither of type <typeparamref name="T" /> nor implements it.</exception>
     /// <exception cref="ComponentNotRegisteredException" />
     /// <exception cref="DependencyResolutionException" />
-    public override object Locate(Type type)
+    public override T Locate(Type type)
     {
       if (type == null)
       {
@@ -38,7 +38,8 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
         throw new ArgumentOutOfRangeException(nameof(type),
                                               $"{nameof(type)} is neither of type {typeof(T)} nor implements it.");
       }
-      var instance = this.LifetimeScope.Resolve(type);
+      var obj = this.LifetimeScope.Resolve(type);
+      var instance = (T) obj;
 
       return instance;
     }
