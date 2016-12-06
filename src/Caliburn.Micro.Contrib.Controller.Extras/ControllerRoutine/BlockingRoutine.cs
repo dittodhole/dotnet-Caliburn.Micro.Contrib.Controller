@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
@@ -8,7 +9,8 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
-                                 IControllerRoutineMixin<BlockingRoutine.CanBeBlocked>, IDisposable
+                                 IControllerRoutineMixin<BlockingRoutine.CanBeBlocked>,
+                                 IDisposable
   {
     [NotNull]
     private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
@@ -65,7 +67,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       return result;
     }
 
-    internal interface ICanBeBlocked
+    internal interface ICanBeBlocked : IMixin
     {
       bool IsBlocked { get; set; }
     }
@@ -73,6 +75,11 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
     internal class CanBeBlocked : ICanBeBlocked
     {
       public bool IsBlocked { get; set; }
+
+      public CustomAttributeBuilder[] GetCustomAttributeBuilders()
+      {
+        return new CustomAttributeBuilder[0];
+      }
     }
 
     public override void Dispose()

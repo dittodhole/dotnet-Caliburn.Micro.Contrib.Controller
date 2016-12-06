@@ -101,6 +101,7 @@
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
     <Compile Include="ExtensionMethods\ObjectExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
+    <Compile Include="IMixin.cs" />
     <Compile Include="Locator.cs" />
     <Compile Include="Intercept.cs" />
     <Compile Include="IInterceptConductorEvents.cs" />
