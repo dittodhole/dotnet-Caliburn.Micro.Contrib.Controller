@@ -81,16 +81,17 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected async Task<TRootController> DisplayViewFor<TController>([CanBeNull] object options = null,
-                                                                      [CanBeNull] object context = null,
-                                                                      [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
+    protected async Task<TController> DisplayViewFor<TController>([CanBeNull] object options = null,
+                                                                  [CanBeNull] object context = null,
+                                                                  [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
     {
       var controllerManager = IoC.Get<IControllerManager>();
-      var rootController = await controllerManager.ShowWindowAsync<TController>(options,
-                                                                                context,
-                                                                                settings)
-                                                  .ConfigureAwait(false);
-      return rootController;
+      var controller = await controllerManager.ShowWindowAsync<TController>(options,
+                                                                            context,
+                                                                            settings)
+                                              .ConfigureAwait(false);
+
+      return controller;
     }
 
     protected override void OnExit(object sender,

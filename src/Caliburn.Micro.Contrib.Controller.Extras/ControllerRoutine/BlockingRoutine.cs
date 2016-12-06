@@ -75,7 +75,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       public bool IsBlocked { get; set; }
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       this.DisposeActions.Dispose();
     }
