@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
-  public class LocatorAdapter<T> : ILocator<T>
+  public class LocatorAdapter<T> : Locator<T>
     where T : class
   {
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
@@ -23,21 +23,11 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     [NotNull]
     private ILifetimeScope LifetimeScope { get; }
 
-    /// <exception cref="ComponentNotRegisteredException" />
-    /// <exception cref="DependencyResolutionException" />
-    public T Locate()
-    {
-      var obj = this.Locate(typeof(T));
-      var instance = (T) obj;
-
-      return instance;
-    }
-
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="type" /> is neither of type <typeparamref name="T" /> nor implements it.</exception>
     /// <exception cref="ComponentNotRegisteredException" />
     /// <exception cref="DependencyResolutionException" />
-    public object Locate(Type type)
+    public override object Locate(Type type)
     {
       if (type == null)
       {
