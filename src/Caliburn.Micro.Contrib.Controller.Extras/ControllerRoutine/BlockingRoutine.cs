@@ -67,12 +67,13 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       return result;
     }
 
-    internal interface ICanBeBlocked : IMixin
+    internal interface ICanBeBlocked
     {
       bool IsBlocked { get; set; }
     }
 
-    internal class CanBeBlocked : ICanBeBlocked
+    internal class CanBeBlocked : ICanBeBlocked,
+                                  IMixin
     {
       public bool IsBlocked { get; set; }
 

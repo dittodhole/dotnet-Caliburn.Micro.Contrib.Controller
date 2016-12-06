@@ -251,6 +251,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                             .Concat(this.MixinTypes.SelectMany(arg => arg.GetInterfaces()))
                                             .Where(arg => arg.IsInterface)
                                             .FilterNotifyInterfaces()
+                                            .FilterInternalMixinInterface()
                                             .ToArray();
 
       return additionalInterfacesToProxy;
