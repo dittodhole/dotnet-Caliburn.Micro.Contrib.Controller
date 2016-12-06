@@ -28,7 +28,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
 
-    void IDisposable.Dispose()
+    public virtual void Dispose()
     {
       this.Screens.Dispose();
     }

@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller
 {
   [PublicAPI]
-  public interface IControllerManager : IDisposable
+  public interface IControllerManager
   {
     /// <exception cref="InvalidOperationException" />
     /// <exception cref="Exception" />
@@ -23,7 +23,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                                    [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase;
   }
 
-  public class ControllerManager : IControllerManager
+  public class ControllerManager : IControllerManager,
+                                   IDisposable
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="windowManagerLocator" /> is <see langword="null" /></exception>
