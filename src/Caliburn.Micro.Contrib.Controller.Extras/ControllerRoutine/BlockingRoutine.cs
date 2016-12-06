@@ -9,8 +9,7 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
-                                 IControllerRoutineMixin<BlockingRoutine.CanBeBlocked>,
-                                 IDisposable
+                                 IControllerRoutineMixin<BlockingRoutine.CanBeBlocked>
   {
     [NotNull]
     private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
@@ -72,20 +71,19 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       bool IsBlocked { get; set; }
     }
 
-    internal class CanBeBlocked : ICanBeBlocked,
-                                  IMixin
+    internal class CanBeBlocked : ICanBeBlocked
     {
       public bool IsBlocked { get; set; }
-
-      public CustomAttributeBuilder[] GetCustomAttributeBuilders()
-      {
-        return new CustomAttributeBuilder[0];
-      }
     }
 
     public override void Dispose()
     {
       this.DisposeActions.Dispose();
+    }
+
+    public CustomAttributeBuilder[] GetCustomAttributeBuilders()
+    {
+      return new CustomAttributeBuilder[0];
     }
   }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -119,6 +121,24 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual void Dispose()
     {
       this.ControllerRoutines.Clear();
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screenType"/> is <see langword="null"/></exception>
+    [Pure]
+    [NotNull]
+    [ItemNotNull]
+    public virtual CustomAttributeBuilder[] GetCustomAttributeBuilders([NotNull] Type screenType)
+    {
+      if (screenType == null)
+      {
+        throw new ArgumentNullException(nameof(screenType));
+      }
+
+      var customAttributeBuilders = this.ControllerRoutines.OfType<IControllerRoutineMixin>()
+                                        .SelectMany(arg => arg.GetCustomAttributeBuilders())
+                                        .ToArray();
+
+      return customAttributeBuilders;
     }
   }
 
