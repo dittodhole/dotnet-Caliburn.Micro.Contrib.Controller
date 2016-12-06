@@ -190,12 +190,12 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
       foreach (var mixinInstance in mixinInstances)
       {
         proxyGenerationOptions.AddMixinInstance(mixinInstance);
+      }
 
-        var customAttributeBuilders = mixinInstance.GetCustomAttributeBuilders();
-        foreach (var customAttributeBuilder in customAttributeBuilders)
-        {
-          proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
-        }
+      var customAttributeBuilders = this.Controller.GetCustomAttributeBuilders(this.ScreenType);
+      foreach (var customAttributeBuilder in customAttributeBuilders)
+      {
+        proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
       }
 
       var proxyGenerator = new ProxyGenerator();
@@ -218,26 +218,19 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentException">If <paramref name="type"/> does not implement <see cref="IMixin"/>.</exception>
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
-    public virtual IMixin CreateMixinInstance([NotNull] Type type)
+    public virtual object CreateMixinInstance([NotNull] Type type)
     {
       if (type == null)
       {
         throw new ArgumentNullException(nameof(type));
       }
-      if (!type.IsDescendant<IMixin>())
-      {
-        throw new ArgumentException(nameof(type),
-                                    $"{type} does not implement {typeof(IMixin)}.");
-      }
 
       var instance = Activator.CreateInstance(type);
-      var mixin = (IMixin) instance;
 
-      return mixin;
+      return instance;
     }
 
     [Pure]
@@ -251,7 +244,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                             .Concat(this.MixinTypes.SelectMany(arg => arg.GetInterfaces()))
                                             .Where(arg => arg.IsInterface)
                                             .FilterNotifyInterfaces()
-                                            .FilterInternalMixinInterface()
                                             .ToArray();
 
       return additionalInterfacesToProxy;
@@ -389,8 +381,7 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                                               })
                                                .Where(arg => arg.GenericTypeDefinition == typeof(IControllerRoutineMixin<>))
                                                .SelectMany(arg => arg.GenericArguments)
-                                               .Where(arg => arg.IsClass)
-                                               .Where(arg => arg.IsDescendant<IMixin>());
+                                               .Where(arg => arg.IsClass);
         foreach (var mixinType in mixinTypes)
         {
           result.Add(mixinType);
