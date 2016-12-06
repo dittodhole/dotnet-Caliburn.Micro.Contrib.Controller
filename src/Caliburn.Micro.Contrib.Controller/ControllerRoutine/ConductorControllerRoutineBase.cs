@@ -5,7 +5,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
   [PublicAPI]
   public abstract class ConductorControllerRoutineBase : ControllerRoutineBase,
-                                                         IConductorControllerRoutine
+                                                         IInterceptConductorEvents
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>

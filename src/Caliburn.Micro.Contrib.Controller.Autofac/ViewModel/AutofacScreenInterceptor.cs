@@ -26,7 +26,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
     public AutofacScreenInterceptor([NotNull] ILifetimeScope lifetimeScope,
-                                    [NotNull] IController controller,
+                                    [NotNull] ControllerBase controller,
                                     [NotNull] Type screenType)
       : base(controller,
              screenType)
@@ -105,6 +105,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
     /// <exception cref="DependencyResolutionException" />
     /// <exception cref="ComponentNotRegisteredException" />
     [Pure]
+    [NotNull]
     protected virtual object[] GetResolvedConstructorArgumentsFromRegistration([NotNull] IComponentRegistration registration)
     {
       if (registration == null)
@@ -170,6 +171,8 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
       {
         instance = base.CreateMixinInstance(type);
       }
+
+      // TODO should dispose instance somewhere or let take the ioc over ... hmm ... :dragon:
 
       return instance;
     }

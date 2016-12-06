@@ -1,11 +1,13 @@
 ﻿using System;
 using Autofac;
-using Caliburn.Micro.Contrib.Controller.Autofac.ViewModel;
+using Autofac.Core;
+using Autofac.Core.Registration;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
-  public class AutofacScreenFactory : IScreenFactory
+  public class AutofacScreenFactory : ScreenFactory
   {
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
     public AutofacScreenFactory([NotNull] ILifetimeScope lifetimeScope)
@@ -21,22 +23,33 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     private ILifetimeScope LifetimeScope { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    public IScreen Create(IController controller,
-                          object options = null)
+    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="ComponentNotRegisteredException" />
+    /// <exception cref="DependencyResolutionException" />
+    public override IScreenInterceptor CreateScreenInterceptor(ControllerBase controller,
+                                                               Type screenType)
     {
-      if (controller == null)
+      IScreenInterceptor screenInterceptor;
+
+      object instance;
+      if (this.LifetimeScope.TryResolveService(new TypedService(typeof(IScreenInterceptor)),
+                                               new[]
+                                               {
+                                                 TypedParameter.From(controller),
+                                                 TypedParameter.From(screenType)
+                                               },
+                                               out instance))
       {
-        throw new ArgumentNullException(nameof(controller));
+        screenInterceptor = (IScreenInterceptor) instance;
+      }
+      else
+      {
+        screenInterceptor = base.CreateScreenInterceptor(controller,
+                                                         screenType);
       }
 
-      var screenType = controller.GetScreenType(options);
-      var autofacScreenInterceptor = new AutofacScreenInterceptor(this.LifetimeScope,
-                                                                  controller,
-                                                                  screenType);
-
-      var screen = autofacScreenInterceptor.CreateProxiedScreen();
-
-      return screen;
+      return screenInterceptor;
     }
   }
 }

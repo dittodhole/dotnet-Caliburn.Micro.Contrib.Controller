@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Autofac;
+using Caliburn.Micro.Contrib.Controller.Autofac.ViewModel;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.Extras;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
   public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
-    where TRootController : IController
+    where TRootController : ControllerBase
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
 
@@ -25,6 +27,13 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     {
       base.ConfigureContainer(builder);
 
+      builder.RegisterType<ControllerManager>()
+             .SingleInstance();
+
+      builder.RegisterType<AutofacScreenInterceptor>()
+             .As<IScreenInterceptor>()
+             .InstancePerDependency();
+
       builder.RegisterType<AutofacScreenFactory>()
              .As<IScreenFactory>()
              .InstancePerDependency();
@@ -38,7 +47,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
-               .As<IControllerRoutine>()
+               .As<ControllerRoutineBase>()
                .InstancePerDependency();
       }
     }
@@ -49,15 +58,16 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="options">The optional view model options.</param>
     /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
+    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected void DisplayRootView([CanBeNull] object options = null,
-                                   [CanBeNull] object context = null,
-                                   [CanBeNull] IDictionary<string, object> settings = null)
+    protected async Task DisplayRootView([CanBeNull] object options = null,
+                                         [CanBeNull] object context = null,
+                                         [CanBeNull] IDictionary<string, object> settings = null)
     {
-      this.DisplayViewFor<TRootController>(options,
-                                           context,
-                                           settings);
+      await this.DisplayViewFor<TRootController>(options,
+                                                 context,
+                                                 settings)
+                .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -67,15 +77,17 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="options">The optional view model options.</param>
     /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="IController" />.</exception>
+    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected void DisplayViewFor<TController>([CanBeNull] object options = null,
-                                               [CanBeNull] object context = null,
-                                               [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+    protected async Task DisplayViewFor<TController>([CanBeNull] object options = null,
+                                                     [CanBeNull] object context = null,
+                                                     [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
     {
-      Controller.ShowWindowAsync<TController>(options,
-                                              context,
-                                              settings);
+      var controllerManager = IoC.Get<ControllerManager>();
+      await controllerManager.ShowWindowAsync<TController>(options,
+                                                           context,
+                                                           settings)
+                             .ConfigureAwait(false);
     }
 
     protected override void OnExit(object sender,

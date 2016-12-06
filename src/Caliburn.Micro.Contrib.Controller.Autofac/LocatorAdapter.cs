@@ -2,12 +2,13 @@
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
-using Caliburn.Micro.Contrib.Controller.Extras;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   public class LocatorAdapter<T> : ILocator<T>
+    where T : class
   {
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
     public LocatorAdapter([NotNull] ILifetimeScope lifetimeScope)
@@ -26,7 +27,28 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="DependencyResolutionException" />
     public T Locate()
     {
-      var instance = this.LifetimeScope.Resolve<T>();
+      var obj = this.Locate(typeof(T));
+      var instance = (T) obj;
+
+      return instance;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="type" /> is neither of type <typeparamref name="T" /> nor implements it.</exception>
+    /// <exception cref="ComponentNotRegisteredException" />
+    /// <exception cref="DependencyResolutionException" />
+    public object Locate(Type type)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+      if (!type.IsDescendantOrMatches<T>())
+      {
+        throw new ArgumentOutOfRangeException(nameof(type),
+                                              $"{nameof(type)} is neither of type {typeof(T)} nor implements it.");
+      }
+      var instance = this.LifetimeScope.Resolve(type);
 
       return instance;
     }

@@ -87,7 +87,6 @@
     <Compile Include="ControllerRoutine\BlockingRoutine.cs" />
     <Compile Include="DisposeAction.cs" />
     <Compile Include="Converters\NegateBoolConverter.cs" />
-    <Compile Include="ILocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

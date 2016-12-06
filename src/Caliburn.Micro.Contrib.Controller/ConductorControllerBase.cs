@@ -8,19 +8,19 @@ namespace Caliburn.Micro.Contrib.Controller
 {
   [PublicAPI]
   public abstract class ConductorControllerBase<TScreen, TItem> : ControllerBase<TScreen>,
-                                                                  IConductorController
+                                                                  IInterceptConductorEvents
     where TScreen : IScreen
     where TItem : IScreen
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
-                                      [NotNull] [ItemNotNull] params IControllerRoutine[] controllerRoutines)
+                                      [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
       : base(screenFactory,
              controllerRoutines) {}
 
     [NotNull]
-    public virtual IEnumerable<IConductorControllerRoutine> ConductorControllerRoutines => this.ControllerRoutines.OfType<IConductorControllerRoutine>();
+    public virtual IEnumerable<ConductorControllerRoutineBase> ConductorControllerRoutines => this.Routines.OfType<ConductorControllerRoutineBase>();
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>

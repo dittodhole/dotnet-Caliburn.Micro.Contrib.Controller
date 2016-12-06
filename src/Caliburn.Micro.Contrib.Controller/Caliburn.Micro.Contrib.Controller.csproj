@@ -93,22 +93,19 @@
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="ConductorControllerBase.cs" />
-    <Compile Include="Controller.cs" />
     <Compile Include="ControllerBase.cs" />
-    <Compile Include="ControllerNotHookedUpException.cs" />
+    <Compile Include="ControllerManager.cs" />
     <Compile Include="ControllerRoutine\ConductorControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\ControllerRoutineBase.cs" />
-    <Compile Include="ControllerRoutine\IConductorControllerRoutine.cs" />
-    <Compile Include="ControllerRoutine\IControllerRoutine.cs" />
-    <Compile Include="ControllerRoutine\IMixinControllerRoutine.cs" />
+    <Compile Include="ControllerRoutine\IControllerRoutineMixin.cs" />
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
     <Compile Include="ExtensionMethods\ObjectExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
-    <Compile Include="IConductorController.cs" />
-    <Compile Include="IController.cs" />
+    <Compile Include="ILocator.cs" />
     <Compile Include="Intercept.cs" />
     <Compile Include="IInterceptConductorEvents.cs" />
     <Compile Include="IInterceptScreenEvents.cs" />
+    <Compile Include="WeakCollection.cs" />
     <Compile Include="ScreenFactory.cs" />
     <Compile Include="ScreenMethodLinkAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
