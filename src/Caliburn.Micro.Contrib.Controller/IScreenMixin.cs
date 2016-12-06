@@ -1,4 +1,4 @@
-﻿namespace Caliburn.Micro.Contrib.Controller.ViewModel
+﻿namespace Caliburn.Micro.Contrib.Controller
 {
   public interface IScreenMixin {}
 

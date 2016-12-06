@@ -7,7 +7,7 @@ using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.ViewModel
+namespace Caliburn.Micro.Contrib.Controller
 {
   public sealed class RerouteToControllerInterceptor : IInterceptor
   {

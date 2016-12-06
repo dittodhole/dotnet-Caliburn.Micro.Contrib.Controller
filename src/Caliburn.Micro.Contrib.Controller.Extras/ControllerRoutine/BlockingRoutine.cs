@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Extras.Converters;
-using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine

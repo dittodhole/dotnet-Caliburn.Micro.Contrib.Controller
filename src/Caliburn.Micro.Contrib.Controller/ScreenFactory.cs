@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection.Emit;
-using Caliburn.Micro.Contrib.Controller.ViewModel;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 

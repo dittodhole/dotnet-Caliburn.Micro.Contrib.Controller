@@ -104,13 +104,13 @@
     <Compile Include="Intercept.cs" />
     <Compile Include="IInterceptConductorEvents.cs" />
     <Compile Include="IInterceptScreenEvents.cs" />
-    <Compile Include="ViewModel\IScreenMixin.cs" />
+    <Compile Include="IScreenMixin.cs" />
     <Compile Include="IScreenAttributesMixin.cs" />
     <Compile Include="WeakCollection.cs" />
     <Compile Include="ScreenFactory.cs" />
     <Compile Include="ScreenMethodLinkAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\RerouteToControllerInterceptor.cs" />
+    <Compile Include="RerouteToControllerInterceptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Caliburn.Micro.Contrib.Controller.nuspec" />
