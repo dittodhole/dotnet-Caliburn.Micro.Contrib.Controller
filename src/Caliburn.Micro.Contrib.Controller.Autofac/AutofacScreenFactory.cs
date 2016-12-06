@@ -27,6 +27,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="InvalidOperationException" />
     /// <exception cref="ComponentNotRegisteredException" />
     /// <exception cref="DependencyResolutionException" />
+    /// <exception cref="Exception" />
     public override IScreenInterceptor CreateScreenInterceptor(ControllerBase controller,
                                                                Type screenType)
     {

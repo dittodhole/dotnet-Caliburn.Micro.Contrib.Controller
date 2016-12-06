@@ -6,6 +6,7 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Caliburn.Micro.Contrib.Controller.ViewModel;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
@@ -69,9 +70,17 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
 
       var proxyGenerationOptions = new ProxyGenerationOptions();
 
-      foreach (var mixinInstance in this.MixinTypes.Select(this.CreateMixinInstance))
+      var mixinInstances = this.MixinTypes.Select(this.CreateMixinInstance)
+                               .ToArray();
+      foreach (var mixinInstance in mixinInstances)
       {
         proxyGenerationOptions.AddMixinInstance(mixinInstance);
+
+        var customAttributeBuilders = mixinInstance.GetCustomAttributeBuilders();
+        foreach (var customAttributeBuilder in customAttributeBuilders)
+        {
+          proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
+        }
       }
 
       var proxyGenerator = new ProxyGenerator();
@@ -155,26 +164,34 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac.ViewModel
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    public override object CreateMixinInstance(Type type)
+    /// <exception cref="ArgumentException">If type does not implement <see cref="IMixin"/>.</exception>
+    /// <exception cref="Exception" />
+    public override IMixin CreateMixinInstance(Type type)
     {
       if (type == null)
       {
         throw new ArgumentNullException(nameof(type));
       }
+      if (!type.IsDescendant<IMixin>())
+      {
+        throw new ArgumentException(nameof(type),
+                                    $"{type} does not implement {typeof(IMixin)}.");
+      }
 
-      object instance;
+      IMixin mixin;
       if (this.LifetimeScope.IsRegistered(type))
       {
-        instance = this.LifetimeScope.Resolve(type);
+        var instance = this.LifetimeScope.Resolve(type);
+        mixin = (IMixin) instance;
       }
       else
       {
-        instance = base.CreateMixinInstance(type);
+        mixin = base.CreateMixinInstance(type);
       }
 
       // TODO should dispose instance somewhere or let take the ioc over ... hmm ... :dragon:
 
-      return instance;
+      return mixin;
     }
   }
 }

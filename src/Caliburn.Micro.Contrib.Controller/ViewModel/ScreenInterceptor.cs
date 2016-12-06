@@ -83,9 +83,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     [ItemNotNull]
     protected ICollection<Type> MixinTypes { get; }
 
-    [NotNull]
-    private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
-
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public virtual void Intercept(IInvocation invocation)
     {
@@ -188,10 +185,17 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     {
       var proxyGenerationOptions = new ProxyGenerationOptions();
 
-      foreach (var mixinType in this.MixinTypes)
+      var mixinInstances = this.MixinTypes.Select(this.CreateMixinInstance)
+                               .ToArray();
+      foreach (var mixinInstance in mixinInstances)
       {
-        var mixinInstance = this.CreateMixinInstance(mixinType);
         proxyGenerationOptions.AddMixinInstance(mixinInstance);
+
+        var customAttributeBuilders = mixinInstance.GetCustomAttributeBuilders();
+        foreach (var customAttributeBuilder in customAttributeBuilders)
+        {
+          proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
+        }
       }
 
       var proxyGenerator = new ProxyGenerator();
@@ -204,17 +208,6 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
 
       var screen = (IScreen) proxy;
 
-      this.Screens.Add(screen);
-
-      screen.Deactivated += (sender,
-                             args) =>
-                            {
-                              if (args.WasClosed)
-                              {
-                                this.Screens.Remove(screen);
-                              }
-                            };
-
       return screen;
     }
 
@@ -225,18 +218,26 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentException">If <paramref name="type"/> does not implement <see cref="IMixin"/>.</exception>
+    /// <exception cref="Exception" />
     [Pure]
     [NotNull]
-    public virtual object CreateMixinInstance([NotNull] Type type)
+    public virtual IMixin CreateMixinInstance([NotNull] Type type)
     {
       if (type == null)
       {
         throw new ArgumentNullException(nameof(type));
       }
+      if (!type.IsDescendant<IMixin>())
+      {
+        throw new ArgumentException(nameof(type),
+                                    $"{type} does not implement {typeof(IMixin)}.");
+      }
 
       var instance = Activator.CreateInstance(type);
+      var mixin = (IMixin) instance;
 
-      return instance;
+      return mixin;
     }
 
     [Pure]
@@ -387,7 +388,8 @@ namespace Caliburn.Micro.Contrib.Controller.ViewModel
                                                               })
                                                .Where(arg => arg.GenericTypeDefinition == typeof(IControllerRoutineMixin<>))
                                                .SelectMany(arg => arg.GenericArguments)
-                                               .Where(arg => arg.IsClass);
+                                               .Where(arg => arg.IsClass)
+                                               .Where(arg => arg.IsDescendant<IMixin>());
         foreach (var mixinType in mixinTypes)
         {
           result.Add(mixinType);

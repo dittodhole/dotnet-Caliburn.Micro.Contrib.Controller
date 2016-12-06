@@ -7,7 +7,7 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IScreenFactory : IDisposable
   {
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="Exception" />
     [Pure]
     [CanBeNull]
     IScreen Create([NotNull] ControllerBase controller,
@@ -19,8 +19,12 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     private IWeakCollection<IScreenInterceptor> ScreenInterceptors { get; } = new WeakCollection<IScreenInterceptor>();
 
+    [NotNull]
+    private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
+
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidOperationException" />
+    /// <exception cref="Exception" />
     public virtual IScreen Create(ControllerBase controller,
                                   object options = null)
     {
@@ -32,6 +36,23 @@ namespace Caliburn.Micro.Contrib.Controller
       var screenType = controller.GetScreenType(options);
       var screenInterceptor = this.CreateScreenInterceptor(controller,
                                                            screenType);
+      this.ScreenInterceptors.Add(screenInterceptor);
+
+      var screen = this.CreateScreen(screenInterceptor);
+      this.Screens.Add(screen);
+
+      return screen;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screenInterceptor" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception" />
+    [NotNull]
+    public virtual IScreen CreateScreen([NotNull] IScreenInterceptor screenInterceptor)
+    {
+      if (screenInterceptor == null)
+      {
+        throw new ArgumentNullException(nameof(screenInterceptor));
+      }
 
       var screen = screenInterceptor.CreateProxiedScreen();
 
@@ -41,6 +62,7 @@ namespace Caliburn.Micro.Contrib.Controller
     public void Dispose()
     {
       this.ScreenInterceptors.Dispose();
+      this.Screens.Dispose();
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
@@ -62,8 +84,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
       var screenInterceptor = new ScreenInterceptor(controller,
                                                     screenType);
-
-      this.ScreenInterceptors.Add(screenInterceptor);
 
       return screenInterceptor;
     }
