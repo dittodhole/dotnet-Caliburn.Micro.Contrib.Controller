@@ -60,8 +60,8 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    private class WeakInstance : IDisposable,
-                                 IEquatable<WeakInstance>
+    private sealed class WeakInstance : IDisposable,
+                                        IEquatable<WeakInstance>
     {
       /// <exception cref="ArgumentNullException"><paramref name="instance" /> is <see langword="null" /></exception>
       public WeakInstance([NotNull] T instance)

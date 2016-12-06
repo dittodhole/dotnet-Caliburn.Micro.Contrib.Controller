@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -11,11 +12,17 @@ namespace Caliburn.Micro.Contrib.Controller
   public abstract class ControllerBase : IDisposable,
                                          IInterceptScreenEvents
   {
+    /// <exception cref="ArgumentNullException"><paramref name="mixinLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] IScreenFactory screenFactory,
+    protected ControllerBase([NotNull] ILocator<object> mixinLocator,
+                             [NotNull] IScreenFactory screenFactory,
                              [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
     {
+      if (mixinLocator == null)
+      {
+        throw new ArgumentNullException(nameof(mixinLocator));
+      }
       if (screenFactory == null)
       {
         throw new ArgumentNullException(nameof(screenFactory));
@@ -24,6 +31,7 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(controllerRoutines));
       }
+      this.MixinLocator = mixinLocator;
       this.ScreenFactory = screenFactory;
 
       foreach (var controllerRoutine in controllerRoutines)
@@ -33,15 +41,23 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     [NotNull]
-    [ItemNotNull]
-    private ICollection<ControllerRoutineBase> ControllerRoutines { get; } = new List<ControllerRoutineBase>();
+    private ILocator<object> MixinLocator { get; }
+
+    [NotNull]
+    private IScreenFactory ScreenFactory { get; }
 
     [NotNull]
     [ItemNotNull]
     public virtual IEnumerable<ControllerRoutineBase> Routines => this.ControllerRoutines;
 
     [NotNull]
-    public virtual IScreenFactory ScreenFactory { get; }
+    [ItemNotNull]
+    private ICollection<ControllerRoutineBase> ControllerRoutines { get; } = new List<ControllerRoutineBase>();
+
+    public virtual void Dispose()
+    {
+      this.ControllerRoutines.Clear();
+    }
 
     [UsedImplicitly]
     [ScreenMethodLink]
@@ -67,11 +83,41 @@ namespace Caliburn.Micro.Contrib.Controller
                                  bool? dialogResult = null);
 
     /// <exception cref="InvalidOperationException" />
-    [CanBeNull]
+    [NotNull]
     public virtual IScreen CreateScreen([CanBeNull] object options = null)
     {
-      var screen = this.ScreenFactory.Create(this,
-                                             options);
+      var mixinSources = new object[]
+                         {
+                           this
+                         }.Concat(this.Routines);
+      var screenMixinTypes = mixinSources.Select(arg => arg.GetType())
+                                         .SelectMany(arg => arg.GetInterfaces())
+                                         .Distinct()
+                                         .Where(arg => arg.IsDescendant<IScreenMixin>())
+                                         .Where(arg => arg.IsGenericType)
+                                         .Select(arg => new
+                                                        {
+                                                          GenericTypeDefinition = arg.GetGenericTypeDefinition(),
+                                                          GenericArguments = arg.GetGenericArguments()
+                                                        })
+                                         .Where(arg => arg.GenericTypeDefinition == typeof(IScreenMixin<>))
+                                         .SelectMany(arg => arg.GenericArguments)
+                                         .ToArray();
+      var additionalInterfaces = screenMixinTypes.Where(arg => arg.IsInterface)
+                                                 .ToArray();
+      var mixinInstances = screenMixinTypes.Select(this.MixinLocator.LocateOptional)
+                                           .Where(arg => arg != null)
+                                           .ToArray();
+      var customAttributeBuilders = mixinSources.OfType<IScreenAttributesMixin>()
+                                                .SelectMany(arg => arg.GetCustomAttributeBuilders())
+                                                .ToArray();
+
+      var screenType = this.GetScreenType(options);
+      var screen = this.ScreenFactory.Create(screenType,
+                                             additionalInterfaces,
+                                             mixinInstances,
+                                             customAttributeBuilders,
+                                             this);
 
       return screen;
     }
@@ -117,40 +163,20 @@ namespace Caliburn.Micro.Contrib.Controller
         this.RegisterRoutine(controllerRoutine);
       }
     }
-
-    public virtual void Dispose()
-    {
-      this.ControllerRoutines.Clear();
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screenType"/> is <see langword="null"/></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    public virtual CustomAttributeBuilder[] GetCustomAttributeBuilders([NotNull] Type screenType)
-    {
-      if (screenType == null)
-      {
-        throw new ArgumentNullException(nameof(screenType));
-      }
-
-      var customAttributeBuilders = this.ControllerRoutines.OfType<IControllerRoutineMixin>()
-                                        .SelectMany(arg => arg.GetCustomAttributeBuilders())
-                                        .ToArray();
-
-      return customAttributeBuilders;
-    }
   }
 
   [PublicAPI]
   public abstract class ControllerBase<TScreen> : ControllerBase
     where TScreen : IScreen
   {
+    /// <exception cref="ArgumentNullException"><paramref name="mixinLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] IScreenFactory screenFactory,
+    protected ControllerBase([NotNull] ILocator<object> mixinLocator,
+                             [NotNull] IScreenFactory screenFactory,
                              [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
-      : base(screenFactory,
+      : base(mixinLocator,
+             screenFactory,
              controllerRoutines) {}
 
     public override Type GetScreenType(object options = null) => typeof(TScreen);

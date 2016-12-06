@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Caliburn.Micro.Contrib.Controller.ViewModel;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -9,9 +10,10 @@ namespace Caliburn.Micro.Contrib.Controller
   public static class Intercept<TScreen>
     where TScreen : IScreen
   {
-    public interface IHandle {}
+    public interface IHandle : IScreenMixin<Micro.IHandle> {}
 
-    public interface IHandle<TMessage> : IHandle
+    public interface IHandle<TMessage> : IHandle,
+                                         IScreenMixin<Micro.IHandle<TMessage>>
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
@@ -20,7 +22,8 @@ namespace Caliburn.Micro.Contrib.Controller
                   [NotNull] TMessage message);
     }
 
-    public interface IHandleWithCoroutine<TMessage> : IHandle
+    public interface IHandleWithCoroutine<TMessage> : IHandle,
+                                                      IScreenMixin<Micro.IHandleWithCoroutine<TMessage>>
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
@@ -31,7 +34,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                   [NotNull] TMessage message);
     }
 
-    public interface IHandleWithTask<TMessage> : IHandle
+    public interface IHandleWithTask<TMessage> : IHandle,
+                                                 IScreenMixin<Micro.IHandleWithTask<TMessage>>
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>

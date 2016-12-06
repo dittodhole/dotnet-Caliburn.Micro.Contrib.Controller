@@ -1,91 +1,151 @@
 ﻿using System;
+using System.Reflection.Emit;
 using Caliburn.Micro.Contrib.Controller.ViewModel;
+using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public interface IScreenFactory : IDisposable
+  public interface IScreenFactory
   {
+    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="additionalInterfaces" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="mixinInstances" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="customAttributeBuilders" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    [Pure]
-    [CanBeNull]
-    IScreen Create([NotNull] ControllerBase controller,
-                   [CanBeNull] object options = null);
+    [NotNull]
+    IScreen Create([NotNull] Type screenType,
+                   [NotNull] [ItemNotNull] Type[] additionalInterfaces,
+                   [NotNull] [ItemNotNull] object[] mixinInstances,
+                   [NotNull] [ItemNotNull] CustomAttributeBuilder[] customAttributeBuilders,
+                   [NotNull] ControllerBase controller);
   }
 
-  public class ScreenFactory : IScreenFactory
+  [PublicAPI]
+  public class ScreenFactory : IScreenFactory,
+                               IDisposable
   {
-    [NotNull]
-    private IWeakCollection<IScreenInterceptor> ScreenInterceptors { get; } = new WeakCollection<IScreenInterceptor>();
-
     [NotNull]
     private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
 
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidOperationException" />
-    /// <exception cref="Exception" />
-    public virtual IScreen Create(ControllerBase controller,
-                                  object options = null)
+    void IDisposable.Dispose()
     {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-
-      var screenType = controller.GetScreenType(options);
-      var screenInterceptor = this.CreateScreenInterceptor(controller,
-                                                           screenType);
-      this.ScreenInterceptors.Add(screenInterceptor);
-
-      var screen = this.CreateScreen(screenInterceptor);
-      this.Screens.Add(screen);
-
-      return screen;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screenInterceptor" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
-    [NotNull]
-    public virtual IScreen CreateScreen([NotNull] IScreenInterceptor screenInterceptor)
-    {
-      if (screenInterceptor == null)
-      {
-        throw new ArgumentNullException(nameof(screenInterceptor));
-      }
-
-      var screen = screenInterceptor.CreateProxiedScreen();
-
-      return screen;
-    }
-
-    public void Dispose()
-    {
-      this.ScreenInterceptors.Dispose();
       this.Screens.Dispose();
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="ArgumentNullException"><paramref name="additionalInterfaces" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="mixinInstances" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="customAttributeBuilders" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     [NotNull]
-    public virtual IScreenInterceptor CreateScreenInterceptor([NotNull] ControllerBase controller,
-                                                              [NotNull] Type screenType)
+    public virtual IScreen Create([NotNull] Type screenType,
+                                  [NotNull] Type[] additionalInterfaces,
+                                  [NotNull] object[] mixinInstances,
+                                  [NotNull] CustomAttributeBuilder[] customAttributeBuilders,
+                                  [NotNull] ControllerBase controller)
     {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
       if (screenType == null)
       {
         throw new ArgumentNullException(nameof(screenType));
       }
+      if (additionalInterfaces == null)
+      {
+        throw new ArgumentNullException(nameof(additionalInterfaces));
+      }
+      if (mixinInstances == null)
+      {
+        throw new ArgumentNullException(nameof(mixinInstances));
+      }
+      if (customAttributeBuilders == null)
+      {
+        throw new ArgumentNullException(nameof(customAttributeBuilders));
+      }
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
 
-      var screenInterceptor = new ScreenInterceptor(controller,
-                                                    screenType);
+      var interceptor = new RerouteToControllerInterceptor(controller,
+                                                           screenType);
 
-      return screenInterceptor;
+      var screen = this.CreateInternal(screenType,
+                                       additionalInterfaces,
+                                       mixinInstances,
+                                       customAttributeBuilders,
+                                       interceptor);
+
+      this.Screens.Add(screen);
+
+      EventHandler<DeactivationEventArgs> onDeactived = null;
+      onDeactived = (sender,
+                     args) =>
+                    {
+                      if (args.WasClosed)
+                      {
+                        screen.Deactivated -= onDeactived;
+                        this.Screens.Remove(screen);
+                      }
+                    };
+      screen.Deactivated += onDeactived;
+
+      return screen;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="additionalInterfaces" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="mixinInstances" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="customAttributeBuilders" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="interceptor" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception" />
+    protected virtual IScreen CreateInternal([NotNull] Type screenType,
+                                             [NotNull] Type[] additionalInterfaces,
+                                             [NotNull] object[] mixinInstances,
+                                             [NotNull] CustomAttributeBuilder[] customAttributeBuilders,
+                                             [NotNull] IInterceptor interceptor)
+    {
+      if (screenType == null)
+      {
+        throw new ArgumentNullException(nameof(screenType));
+      }
+      if (additionalInterfaces == null)
+      {
+        throw new ArgumentNullException(nameof(additionalInterfaces));
+      }
+      if (mixinInstances == null)
+      {
+        throw new ArgumentNullException(nameof(mixinInstances));
+      }
+      if (customAttributeBuilders == null)
+      {
+        throw new ArgumentNullException(nameof(customAttributeBuilders));
+      }
+      if (interceptor == null)
+      {
+        throw new ArgumentNullException(nameof(interceptor));
+      }
+
+      var proxyGenerationOptions = new ProxyGenerationOptions();
+      foreach (var mixinInstance in mixinInstances)
+      {
+        proxyGenerationOptions.AddMixinInstance(mixinInstance);
+      }
+      foreach (var customAttributeBuilder in customAttributeBuilders)
+      {
+        proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
+      }
+
+      var proxyGenerator = new ProxyGenerator();
+
+      var proxy = proxyGenerator.CreateClassProxy(screenType,
+                                                  additionalInterfaces,
+                                                  proxyGenerationOptions,
+                                                  interceptor);
+      var screen = (IScreen) proxy;
+
+      return screen;
     }
   }
 }
