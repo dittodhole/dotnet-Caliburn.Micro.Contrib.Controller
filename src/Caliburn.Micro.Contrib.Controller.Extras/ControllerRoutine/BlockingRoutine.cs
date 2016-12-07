@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
-                                 IScreenMixin<BlockingRoutine.CanBeBlocked>,
                                  IScreenMixin<BlockingRoutine.ICanBeBlocked>
   {
     [NotNull]
@@ -71,7 +70,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       this.DisposeActions.Dispose();
     }
 
-    internal interface ICanBeBlocked
+    public interface ICanBeBlocked
     {
       bool IsBlocked { get; set; }
     }

@@ -19,7 +19,10 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     protected const string GetConstructorBindingsMethodName = "GetConstructorBindings";
 
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
-    public AutofacScreenFactory([NotNull] ILifetimeScope lifetimeScope)
+    /// <exception cref="ArgumentNullException"><paramref name="mixinLocator" /> is <see langword="null" /></exception>
+    public AutofacScreenFactory([NotNull] ILifetimeScope lifetimeScope,
+                                [NotNull] ILocator<object> mixinLocator)
+      : base(mixinLocator)
     {
       if (lifetimeScope == null)
       {
