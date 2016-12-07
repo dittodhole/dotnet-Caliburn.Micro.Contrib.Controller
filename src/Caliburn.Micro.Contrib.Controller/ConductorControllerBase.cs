@@ -12,14 +12,11 @@ namespace Caliburn.Micro.Contrib.Controller
     where TScreen : IScreen
     where TItem : IScreen
   {
-    /// <exception cref="ArgumentNullException"><paramref name="mixinLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    protected ConductorControllerBase([NotNull] ILocator<object> mixinLocator,
-                                      [NotNull] IScreenFactory screenFactory,
+    protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
                                       [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
-      : base(mixinLocator,
-             screenFactory,
+      : base(screenFactory,
              controllerRoutines) {}
 
     [NotNull]
