@@ -8,7 +8,6 @@ namespace Caliburn.Micro.Contrib.Controller
   public sealed class ScreenMethodLinkAttribute : Attribute
   {
     public bool CallBase { get; set; } = true;
-    public bool CallAsync { get; set; }
 
     [CanBeNull]
     public string MethodName { get; set; }

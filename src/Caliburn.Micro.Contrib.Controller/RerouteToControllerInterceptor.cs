@@ -89,29 +89,16 @@ namespace Caliburn.Micro.Contrib.Controller
 
       controllerMethodInvocations = controllerMethodInvocations.Where(arg =>
                                                                       {
-                                                                        bool result;
-
                                                                         var controllerMethodInfo = arg.ControllerMethodInfo;
-                                                                        if (controllerMethodInfo == null)
-                                                                        {
-                                                                          result = false;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                          var controllerMethodParameterTypes = controllerMethodInfo.GetParameters()
-                                                                                                                                   .Skip(1)
-                                                                                                                                   .Select(parameterInfo => parameterInfo.ParameterType)
-                                                                                                                                   .ToArray();
-                                                                          var returnType = controllerMethodInfo.ReturnType;
-                                                                          if (arg.CallAsync)
-                                                                          {
-                                                                            returnType = returnType.GetTaskReturnType();
-                                                                          }
+                                                                        var controllerMethodParameterTypes = controllerMethodInfo.GetParameters()
+                                                                                                                                 .Skip(1)
+                                                                                                                                 .Select(parameterInfo => parameterInfo.ParameterType)
+                                                                                                                                 .ToArray();
+                                                                        var returnType = controllerMethodInfo.ReturnType;
 
-                                                                          result = screenMethod.DoesSignatureMatch(screenMethodName,
-                                                                                                                   returnType,
-                                                                                                                   controllerMethodParameterTypes);
-                                                                        }
+                                                                        var result = screenMethod.DoesSignatureMatch(screenMethodName,
+                                                                                                                     returnType,
+                                                                                                                     controllerMethodParameterTypes);
 
                                                                         return result;
                                                                       })
@@ -146,10 +133,6 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         var returnValue = controllerMethodInvocation.ControllerMethodInfo.Invoke(this.Controller,
                                                                                  controllerMethodParameters);
-        if (controllerMethodInvocation.CallAsync)
-        {
-          returnValue = returnValue.WaitForResultIfTaskWithResult();
-        }
 
         if (!callBase)
         {
@@ -212,8 +195,7 @@ namespace Caliburn.Micro.Contrib.Controller
           }
 
           var controllerMethodInvocation = new ControllerMethodInvocation(controllerMethodInfo,
-                                                                          screenMethodLinkAttribute.CallBase,
-                                                                          screenMethodLinkAttribute.CallAsync);
+                                                                          screenMethodLinkAttribute.CallBase);
           controllerMethodInvocations.Add(controllerMethodInvocation);
         }
       }
@@ -225,8 +207,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="controllerMethodInfo" /> is <see langword="null" /></exception>
       public ControllerMethodInvocation([NotNull] MethodInfo controllerMethodInfo,
-                                        bool callBase,
-                                        bool callAsync)
+                                        bool callBase)
       {
         if (controllerMethodInfo == null)
         {
@@ -234,15 +215,12 @@ namespace Caliburn.Micro.Contrib.Controller
         }
         this.ControllerMethodInfo = controllerMethodInfo;
         this.CallBase = callBase;
-        this.CallAsync = callAsync;
       }
 
       [NotNull]
       public MethodInfo ControllerMethodInfo { get; }
 
       public bool CallBase { get; }
-
-      public bool CallAsync { get; }
     }
   }
 }

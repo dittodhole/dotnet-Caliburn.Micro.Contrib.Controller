@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
@@ -134,35 +133,6 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
         }
         yield return type;
       }
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    [Pure]
-    [CanBeNull]
-    public static Type GetTaskReturnType([NotNull] this Type type)
-    {
-      if (type == null)
-      {
-        throw new ArgumentNullException(nameof(type));
-      }
-
-      Type taskReturnType;
-      if (!type.IsDescendantOrMatches<Task>())
-      {
-        taskReturnType = null;
-      }
-      else if (type == typeof(Task))
-      {
-        taskReturnType = typeof(void);
-      }
-      else
-      {
-        taskReturnType = type.GetProperty(nameof(Task<object>.Result),
-                                          TypeExtensions.TaskResultBindingFlags)
-                             .PropertyType;
-      }
-
-      return taskReturnType;
     }
   }
 }
