@@ -52,10 +52,10 @@ namespace Caliburn.Micro.Contrib.Controller
                                                            screenType);
 
       var mixinProviders = this.GetMixinProviders(controller);
-      var additionalInterfaces = this.GetAdditionalInterfaces(controller);
+      var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
       var mixinInstances = this.GetMixinInstances(mixinProviders,
                                                   options);
-      var customAttributeBuilders = this.GetCustomAttributeBuilders(controller);
+      var customAttributeBuilders = this.GetCustomAttributeBuilders(mixinProviders);
 
       var screen = this.CreateInternal(screenType,
                                        additionalInterfaces,
@@ -84,16 +84,52 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     [ItemNotNull]
-    protected virtual Type[] GetAdditionalInterfaces([NotNull] ControllerBase controller)
+    protected virtual IMixinProvider[] GetMixinProviders([NotNull] ControllerBase controller)
     {
       if (controller == null)
       {
         throw new ArgumentNullException(nameof(controller));
       }
 
-      var typesToMixin = this.GetTypesToMixin(controller);
-      var additionalInterfaces = typesToMixin.Where(arg => arg.IsInterface)
-                                             .ToArray();
+      var mixinProviders = new object[]
+                           {
+                             controller
+                           }.Concat(controller.Routines)
+                            .OfType<IMixinProvider>()
+                            .ToArray();
+
+      return mixinProviders;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
+    [Pure]
+    [NotNull]
+    [ItemNotNull]
+    protected virtual Type[] GetAdditionalInterfaces([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
+    {
+      if (mixinProviders == null)
+      {
+        throw new ArgumentNullException(nameof(mixinProviders));
+      }
+
+      var additionalInterfaces = mixinProviders.SelectMany(arg =>
+                                                           {
+                                                             var type = arg.GetType();
+                                                             var interfaces = type.GetInterfaces();
+
+                                                             var result = interfaces.Where(@interface => @interface.IsGenericType)
+                                                                                    .Where(@interface => @interface.IsDescendant<IMixinProvider>())
+                                                                                    .Select(@interface => new
+                                                                                                          {
+                                                                                                            GenericTypeDefinition = @interface.GetGenericTypeDefinition(),
+                                                                                                            GenericArguments = @interface.GetGenericArguments()
+                                                                                                          })
+                                                                                    .Where(@interface => @interface.GenericTypeDefinition == typeof(IMixinInterface<>));
+
+                                                             return result;
+                                                           })
+                                               .Select(arg => arg.GenericArguments.Single())
+                                               .ToArray();
 
       return additionalInterfaces;
     }
@@ -116,8 +152,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                                        var type = arg.GetType();
                                                        var methodInfos = type.GetMethods(TypeExtensions.DefaultBindingFlags);
                                                        var interfaces = type.GetInterfaces();
-                                                       var result = interfaces.Where(@interface => @interface.IsDescendant<IMixinProvider>())
-                                                                              .Where(@interface => @interface.IsGenericType)
+                                                       var result = interfaces.Where(@interface => @interface.IsGenericType)
+                                                                              .Where(@interface => @interface.IsDescendant<IMixinProvider>())
                                                                               .Select(@interface => new
                                                                                                     {
                                                                                                       Type = type,
@@ -153,73 +189,22 @@ namespace Caliburn.Micro.Contrib.Controller
       return mixinInstances;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
     [Pure]
     [NotNull]
     [ItemNotNull]
-    protected virtual Type[] GetTypesToMixin([NotNull] ControllerBase controller)
+    protected virtual CustomAttributeBuilder[] GetCustomAttributeBuilders([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
     {
-      if (controller == null)
+      if (mixinProviders == null)
       {
-        throw new ArgumentNullException(nameof(controller));
+        throw new ArgumentNullException(nameof(mixinProviders));
       }
 
-      var screenMixins = this.GetMixinProviders(controller);
-      var typesToMixin = screenMixins.Select(arg => arg.GetType())
-                                     .SelectMany(arg => arg.GetInterfaces())
-                                     .Distinct()
-                                     .Where(arg => arg.IsDescendant<IMixinProvider>())
-                                     .Where(arg => arg.IsGenericType)
-                                     .Select(arg => new
-                                                    {
-                                                      GenericTypeDefinition = arg.GetGenericTypeDefinition(),
-                                                      GenericArguments = arg.GetGenericArguments()
-                                                    })
-                                     .Where(arg => arg.GenericTypeDefinition == typeof(IMixinProvider))
-                                     .SelectMany(arg => arg.GenericArguments)
-                                     .ToArray();
-
-      return typesToMixin;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    protected virtual CustomAttributeBuilder[] GetCustomAttributeBuilders([NotNull] ControllerBase controller)
-    {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-
-      var screenMixins = this.GetMixinProviders(controller);
-      var customAttributeBuilders = screenMixins.OfType<IMixinAttributes>()
-                                                .SelectMany(arg => arg.GetCustomAttributeBuilders())
-                                                .ToArray();
+      var customAttributeBuilders = mixinProviders.OfType<IMixinAttributes>()
+                                                  .SelectMany(arg => arg.GetCustomAttributeBuilders())
+                                                  .ToArray();
 
       return customAttributeBuilders;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    protected virtual IMixinProvider[] GetMixinProviders([NotNull] ControllerBase controller)
-    {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-
-      var screenMixins = new object[]
-                         {
-                           controller
-                         }.Concat(controller.Routines)
-                          .OfType<IMixinProvider>()
-                          .ToArray();
-
-      return screenMixins;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
