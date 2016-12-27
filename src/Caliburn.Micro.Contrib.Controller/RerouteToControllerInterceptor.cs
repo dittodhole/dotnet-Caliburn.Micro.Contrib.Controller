@@ -11,8 +11,6 @@ namespace Caliburn.Micro.Contrib.Controller
 {
   public sealed class RerouteToControllerInterceptor : IInterceptor
   {
-    private const BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
-
     static RerouteToControllerInterceptor()
     {
       var locateTypeForModelType = ViewLocator.LocateTypeForModelType;
@@ -162,7 +160,7 @@ namespace Caliburn.Micro.Contrib.Controller
       var result = new Dictionary<string, ICollection<ControllerMethodInvocation>>();
 
       var controllerType = controller.GetType();
-      var controllerMethodInfos = controllerType.GetMethods(RerouteToControllerInterceptor.DefaultBindingFlags);
+      var controllerMethodInfos = controllerType.GetMethods(TypeExtensions.DefaultBindingFlags);
       foreach (var controllerMethodInfo in controllerMethodInfos)
       {
         var screenMethodLinkAttributes = controllerMethodInfo.GetAttributes<ScreenMethodLinkAttribute>(true)

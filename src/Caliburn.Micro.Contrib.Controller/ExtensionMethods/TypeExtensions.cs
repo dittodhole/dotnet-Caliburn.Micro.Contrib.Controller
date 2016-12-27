@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
 using JetBrains.Annotations;
 
@@ -9,7 +7,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
   [PublicAPI]
   public static class TypeExtensions
   {
-    public static BindingFlags TaskResultBindingFlags = BindingFlags.Instance | BindingFlags.Public;
+    public const BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidOperationException">If <paramref name="type" /> is an interface.</exception>

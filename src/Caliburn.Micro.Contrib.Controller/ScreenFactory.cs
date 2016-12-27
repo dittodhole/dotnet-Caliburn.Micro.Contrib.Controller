@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
@@ -12,28 +13,17 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
+    [Pure]
     [NotNull]
     IScreen Create([NotNull] Type screenType,
-                   [NotNull] ControllerBase controller);
+                   [NotNull] ControllerBase controller,
+                   [CanBeNull] object options = null);
   }
 
   [PublicAPI]
   public class ScreenFactory : IScreenFactory,
                                IDisposable
   {
-    /// <exception cref="ArgumentNullException"><paramref name="mixinLocator" /> is <see langword="null" /></exception>
-    public ScreenFactory([NotNull] ILocator<object> mixinLocator)
-    {
-      if (mixinLocator == null)
-      {
-        throw new ArgumentNullException(nameof(mixinLocator));
-      }
-      this.MixinLocator = mixinLocator;
-    }
-
-    [NotNull]
-    private ILocator<object> MixinLocator { get; }
-
     [NotNull]
     private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
 
@@ -45,8 +35,9 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    public virtual IScreen Create([NotNull] Type screenType,
-                                  [NotNull] ControllerBase controller)
+    public virtual IScreen Create(Type screenType,
+                                  ControllerBase controller,
+                                  object options = null)
     {
       if (screenType == null)
       {
@@ -60,8 +51,10 @@ namespace Caliburn.Micro.Contrib.Controller
       var interceptor = new RerouteToControllerInterceptor(controller,
                                                            screenType);
 
+      var mixinProviders = this.GetMixinProviders(controller);
       var additionalInterfaces = this.GetAdditionalInterfaces(controller);
-      var mixinInstances = this.GetMixinInstances(controller);
+      var mixinInstances = this.GetMixinInstances(mixinProviders,
+                                                  options);
       var customAttributeBuilders = this.GetCustomAttributeBuilders(controller);
 
       var screen = this.CreateInternal(screenType,
@@ -105,21 +98,57 @@ namespace Caliburn.Micro.Contrib.Controller
       return additionalInterfaces;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception" />
     [Pure]
     [NotNull]
     [ItemNotNull]
-    protected virtual object[] GetMixinInstances([NotNull] ControllerBase controller)
+    protected virtual object[] GetMixinInstances([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders,
+                                                 [CanBeNull] object options = null)
     {
-      if (controller == null)
+      if (mixinProviders == null)
       {
-        throw new ArgumentNullException(nameof(controller));
+        throw new ArgumentNullException(nameof(mixinProviders));
       }
 
-      var typesToMixin = this.GetTypesToMixin(controller);
-      var mixinInstances = typesToMixin.Select(this.MixinLocator.LocateOptional)
-                                       .Where(arg => arg != null)
-                                       .ToArray();
+      var mixinInstances = mixinProviders.SelectMany(arg =>
+                                                     {
+                                                       var type = arg.GetType();
+                                                       var methodInfos = type.GetMethods(TypeExtensions.DefaultBindingFlags);
+                                                       var interfaces = type.GetInterfaces();
+                                                       var result = interfaces.Where(@interface => @interface.IsDescendant<IMixinProvider>())
+                                                                              .Where(@interface => @interface.IsGenericType)
+                                                                              .Select(@interface => new
+                                                                                                    {
+                                                                                                      Type = type,
+                                                                                                      MethodInfos = methodInfos,
+                                                                                                      Interface = @interface,
+                                                                                                      GenericTypeDefinition = @interface.GetGenericTypeDefinition(),
+                                                                                                      GenericArguments = @interface.GetGenericArguments(),
+                                                                                                      MixinProvider = arg
+                                                                                                    })
+                                                                              .Where(@interface => @interface.GenericTypeDefinition == typeof(IMixinInstance<>));
+
+                                                       return result;
+                                                     })
+                                         .Select(arg =>
+                                                 {
+                                                   var mixinType = arg.GenericArguments.Single();
+                                                   var mixinInstance = arg.MethodInfos.Single(methodInfo => methodInfo.DoesSignatureMatch(nameof(IMixinInstance<object>.CreateMixinInstance),
+                                                                                                                                          mixinType,
+                                                                                                                                          new[]
+                                                                                                                                          {
+                                                                                                                                            typeof(object)
+                                                                                                                                          }))
+                                                                          .Invoke(arg.MixinProvider,
+                                                                                  new[]
+                                                                                  {
+                                                                                    options
+                                                                                  });
+
+                                                   return mixinInstance;
+                                                 })
+                                         .ToArray();
 
       return mixinInstances;
     }
@@ -135,18 +164,18 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(controller));
       }
 
-      var screenMixins = this.GetScreenMixins(controller);
+      var screenMixins = this.GetMixinProviders(controller);
       var typesToMixin = screenMixins.Select(arg => arg.GetType())
                                      .SelectMany(arg => arg.GetInterfaces())
                                      .Distinct()
-                                     .Where(arg => arg.IsDescendant<IScreenMixin>())
+                                     .Where(arg => arg.IsDescendant<IMixinProvider>())
                                      .Where(arg => arg.IsGenericType)
                                      .Select(arg => new
                                                     {
                                                       GenericTypeDefinition = arg.GetGenericTypeDefinition(),
                                                       GenericArguments = arg.GetGenericArguments()
                                                     })
-                                     .Where(arg => arg.GenericTypeDefinition == typeof(IScreenMixin<>))
+                                     .Where(arg => arg.GenericTypeDefinition == typeof(IMixinProvider))
                                      .SelectMany(arg => arg.GenericArguments)
                                      .ToArray();
 
@@ -164,8 +193,8 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(controller));
       }
 
-      var screenMixins = this.GetScreenMixins(controller);
-      var customAttributeBuilders = screenMixins.OfType<IScreenAttributesMixin>()
+      var screenMixins = this.GetMixinProviders(controller);
+      var customAttributeBuilders = screenMixins.OfType<IMixinAttributes>()
                                                 .SelectMany(arg => arg.GetCustomAttributeBuilders())
                                                 .ToArray();
 
@@ -176,7 +205,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     [ItemNotNull]
-    protected virtual IScreenMixin[] GetScreenMixins([NotNull] ControllerBase controller)
+    protected virtual IMixinProvider[] GetMixinProviders([NotNull] ControllerBase controller)
     {
       if (controller == null)
       {
@@ -187,7 +216,7 @@ namespace Caliburn.Micro.Contrib.Controller
                          {
                            controller
                          }.Concat(controller.Routines)
-                          .OfType<IScreenMixin>()
+                          .OfType<IMixinProvider>()
                           .ToArray();
 
       return screenMixins;

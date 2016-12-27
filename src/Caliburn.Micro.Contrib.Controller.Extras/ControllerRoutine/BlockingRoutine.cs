@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
-                                 IScreenMixin<BlockingRoutine.ICanBeBlocked>
+                                 IMixinInstance<BlockingRoutine.ICanBeBlocked>
   {
     [NotNull]
     private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
@@ -68,6 +68,13 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
     public override void Dispose()
     {
       this.DisposeActions.Dispose();
+    }
+
+    public virtual ICanBeBlocked CreateMixinInstance(object options = null)
+    {
+      var instance = new CanBeBlocked();
+
+      return instance;
     }
 
     public interface ICanBeBlocked

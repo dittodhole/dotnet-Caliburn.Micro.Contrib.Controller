@@ -15,14 +15,10 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
   [PublicAPI]
   public class AutofacScreenFactory : ScreenFactory
   {
-    protected const BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
     protected const string GetConstructorBindingsMethodName = "GetConstructorBindings";
 
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="mixinLocator" /> is <see langword="null" /></exception>
-    public AutofacScreenFactory([NotNull] ILifetimeScope lifetimeScope,
-                                [NotNull] ILocator<object> mixinLocator)
-      : base(mixinLocator)
+    public AutofacScreenFactory([NotNull] ILifetimeScope lifetimeScope)
     {
       if (lifetimeScope == null)
       {
@@ -134,7 +130,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       var constructors = reflectionActivator.ConstructorFinder.FindConstructors(screenType);
 
       var constructorBindings = (IEnumerable<ConstructorParameterBinding>) activatorType.GetMethod(AutofacScreenFactory.GetConstructorBindingsMethodName,
-                                                                                                   AutofacScreenFactory.DefaultBindingFlags)
+                                                                                                   ExtensionMethods.TypeExtensions.DefaultBindingFlags)
                                                                                         .Invoke(reflectionActivator,
                                                                                                 new object[]
                                                                                                 {

@@ -3,10 +3,11 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public interface IMixin
+  public interface IMixinAttributes : IMixinProvider
   {
-    [NotNull]
+    [Pure]
     [ItemNotNull]
+    [NotNull]
     CustomAttributeBuilder[] GetCustomAttributeBuilders();
   }
 }

@@ -78,7 +78,8 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       var screenType = this.GetScreenType(options);
       var screen = this.ScreenFactory.Create(screenType,
-                                             this);
+                                             this,
+                                             options);
 
       return screen;
     }
