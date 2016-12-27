@@ -8,7 +8,8 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
-                                 IMixinInstance<BlockingRoutine.ICanBeBlocked>
+                                 IMixinInstance<BlockingRoutine.ICanBeBlocked>,
+                                 IMixinInterface<BlockingRoutine.ICanBeBlocked>
   {
     [NotNull]
     private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
