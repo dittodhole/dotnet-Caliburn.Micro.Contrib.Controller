@@ -170,12 +170,12 @@ namespace Caliburn.Micro.Contrib.Controller
                                          .Select(arg =>
                                                  {
                                                    var mixinType = arg.GenericArguments.Single();
-                                                   var mixinInstance = arg.MethodInfos.Single(methodInfo => methodInfo.DoesSignatureMatch(nameof(IMixinInstance<object>.CreateMixinInstance),
-                                                                                                                                          mixinType,
+                                                   var mixinInstance = arg.MethodInfos.Single(methodInfo => methodInfo.DoesSignatureMatch(mixinType,
                                                                                                                                           new[]
                                                                                                                                           {
                                                                                                                                             typeof(object)
-                                                                                                                                          }))
+                                                                                                                                          },
+                                                                                                                                          nameof(IMixinInstance<object>.CreateMixinInstance)))
                                                                           .Invoke(arg.MixinProvider,
                                                                                   new[]
                                                                                   {

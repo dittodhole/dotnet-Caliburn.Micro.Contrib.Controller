@@ -94,9 +94,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                                                                                  .ToArray();
                                                                         var returnType = controllerMethodInfo.ReturnType;
 
-                                                                        var result = screenMethod.DoesSignatureMatch(screenMethodName,
-                                                                                                                     returnType,
-                                                                                                                     controllerMethodParameterTypes);
+                                                                        var result = controllerMethodInfo.DoesSignatureMatch(returnType,
+                                                                                                                             controllerMethodParameterTypes);
 
                                                                         return result;
                                                                       })
