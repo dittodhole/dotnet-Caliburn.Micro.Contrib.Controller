@@ -71,7 +71,7 @@ namespace Caliburn.Micro.Contrib.Controller
     public abstract void OnClose(IScreen screen,
                                  bool? dialogResult = null);
 
-    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="Exception" />
     [Pure]
     [NotNull]
     public virtual IScreen CreateScreen([CanBeNull] object options = null)
