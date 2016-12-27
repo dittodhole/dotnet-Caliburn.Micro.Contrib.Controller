@@ -105,34 +105,5 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 
       return false;
     }
-
-    /// <exception cref="ArgumentNullException"><paramref name="types"/> is <see langword="null"/></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    public static IEnumerable<Type> FilterNotifyInterfaces([NotNull] [ItemNotNull] this IEnumerable<Type> types)
-    {
-      if (types == null)
-      {
-        throw new ArgumentNullException(nameof(types));
-      }
-
-      foreach (var type in types)
-      {
-        if (type.IsDescendantOrMatches<INotifyPropertyChanged>())
-        {
-          continue;
-        }
-        if (type.IsDescendantOrMatches<INotifyPropertyChangedEx>())
-        {
-          continue;
-        }
-        if (type.IsDescendantOrMatches<INotifyPropertyChanging>())
-        {
-          continue;
-        }
-        yield return type;
-      }
-    }
   }
 }
