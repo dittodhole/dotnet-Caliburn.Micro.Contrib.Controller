@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
