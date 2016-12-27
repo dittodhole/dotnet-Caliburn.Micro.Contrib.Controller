@@ -72,6 +72,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                  bool? dialogResult = null);
 
     /// <exception cref="InvalidOperationException" />
+    [Pure]
     [NotNull]
     public virtual IScreen CreateScreen([CanBeNull] object options = null)
     {
@@ -82,6 +83,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
+    [Pure]
     [NotNull]
     public abstract Type GetScreenType([CanBeNull] object options = null);
 

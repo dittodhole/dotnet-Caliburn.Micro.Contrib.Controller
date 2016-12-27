@@ -45,7 +45,6 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    [NotNull]
     public virtual IScreen Create([NotNull] Type screenType,
                                   [NotNull] ControllerBase controller)
     {
@@ -200,6 +199,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="customAttributeBuilders" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="interceptor" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
     protected virtual IScreen CreateInternal([NotNull] Type screenType,
                                              [NotNull] Type[] additionalInterfaces,
                                              [NotNull] object[] mixinInstances,
