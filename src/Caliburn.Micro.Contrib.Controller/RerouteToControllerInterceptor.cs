@@ -9,7 +9,8 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public sealed class RerouteToControllerInterceptor : IInterceptor
+  public sealed class RerouteToControllerInterceptor : IInterceptor,
+                                                       IDisposable
   {
     static RerouteToControllerInterceptor()
     {
@@ -65,6 +66,11 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     private IDictionary<string, ICollection<ControllerMethodInvocation>> ScreenMethodMapping { get; }
+
+    public void Dispose()
+    {
+      this.ScreenMethodMapping.Clear();
+    }
 
     /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public void Intercept(IInvocation invocation)
@@ -136,11 +142,6 @@ namespace Caliburn.Micro.Contrib.Controller
           invocation.ReturnValue = returnValue;
         }
       }
-    }
-
-    public void Dispose()
-    {
-      this.ScreenMethodMapping.Clear();
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" />.</exception>
