@@ -87,6 +87,7 @@ namespace Caliburn.Micro.Contrib.Controller
       if (!this.ScreenMethodMapping.TryGetValue(screenMethodName,
                                                 out controllerMethodInvocations))
       {
+        LogTo.Debug($"No reroute for {screenMethodName} was found, proceeding invocation.");
         invocation.Proceed();
         return;
       }
@@ -108,6 +109,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                .ToArray();
       if (!controllerMethodInvocations.Any())
       {
+        LogTo.Debug($"No reroute for {screenMethodName} with matching signature was found, proceeding invocation.");
         invocation.Proceed();
         return;
       }
