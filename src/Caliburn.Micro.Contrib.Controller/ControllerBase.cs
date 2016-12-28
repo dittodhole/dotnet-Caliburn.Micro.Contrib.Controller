@@ -72,7 +72,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
-    public IScreen CreateScreen([CanBeNull] object options = null)
+    public virtual IScreen CreateScreen([CanBeNull] object options = null)
     {
       var screen = this.CreateScreenImpl(options);
 
@@ -275,14 +275,14 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
-    public new TScreen CreateScreen([CanBeNull] object options = null)
+    public new virtual TScreen CreateScreen([CanBeNull] object options = null)
     {
       var screen = this.CreateConcreteScreenImpl(options);
 
       return screen;
     }
 
-    protected sealed override IScreen CreateScreenImpl(object options = null)
+    protected override IScreen CreateScreenImpl(object options = null)
     {
       var screen = this.CreateConcreteScreenImpl(options);
 
