@@ -261,5 +261,12 @@ namespace Caliburn.Micro.Contrib.Controller
                                        close);
       }
     }
+
+    public new virtual TScreen CreateScreen([CanBeNull] object options = null)
+    {
+      var screen = (TScreen) base.CreateScreen(options);
+
+      return screen;
+    }
   }
 }
