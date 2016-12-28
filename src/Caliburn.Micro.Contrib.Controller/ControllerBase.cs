@@ -72,7 +72,17 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
-    public virtual IScreen CreateScreen([CanBeNull] object options = null)
+    public IScreen CreateScreen([CanBeNull] object options = null)
+    {
+      var screen = this.CreateScreenImpl(options);
+
+      return screen;
+    }
+
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
+    protected virtual IScreen CreateScreenImpl([CanBeNull] object options = null)
     {
       var screenType = this.GetScreenType(options);
       var screen = this.ScreenFactory.Create(screenType,
@@ -262,9 +272,9 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    public new virtual TScreen CreateScreen([CanBeNull] object options = null)
+    public new TScreen CreateScreen([CanBeNull] object options = null)
     {
-      var screen = (TScreen) base.CreateScreen(options);
+      var screen = (TScreen) this.CreateScreenImpl(options);
 
       return screen;
     }
