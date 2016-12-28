@@ -16,7 +16,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     IScreen Create([NotNull] Type screenType,
-                   [NotNull] ControllerBase controller,
+                   [NotNull] IController controller,
                    [CanBeNull] object options = null);
   }
 
@@ -36,7 +36,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     public virtual IScreen Create(Type screenType,
-                                  ControllerBase controller,
+                                  IController controller,
                                   object options = null)
     {
       if (screenType == null)
@@ -84,7 +84,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     [ItemNotNull]
-    protected virtual IMixinProvider[] GetMixinProviders([NotNull] ControllerBase controller)
+    protected virtual IMixinProvider[] GetMixinProviders([NotNull] IController controller)
     {
       if (controller == null)
       {

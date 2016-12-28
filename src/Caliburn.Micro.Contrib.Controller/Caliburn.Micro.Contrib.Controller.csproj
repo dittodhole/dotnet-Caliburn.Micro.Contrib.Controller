@@ -97,8 +97,10 @@
     <Compile Include="ControllerManager.cs" />
     <Compile Include="ControllerRoutine\ConductorControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\ControllerRoutineBase.cs" />
+    <Compile Include="ControllerRoutine\IRoutine.cs" />
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
+    <Compile Include="IController.cs" />
     <Compile Include="IMixinInstance.cs" />
     <Compile Include="IMixinInterface.cs" />
     <Compile Include="Locator.cs" />

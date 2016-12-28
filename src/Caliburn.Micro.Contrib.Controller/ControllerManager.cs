@@ -13,14 +13,14 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     Task<TController> ShowWindowAsync<TController>([CanBeNull] object options = null,
                                                    [CanBeNull] object context = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase;
+                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController;
 
     /// <exception cref="InvalidOperationException" />
     /// <exception cref="Exception" />
     [NotNull]
     Task<TController> ShowDialogAsync<TController>([CanBeNull] object options = null,
                                                    [CanBeNull] object context = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase;
+                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController;
   }
 
   public class ControllerManager : IControllerManager,
@@ -28,7 +28,7 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="windowManagerLocator" /> is <see langword="null" /></exception>
-    public ControllerManager([NotNull] ILocator<ControllerBase> controllerLocator,
+    public ControllerManager([NotNull] ILocator<IController> controllerLocator,
                              [NotNull] ILocator<IWindowManager> windowManagerLocator)
     {
       if (controllerLocator == null)
@@ -44,7 +44,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     [NotNull]
-    private ILocator<ControllerBase> ControllerLocator { get; }
+    private ILocator<IController> ControllerLocator { get; }
 
     [NotNull]
     private ILocator<IWindowManager> WindowManagerLocator { get; }
@@ -53,7 +53,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     public virtual async Task<TController> ShowWindowAsync<TController>(object options = null,
                                                                         object context = null,
-                                                                        IDictionary<string, object> settings = null) where TController : ControllerBase
+                                                                        IDictionary<string, object> settings = null) where TController : IController
     {
       var controller = this.CreateController<TController>();
       var screen = controller.CreateScreen(options);
@@ -76,7 +76,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     public virtual async Task<TController> ShowDialogAsync<TController>(object options = null,
                                                                         object context = null,
-                                                                        IDictionary<string, object> settings = null) where TController : ControllerBase
+                                                                        IDictionary<string, object> settings = null) where TController : IController
     {
       var controller = this.CreateController<TController>();
       var screen = controller.CreateScreen(options);
@@ -99,7 +99,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="Exception" />
     [NotNull]
-    public virtual TController CreateController<TController>() where TController : ControllerBase
+    public virtual TController CreateController<TController>() where TController : IController
     {
       var type = typeof(TController);
       var obj = this.ControllerLocator.Locate(type);

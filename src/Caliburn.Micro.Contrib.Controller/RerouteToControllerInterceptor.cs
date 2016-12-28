@@ -40,7 +40,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is an interface.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> is <see langword="sealed" />.</exception>
     /// <exception cref="InvalidOperationException">If <paramref name="screenType" /> does not implement <see cref="IScreen" />.</exception>
-    public RerouteToControllerInterceptor([NotNull] ControllerBase controller,
+    public RerouteToControllerInterceptor([NotNull] IController controller,
                                           [NotNull] Type screenType)
     {
       if (controller == null)
@@ -59,7 +59,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     [NotNull]
-    private ControllerBase Controller { get; }
+    private IController Controller { get; }
 
     [NotNull]
     private Type ScreenType { get; }
@@ -152,7 +152,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidOperationException">If <paramref name="controller" /> has a method defined via <see cref="ScreenMethodLinkAttribute" />, which is not declared as <see langword="virtual" /> or <see langword="abstract" /> on <see cref="ScreenType" />.</exception>
     [Pure]
     [NotNull]
-    private IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] ControllerBase controller)
+    private IDictionary<string, ICollection<ControllerMethodInvocation>> CreateScreenMethodMapping([NotNull] IController controller)
     {
       if (controller == null)
       {

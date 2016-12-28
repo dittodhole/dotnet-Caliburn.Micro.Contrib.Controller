@@ -4,7 +4,8 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
   [PublicAPI]
-  public abstract class ControllerRoutineBase : IInterceptScreenEvents,
+  public abstract class ControllerRoutineBase : IRoutine,
+                                                IInterceptScreenEvents,
                                                 IDisposable
   {
     public virtual void Dispose() {}

@@ -13,11 +13,11 @@ namespace Caliburn.Micro.Contrib.Controller
     where TItem : IScreen
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
-                                      [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
+                                      [NotNull] [ItemNotNull] params IRoutine[] routines)
       : base(screenFactory,
-             controllerRoutines) {}
+             routines) {}
 
     [NotNull]
     public virtual IEnumerable<IInterceptConductorEvents> ConductorEventInterceptors => this.Routines.OfType<IInterceptConductorEvents>();

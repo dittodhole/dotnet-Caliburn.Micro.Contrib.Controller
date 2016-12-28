@@ -7,25 +7,26 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller
 {
   [PublicAPI]
-  public abstract class ControllerBase : IInterceptScreenEvents,
+  public abstract class ControllerBase : IController,
+                                         IInterceptScreenEvents,
                                          IDisposable
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] IScreenFactory screenFactory,
-                             [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
+                             [NotNull] [ItemNotNull] params IRoutine[] routines)
     {
       if (screenFactory == null)
       {
         throw new ArgumentNullException(nameof(screenFactory));
       }
-      if (controllerRoutines == null)
+      if (routines == null)
       {
-        throw new ArgumentNullException(nameof(controllerRoutines));
+        throw new ArgumentNullException(nameof(routines));
       }
       this.ScreenFactory = screenFactory;
 
-      foreach (var controllerRoutine in controllerRoutines)
+      foreach (var controllerRoutine in routines)
       {
         this.RegisterRoutine(controllerRoutine);
       }
@@ -40,7 +41,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     [ItemNotNull]
-    public virtual ICollection<ControllerRoutineBase> Routines { get; } = new List<ControllerRoutineBase>();
+    public virtual ICollection<IRoutine> Routines { get; } = new List<IRoutine>();
 
     public virtual void Dispose()
     {
@@ -99,7 +100,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="routine" /> is <see langword="null" /></exception>
     [NotNull]
-    public virtual T RegisterRoutine<T>([NotNull] T routine) where T : ControllerRoutineBase
+    public virtual T RegisterRoutine<T>([NotNull] T routine) where T : IRoutine
     {
       if (routine == null)
       {
@@ -112,7 +113,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="routine" /> is <see langword="null" /></exception>
-    public virtual bool UnregisterRoutine<T>([NotNull] T routine) where T : ControllerRoutineBase
+    public virtual bool UnregisterRoutine<T>([NotNull] T routine) where T : IRoutine
     {
       if (routine == null)
       {
@@ -123,7 +124,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
-    public virtual void RegisterRoutines<T>([NotNull] [ItemNotNull] IEnumerable<T> routines) where T : ControllerRoutineBase
+    public virtual void RegisterRoutines<T>([NotNull] [ItemNotNull] IEnumerable<T> routines) where T : IRoutine
     {
       if (routines == null)
       {
@@ -142,11 +143,11 @@ namespace Caliburn.Micro.Contrib.Controller
     where TScreen : IScreen
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] IScreenFactory screenFactory,
-                             [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
+                             [NotNull] [ItemNotNull] params IRoutine[] routines)
       : base(screenFactory,
-             controllerRoutines) {}
+             routines) {}
 
     public override Type GetScreenType(object options = null) => typeof(TScreen);
 
