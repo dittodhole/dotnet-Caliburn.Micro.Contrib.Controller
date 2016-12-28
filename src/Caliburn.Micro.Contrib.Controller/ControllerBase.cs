@@ -6,8 +6,8 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller
 {
   [PublicAPI]
-  public abstract class ControllerBase : IDisposable,
-                                         IInterceptScreenEvents
+  public abstract class ControllerBase : IInterceptScreenEvents,
+                                         IDisposable
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
