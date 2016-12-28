@@ -95,14 +95,14 @@ namespace Caliburn.Micro.Contrib.Controller
       controllerMethodInvocations = controllerMethodInvocations.Where(arg =>
                                                                       {
                                                                         var controllerMethodInfo = arg.ControllerMethodInfo;
-                                                                        var controllerMethodParameterTypes = controllerMethodInfo.GetParameters()
-                                                                                                                                 .Skip(1)
-                                                                                                                                 .Select(parameterInfo => parameterInfo.ParameterType)
-                                                                                                                                 .ToArray();
+                                                                        var screenMethodParameterTypes = controllerMethodInfo.GetParameters()
+                                                                                                                             .Skip(1)
+                                                                                                                             .Select(parameterInfo => parameterInfo.ParameterType)
+                                                                                                                             .ToArray();
                                                                         var returnType = controllerMethodInfo.ReturnType;
 
-                                                                        var result = controllerMethodInfo.DoesSignatureMatch(returnType,
-                                                                                                                             controllerMethodParameterTypes);
+                                                                        var result = screenMethod.DoesSignatureMatch(returnType,
+                                                                                                                     screenMethodParameterTypes);
 
                                                                         return result;
                                                                       })
