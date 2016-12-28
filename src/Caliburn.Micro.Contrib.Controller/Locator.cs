@@ -1,8 +1,10 @@
 ﻿using System;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public interface ILocator<T>
     where T : class
   {
@@ -10,6 +12,11 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     T Locate();
+
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
+    TInstance Locate<TInstance>() where TInstance : T;
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="type" /> is neither of type <typeparamref name="T" /> nor implements it.</exception>
@@ -43,8 +50,27 @@ namespace Caliburn.Micro.Contrib.Controller
       return instance;
     }
 
+    public virtual TInstance Locate<TInstance>() where TInstance : T
+    {
+      var type = typeof(TInstance);
+      var obj = this.Locate(type);
+      var instance = (TInstance) obj;
+
+      return instance;
+    }
+
     public virtual T Locate(Type type)
     {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+      if (!type.IsDescendantOrMatches<T>())
+      {
+        throw new ArgumentOutOfRangeException(nameof(type),
+                                              $"{nameof(type)} is neither of type {typeof(T)} nor implements it.");
+      }
+
       var obj = IoC.GetInstance(type,
                                 null);
       var instance = (T) obj;
