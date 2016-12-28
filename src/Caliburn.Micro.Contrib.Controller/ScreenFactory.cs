@@ -11,13 +11,14 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IScreenFactory
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
     IScreen Create([NotNull] Type screenType,
-                   [NotNull] IController controller,
-                   [CanBeNull] object options = null);
+                   [NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders,
+                   [NotNull] object interceptionTarget);
   }
 
   [PublicAPI]
@@ -33,28 +34,30 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     public virtual IScreen Create(Type screenType,
-                                  IController controller,
-                                  object options = null)
+                                  IEnumerable<IMixinProvider> mixinProviders,
+                                  object interceptionTarget)
     {
       if (screenType == null)
       {
         throw new ArgumentNullException(nameof(screenType));
       }
-      if (controller == null)
+      if (mixinProviders == null)
       {
-        throw new ArgumentNullException(nameof(controller));
+        throw new ArgumentNullException(nameof(mixinProviders));
+      }
+      if (interceptionTarget == null)
+      {
+        throw new ArgumentNullException(nameof(interceptionTarget));
       }
 
-      var interceptor = new RerouteToControllerInterceptor(controller,
-                                                           screenType);
+      var interceptor = new RerouteBasedOnScreenMethodLinkAttributeInterceptor(interceptionTarget);
 
-      var mixinProviders = this.GetMixinProviders(controller);
       var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
-      var mixinInstances = this.GetMixinInstances(mixinProviders,
-                                                  options);
+      var mixinInstances = this.GetMixinInstances(mixinProviders);
       var customAttributeBuilders = this.GetCustomAttributeBuilders(mixinProviders);
 
       var screen = this.CreateInternal(screenType,
@@ -78,27 +81,6 @@ namespace Caliburn.Micro.Contrib.Controller
       screen.Deactivated += onDeactived;
 
       return screen;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    protected virtual IMixinProvider[] GetMixinProviders([NotNull] IController controller)
-    {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-
-      var mixinProviders = new object[]
-                           {
-                             controller
-                           }.Concat(controller.Routines)
-                            .OfType<IMixinProvider>()
-                            .ToArray();
-
-      return mixinProviders;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
@@ -139,8 +121,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     [ItemNotNull]
-    protected virtual object[] GetMixinInstances([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders,
-                                                 [CanBeNull] object options = null)
+    protected virtual object[] GetMixinInstances([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)
       {
@@ -171,16 +152,10 @@ namespace Caliburn.Micro.Contrib.Controller
                                                  {
                                                    var mixinType = arg.GenericArguments.Single();
                                                    var mixinInstance = arg.MethodInfos.Single(methodInfo => methodInfo.DoesSignatureMatch(mixinType,
-                                                                                                                                          new[]
-                                                                                                                                          {
-                                                                                                                                            typeof(object)
-                                                                                                                                          },
+                                                                                                                                          new Type[0],
                                                                                                                                           nameof(IMixinInstance<object>.CreateMixinInstance)))
                                                                           .Invoke(arg.MixinProvider,
-                                                                                  new[]
-                                                                                  {
-                                                                                    options
-                                                                                  });
+                                                                                  null);
 
                                                    return mixinInstance;
                                                  })

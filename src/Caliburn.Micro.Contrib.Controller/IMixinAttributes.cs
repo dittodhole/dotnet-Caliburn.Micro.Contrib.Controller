@@ -6,8 +6,8 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IMixinAttributes : IMixinProvider
   {
     [Pure]
-    [ItemNotNull]
     [NotNull]
+    [ItemNotNull]
     CustomAttributeBuilder[] GetCustomAttributeBuilders();
   }
 }

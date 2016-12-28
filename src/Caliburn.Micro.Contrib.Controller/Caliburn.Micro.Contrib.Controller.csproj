@@ -105,15 +105,13 @@
     <Compile Include="IMixinInterface.cs" />
     <Compile Include="Locator.cs" />
     <Compile Include="Intercept.cs" />
-    <Compile Include="IInterceptConductorEvents.cs" />
-    <Compile Include="IInterceptScreenEvents.cs" />
     <Compile Include="IMixinProvider.cs" />
     <Compile Include="IMixinAttributes.cs" />
     <Compile Include="WeakCollection.cs" />
     <Compile Include="ScreenFactory.cs" />
     <Compile Include="ScreenMethodLinkAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RerouteToControllerInterceptor.cs" />
+    <Compile Include="RerouteBasedOnScreenMethodLinkAttributeInterceptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Caliburn.Micro.Contrib.Controller.nuspec" />

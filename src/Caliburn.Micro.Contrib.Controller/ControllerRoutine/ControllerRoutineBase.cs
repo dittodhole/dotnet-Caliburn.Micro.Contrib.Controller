@@ -1,15 +1,10 @@
 ﻿using System;
-using JetBrains.Annotations;
+using System.Threading.Tasks;
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
-  [PublicAPI]
-  public abstract class ControllerRoutineBase : IRoutine,
-                                                IInterceptScreenEvents,
-                                                IDisposable
+  public abstract class ControllerRoutineBase : IRoutine
   {
-    public virtual void Dispose() {}
-
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     public virtual void OnInitialize(IScreen screen)
     {
@@ -40,8 +35,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    public virtual void OnViewReady(IScreen screen,
-                                    object view)
+    public virtual async Task OnViewReadyAsync(IScreen screen,
+                                               object view)
     {
       if (screen == null)
       {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
@@ -9,18 +10,31 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class BlockingRoutine : ControllerRoutineBase,
                                  IMixinInstance<BlockingRoutine.ICanBeBlocked>,
-                                 IMixinInterface<BlockingRoutine.ICanBeBlocked>
+                                 IMixinInterface<BlockingRoutine.ICanBeBlocked>,
+                                 IDisposable
   {
     [NotNull]
     private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
 
-    public override void OnViewReady(IScreen screen,
-                                     object view)
+    public void Dispose()
     {
-      base.OnViewReady(screen,
-                       view);
+      this.DisposeActions.Dispose();
+    }
 
-      var dependencyObject = (DependencyObject) view;
+    public virtual ICanBeBlocked CreateMixinInstance()
+    {
+      var instance = new CanBeBlocked();
+
+      return instance;
+    }
+
+    public override async Task OnViewReadyAsync(IScreen screen,
+                                                object view)
+    {
+      await base.OnViewReadyAsync(screen,
+                                  view)
+                .ConfigureAwait(false);
+
       var binding = new Binding
                     {
                       Path = new PropertyPath(nameof(ICanBeBlocked.IsBlocked)),
@@ -28,9 +42,15 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                       Converter = new NegateBoolConverter()
                     };
 
-      BindingOperations.SetBinding(dependencyObject,
-                                   UIElement.IsEnabledProperty,
-                                   binding);
+      await Execute.OnUIThreadAsync(() =>
+                                    {
+                                      var dependencyObject = (DependencyObject) view;
+
+                                      BindingOperations.SetBinding(dependencyObject,
+                                                                   UIElement.IsEnabledProperty,
+                                                                   binding);
+                                    })
+                   .ConfigureAwait(false);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -64,18 +84,6 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       }
 
       return result;
-    }
-
-    public override void Dispose()
-    {
-      this.DisposeActions.Dispose();
-    }
-
-    public virtual ICanBeBlocked CreateMixinInstance(object options = null)
-    {
-      var instance = new CanBeBlocked();
-
-      return instance;
     }
 
     public interface ICanBeBlocked

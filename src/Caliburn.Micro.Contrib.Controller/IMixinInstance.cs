@@ -7,6 +7,6 @@ namespace Caliburn.Micro.Contrib.Controller
     [UsedImplicitly]
     [Pure]
     [NotNull]
-    T CreateMixinInstance([CanBeNull] object options = null);
+    T CreateMixinInstance();
   }
 }

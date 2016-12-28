@@ -23,8 +23,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                    [CanBeNull] IDictionary<string, object> settings = null) where TController : IController;
   }
 
-  public class ControllerManager : IControllerManager,
-                                   IDisposable
+  public class ControllerManager : IControllerManager
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="windowManagerLocator" /> is <see langword="null" /></exception>
@@ -55,7 +54,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                         object context = null,
                                                                         IDictionary<string, object> settings = null) where TController : IController
     {
-      var controller = this.CreateController<TController>();
+      var controller = this.ControllerLocator.Locate<TController>();
       var screen = controller.CreateScreen(options);
       if (screen == null)
       {
@@ -78,7 +77,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                         object context = null,
                                                                         IDictionary<string, object> settings = null) where TController : IController
     {
-      var controller = this.CreateController<TController>();
+      var controller = this.ControllerLocator.Locate<TController>();
       var screen = controller.CreateScreen(options);
       if (screen == null)
       {
@@ -91,19 +90,6 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                    context,
                                                                    settings))
                    .ConfigureAwait(false);
-
-      return controller;
-    }
-
-    public virtual void Dispose() {}
-
-    /// <exception cref="Exception" />
-    [NotNull]
-    public virtual TController CreateController<TController>() where TController : IController
-    {
-      var type = typeof(TController);
-      var obj = this.ControllerLocator.Locate(type);
-      var controller = (TController) obj;
 
       return controller;
     }
