@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -35,15 +36,15 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     [ItemNotNull]
-    public virtual IEnumerable<ControllerRoutineBase> Routines => this.ControllerRoutines;
+    public virtual IEnumerable<IInterceptScreenEvents> ScreenEventInterceptors => this.Routines.OfType<IInterceptScreenEvents>();
 
     [NotNull]
     [ItemNotNull]
-    private ICollection<ControllerRoutineBase> ControllerRoutines { get; } = new List<ControllerRoutineBase>();
+    public virtual ICollection<ControllerRoutineBase> Routines { get; } = new List<ControllerRoutineBase>();
 
     public virtual void Dispose()
     {
-      this.ControllerRoutines.Clear();
+      this.Routines.Clear();
     }
 
     [UsedImplicitly]
@@ -96,40 +97,40 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     public abstract Type GetScreenType([CanBeNull] object options = null);
 
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="routine" /> is <see langword="null" /></exception>
     [NotNull]
-    public virtual T RegisterRoutine<T>([NotNull] T controllerRoutine) where T : ControllerRoutineBase
+    public virtual T RegisterRoutine<T>([NotNull] T routine) where T : ControllerRoutineBase
     {
-      if (controllerRoutine == null)
+      if (routine == null)
       {
-        throw new ArgumentNullException(nameof(controllerRoutine));
+        throw new ArgumentNullException(nameof(routine));
       }
 
-      this.ControllerRoutines.Add(controllerRoutine);
+      this.Routines.Add(routine);
 
-      return controllerRoutine;
+      return routine;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    public virtual bool UnregisterRoutine([NotNull] ControllerRoutineBase controllerRoutine)
+    /// <exception cref="ArgumentNullException"><paramref name="routine" /> is <see langword="null" /></exception>
+    public virtual bool UnregisterRoutine<T>([NotNull] T routine) where T : ControllerRoutineBase
     {
-      if (controllerRoutine == null)
+      if (routine == null)
       {
-        throw new ArgumentNullException(nameof(controllerRoutine));
+        throw new ArgumentNullException(nameof(routine));
       }
 
-      return this.ControllerRoutines.Remove(controllerRoutine);
+      return this.Routines.Remove(routine);
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
-    public virtual void RegisterRoutines([NotNull] [ItemNotNull] IEnumerable<ControllerRoutineBase> controllerRoutines)
+    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
+    public virtual void RegisterRoutines<T>([NotNull] [ItemNotNull] IEnumerable<T> routines) where T : ControllerRoutineBase
     {
-      if (controllerRoutines == null)
+      if (routines == null)
       {
-        throw new ArgumentNullException(nameof(controllerRoutines));
+        throw new ArgumentNullException(nameof(routines));
       }
 
-      foreach (var controllerRoutine in controllerRoutines)
+      foreach (var controllerRoutine in routines)
       {
         this.RegisterRoutine(controllerRoutine);
       }
@@ -200,10 +201,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.Routines)
+      foreach (var screenEventInterceptor in this.ScreenEventInterceptors)
       {
-        controllerRoutine.OnClose(screen,
-                                  dialogResult);
+        screenEventInterceptor.OnClose(screen,
+                                       dialogResult);
       }
     }
 
@@ -215,9 +216,9 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.Routines)
+      foreach (var screenEventInterceptor in this.ScreenEventInterceptors)
       {
-        controllerRoutine.OnInitialize(screen);
+        screenEventInterceptor.OnInitialize(screen);
       }
     }
 
@@ -235,10 +236,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(view));
       }
 
-      foreach (var controllerRoutine in this.Routines)
+      foreach (var screenEventInterceptor in this.ScreenEventInterceptors)
       {
-        controllerRoutine.OnViewReady(screen,
-                                      view);
+        screenEventInterceptor.OnViewReady(screen,
+                                           view);
       }
     }
 
@@ -250,9 +251,9 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.Routines)
+      foreach (var screenEventInterceptor in this.ScreenEventInterceptors)
       {
-        controllerRoutine.OnActivate(screen);
+        screenEventInterceptor.OnActivate(screen);
       }
     }
 
@@ -265,10 +266,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var controllerRoutine in this.Routines)
+      foreach (var screenEventInterceptor in this.ScreenEventInterceptors)
       {
-        controllerRoutine.OnDeactivate(screen,
-                                       close);
+        screenEventInterceptor.OnDeactivate(screen,
+                                            close);
       }
     }
 

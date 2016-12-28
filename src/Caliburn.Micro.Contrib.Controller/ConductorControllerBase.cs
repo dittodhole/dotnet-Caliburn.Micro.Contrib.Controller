@@ -20,7 +20,7 @@ namespace Caliburn.Micro.Contrib.Controller
              controllerRoutines) {}
 
     [NotNull]
-    public virtual IEnumerable<ConductorControllerRoutineBase> ConductorControllerRoutines => this.Routines.OfType<ConductorControllerRoutineBase>();
+    public virtual IEnumerable<IInterceptConductorEvents> ConductorEventInterceptors => this.Routines.OfType<IInterceptConductorEvents>();
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
@@ -62,10 +62,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(item));
       }
 
-      foreach (var conductorControllerRoutine in this.ConductorControllerRoutines)
+      foreach (var conductorEventInterceptor in this.ConductorEventInterceptors)
       {
-        conductorControllerRoutine.OnActivateItem(screen,
-                                                  item);
+        conductorEventInterceptor.OnActivateItem(screen,
+                                                 item);
       }
     }
 
@@ -80,11 +80,11 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var conductorControllerRoutine in this.ConductorControllerRoutines)
+      foreach (var conductorEventInterceptor in this.ConductorEventInterceptors)
       {
-        conductorControllerRoutine.OnDeactivateItem(screen,
-                                                    item,
-                                                    close);
+        conductorEventInterceptor.OnDeactivateItem(screen,
+                                                   item,
+                                                   close);
       }
     }
   }
