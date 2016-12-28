@@ -272,9 +272,29 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
     public new TScreen CreateScreen([CanBeNull] object options = null)
     {
-      var screen = (TScreen) this.CreateScreenImpl(options);
+      var screen = this.CreateConcreteScreenImpl(options);
+
+      return screen;
+    }
+
+    protected sealed override IScreen CreateScreenImpl(object options = null)
+    {
+      var screen = this.CreateConcreteScreenImpl(options);
+
+      return screen;
+    }
+
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
+    protected virtual TScreen CreateConcreteScreenImpl([CanBeNull] object options = null)
+    {
+      var screen = (TScreen) base.CreateScreenImpl(options);
 
       return screen;
     }
