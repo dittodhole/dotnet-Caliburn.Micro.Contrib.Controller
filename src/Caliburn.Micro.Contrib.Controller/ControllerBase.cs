@@ -268,9 +268,24 @@ namespace Caliburn.Micro.Contrib.Controller
                            }.Concat(this.Routines)
                             .OfType<IMixinProvider>()
                             .ToArray();
-      var screen = this.ScreenFactory.Create(screenType,
-                                             mixinProviders,
-                                             this);
+      var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       mixinProviders,
+                                                       this);
+
+      screen = this.BuildUp(screen,
+                            options);
+
+      return screen;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    public virtual TScreen BuildUp([NotNull] TScreen screen,
+                                   [CanBeNull] object options = null)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
 
       return screen;
     }
