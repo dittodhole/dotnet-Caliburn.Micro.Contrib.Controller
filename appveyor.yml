@@ -11,7 +11,7 @@ environment:
   proxy_project_name: Caliburn.Micro.Contrib.Controller.Proxy
   proxy_project_dir: '%solution_dir%%proxy_project_name%\'
   proxy_project_file: '%proxy_project_dir%%proxy_project_name%.csproj'
-  extras_project_name: Caliburn.Micro.Contrib.Controller.Extra
+  extras_project_name: Caliburn.Micro.Contrib.Controller.Extras
   extras_project_dir: '%solution_dir%%extras_project_name%\'
   extras_project_file: '%extras_project_dir%%extras_project_name%.csproj'
   autofac_project_name: Caliburn.Micro.Contrib.Controller.Autofac
