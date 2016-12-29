@@ -35,7 +35,7 @@ after_build:
 - cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
 - cmd: nuget pack "%autofac_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
-- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbol
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%proxy_project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%proxy_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"
