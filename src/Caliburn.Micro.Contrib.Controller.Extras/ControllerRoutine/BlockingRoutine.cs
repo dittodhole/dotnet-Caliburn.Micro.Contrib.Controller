@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
@@ -27,11 +28,12 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       return instance;
     }
 
-    public override void OnViewReady(IScreen screen,
-                                     object view)
+    public override async Task OnViewReadyAsync(IScreen screen,
+                                                object view)
     {
-      base.OnViewReady(screen,
-                       view);
+      await base.OnViewReadyAsync(screen,
+                                  view)
+                .ConfigureAwait(false);
 
       var binding = new Binding
                     {
@@ -40,11 +42,15 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                       Converter = new NegateBoolConverter()
                     };
 
-      var dependencyObject = (DependencyObject) view;
+      await Execute.OnUIThreadAsync(() =>
+                                    {
+                                      var dependencyObject = (DependencyObject) view;
 
-      BindingOperations.SetBinding(dependencyObject,
-                                   UIElement.IsEnabledProperty,
-                                   binding);
+                                      BindingOperations.SetBinding(dependencyObject,
+                                                                   UIElement.IsEnabledProperty,
+                                                                   binding);
+                                    })
+                   .ConfigureAwait(false);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
