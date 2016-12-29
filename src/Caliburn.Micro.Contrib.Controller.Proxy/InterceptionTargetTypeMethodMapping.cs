@@ -36,8 +36,13 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
     [Pure]
     [NotNull]
     [ItemNotNull]
-    public TargetMethod[] GetTargetMethods([NotNull] MethodInfo proxyMethodInfo)
+    public TargetMethod[] GetTargetMethods([NotNull] Type proxyType,
+                                           [NotNull] MethodInfo proxyMethodInfo)
     {
+      if (proxyType == null)
+      {
+        throw new ArgumentNullException(nameof(proxyType));
+      }
       if (proxyMethodInfo == null)
       {
         throw new ArgumentNullException(nameof(proxyMethodInfo));
@@ -61,7 +66,7 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
                                               }
 
                                               var proxiedType = proxiedTypeParameterInfo.ParameterType;
-                                              if (!proxyMethodInfo.ReflectedType.IsDescendant(proxiedType))
+                                              if (!proxyType.IsDescendantOrMatches(proxiedType))
                                               {
                                                 return false;
                                               }

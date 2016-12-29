@@ -38,7 +38,10 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
       }
 
       var proxyMethodInfo = invocation.Method;
-      var targetMethods = this.InterceptionTargetTypeMethodMapping.GetTargetMethods(proxyMethodInfo);
+      var proxy = invocation.Proxy;
+      var proxyType = proxy.GetType();
+      var targetMethods = this.InterceptionTargetTypeMethodMapping.GetTargetMethods(proxyType,
+                                                                                    proxyMethodInfo);
       if (!targetMethods.Any())
       {
         invocation.Proceed();
@@ -53,7 +56,7 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
 
         var proxyMethodParameters = invocation.Arguments;
         var targetMethodParameters = new object[proxyMethodParameters.Length + 1];
-        targetMethodParameters[0] = invocation.Proxy;
+        targetMethodParameters[0] = proxy;
         Array.Copy(proxyMethodParameters,
                    0,
                    targetMethodParameters,
