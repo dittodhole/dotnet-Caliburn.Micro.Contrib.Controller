@@ -279,6 +279,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [NotNull]
     public virtual TScreen BuildUp([NotNull] TScreen screen,
                                    [CanBeNull] object options = null)
     {
