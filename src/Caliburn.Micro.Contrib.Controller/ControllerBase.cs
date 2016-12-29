@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -105,8 +104,8 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(view));
       }
 
-      TaskEx.Run(() => this.OnViewReadyAsync((TScreen) screen,
-                                             view));
+      this.OnViewReady((TScreen) screen,
+                       view);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -207,8 +206,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     /// <remarks>Should be used for funky UI stuff (like initial validation, initial focus, ... stuff ... :beers:)</remarks>
-    public virtual async Task OnViewReadyAsync([NotNull] TScreen screen,
-                                               [NotNull] object view)
+    public virtual void OnViewReady([NotNull] TScreen screen,
+                                    [NotNull] object view)
     {
       if (screen == null)
       {
@@ -221,9 +220,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
       foreach (var routine in this.Routines)
       {
-        await routine.OnViewReadyAsync(screen,
-                                       view)
-                     .ConfigureAwait(false);
+        routine.OnViewReady(screen,
+                            view);
       }
     }
 
