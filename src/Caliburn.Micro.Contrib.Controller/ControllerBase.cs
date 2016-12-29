@@ -261,6 +261,14 @@ namespace Caliburn.Micro.Contrib.Controller
 
     public override IScreen CreateScreen(object options = null)
     {
+      var screen = this.CreateScreenImpl(options);
+
+      return screen;
+    }
+
+    [NotNull]
+    public virtual TScreen CreateScreenImpl([CanBeNull] object options = null)
+    {
       var screenType = this.GetScreenType(options);
       var mixinProviders = new object[]
                            {
