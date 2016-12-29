@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
-using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
+using Caliburn.Micro.Contrib.Controller.Proxy;
+using Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
@@ -25,6 +26,26 @@ namespace Caliburn.Micro.Contrib.Controller
   public class ScreenFactory : IScreenFactory,
                                IDisposable
   {
+    static ScreenFactory()
+    {
+      var locateTypeForModelType = ViewLocator.LocateTypeForModelType;
+      ViewLocator.LocateTypeForModelType = (modelType,
+                                            displayLocation,
+                                            context) =>
+                                           {
+                                             if (ProxyUtil.IsProxyType(modelType))
+                                             {
+                                               modelType = modelType.BaseType;
+                                             }
+
+                                             var viewType = locateTypeForModelType.Invoke(modelType,
+                                                                                          displayLocation,
+                                                                                          context);
+
+                                             return viewType;
+                                           };
+    }
+
     [NotNull]
     private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
 
@@ -54,7 +75,7 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(interceptionTarget));
       }
 
-      var interceptor = new RerouteBasedOnScreenMethodLinkAttributeInterceptor(interceptionTarget);
+      var interceptor = new InterceptProxyMethodAttributeBasedInterceptor(interceptionTarget);
 
       var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
       var mixinInstances = this.GetMixinInstances(mixinProviders);
@@ -64,6 +85,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                        additionalInterfaces,
                                        mixinInstances,
                                        customAttributeBuilders,
+                                       null,
                                        interceptor);
 
       this.Screens.Add(screen);
@@ -194,7 +216,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                              [NotNull] Type[] additionalInterfaces,
                                              [NotNull] object[] mixinInstances,
                                              [NotNull] CustomAttributeBuilder[] customAttributeBuilders,
-                                             [NotNull] IInterceptor interceptor)
+                                             [CanBeNull] object[] constructorParameters,
+                                             [NotNull] object interceptor)
     {
       if (screenType == null)
       {
@@ -229,10 +252,23 @@ namespace Caliburn.Micro.Contrib.Controller
 
       var proxyGenerator = new ProxyGenerator();
 
-      var proxy = proxyGenerator.CreateClassProxy(screenType,
-                                                  additionalInterfaces,
-                                                  proxyGenerationOptions,
-                                                  interceptor);
+      object proxy;
+      if (constructorParameters == null)
+      {
+        proxy = proxyGenerator.CreateClassProxy(screenType,
+                                                additionalInterfaces,
+                                                proxyGenerationOptions,
+                                                (IInterceptor) interceptor);
+      }
+      else
+      {
+        proxy = proxyGenerator.CreateClassProxy(screenType,
+                                                additionalInterfaces,
+                                                proxyGenerationOptions,
+                                                constructorParameters,
+                                                (IInterceptor) interceptor);
+      }
+
       var screen = (IScreen) proxy;
 
       return screen;

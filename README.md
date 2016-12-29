@@ -1,7 +1,7 @@
 ![Icon](https://raw.githubusercontent.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller/master/assets/noun_710304_cc.png)
 
 # dotnet-Caliburn.Micro.Contrib.Controller
-> Extend Caliburn.Micro's MVVM-implementation with a Controller - you'll get MVVM w/ Controller :beers:.
+> Extend Caliburn.Micro's MVVM-implementation with a Controller - you'll get 'MVVM w/ Controller' :beers:.
 
 **master** branch status
 [![Build status](https://ci.appveyor.com/api/projects/status/7kceqcal6m29lwx5?svg=true)](//ci.appveyor.com/project/dittodhole/dotnet-caliburn-micro-contrib-controller)
@@ -18,6 +18,11 @@ https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller
 
+[![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Proxy.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Proxy)
+https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Proxy
+
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.Proxy
+
 [![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Extras.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras)
 https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras
 
@@ -32,17 +37,22 @@ https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Autofac
 
     PM> nuget sources Add "dittodhole" https://www.myget.org/F/dittodhole/api/v3/index.json
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.svg)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller)
+[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.svg?style=flat-square)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller)
 https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller -pre
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Extras.svg)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras)
+[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Proxy.svg?style=flat-square)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Proxy)
+https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Proxy
+
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.Proxy -pre
+
+[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Extras.svg?style=flat-square)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras)
 https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller.Extras -pre
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Autofac.svg)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac)
+[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Autofac.svg?style=flat-square)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac)
 https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller.Autofac -pre

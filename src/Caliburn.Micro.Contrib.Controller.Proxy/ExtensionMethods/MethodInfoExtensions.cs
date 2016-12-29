@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
+namespace Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods
 {
   public static class MethodInfoExtensions
   {

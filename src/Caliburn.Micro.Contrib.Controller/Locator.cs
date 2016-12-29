@@ -1,5 +1,5 @@
 ﻿using System;
-using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
+using Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller

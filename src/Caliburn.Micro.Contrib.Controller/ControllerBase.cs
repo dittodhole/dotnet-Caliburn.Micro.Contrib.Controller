@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.Proxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -92,7 +93,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = "OnViewReady", CallBase = true)]
+    [InterceptProxyMethod(MethodName = "OnViewReady", CallBase = true)]
     internal void OnViewReady([NotNull] IScreen screen,
                               [NotNull] object view)
     {
@@ -112,7 +113,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = "OnActivate", CallBase = true)]
+    [InterceptProxyMethod(MethodName = "OnActivate", CallBase = true)]
     internal void OnActivate([NotNull] IScreen screen)
     {
       if (screen == null)
@@ -126,7 +127,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = "OnDeactivate", CallBase = true)]
+    [InterceptProxyMethod(MethodName = "OnDeactivate", CallBase = true)]
     internal void OnDeactivate([NotNull] IScreen screen,
                                bool close)
     {
@@ -142,7 +143,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = "OnInitialize", CallBase = true)]
+    [InterceptProxyMethod(MethodName = "OnInitialize", CallBase = true)]
     internal void OnInitialize([NotNull] IScreen screen)
     {
       if (screen == null)
@@ -156,7 +157,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IClose.TryClose), CallBase = true)]
+    [InterceptProxyMethod(MethodName = nameof(IClose.TryClose), CallBase = true)]
     internal void OnClose([NotNull] IScreen screen,
                           bool? dialogResult = null)
     {

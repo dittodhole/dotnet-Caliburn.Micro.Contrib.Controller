@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.Proxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -21,7 +22,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
+    [InterceptProxyMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     internal void OnActivateItem([NotNull] IScreen screen,
                                  [NotNull] IScreen item)
     {
@@ -42,7 +43,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
+    [InterceptProxyMethod(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
     internal void OnDeactivateItem([NotNull] IScreen screen,
                                    [NotNull] IScreen item,
                                    bool close)
