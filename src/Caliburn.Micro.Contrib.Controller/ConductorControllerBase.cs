@@ -1,35 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.Proxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
   [PublicAPI]
-  public abstract class ConductorControllerBase<TScreen, TItem> : ControllerBase<TScreen>,
-                                                                  IInterceptConductorEvents
+  public abstract class ConductorControllerBase<TScreen, TItem> : ControllerBase<TScreen>
     where TScreen : IScreen
     where TItem : IScreen
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutines" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
-                                      [NotNull] [ItemNotNull] params ControllerRoutineBase[] controllerRoutines)
+                                      [NotNull] [ItemNotNull] params IRoutine[] routines)
       : base(screenFactory,
-             controllerRoutines) {}
-
-    [NotNull]
-    public virtual IEnumerable<ConductorControllerRoutineBase> ConductorControllerRoutines => this.Routines.OfType<ConductorControllerRoutineBase>();
+             routines) {}
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IConductor.ActivateItem))]
-    public virtual void OnActivateItem(IScreen screen,
-                                       IScreen item)
+    [InterceptProxyMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
+    internal void OnActivateItem([NotNull] IScreen screen,
+                                 [NotNull] IScreen item)
     {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+      if (item == null)
+      {
+        throw new ArgumentNullException(nameof(item));
+      }
+
       this.OnActivateItem((TScreen) screen,
                           (TItem) item);
     }
@@ -38,11 +43,20 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [ScreenMethodLink(MethodName = nameof(IConductor.DeactivateItem))]
-    public virtual void OnDeactivateItem(IScreen screen,
-                                         IScreen item,
-                                         bool close)
+    [InterceptProxyMethod(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
+    internal void OnDeactivateItem([NotNull] IScreen screen,
+                                   [NotNull] IScreen item,
+                                   bool close)
     {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+      if (item == null)
+      {
+        throw new ArgumentNullException(nameof(item));
+      }
+
       this.OnDeactivateItem((TScreen) screen,
                             (TItem) item,
                             close);
@@ -62,10 +76,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(item));
       }
 
-      foreach (var conductorControllerRoutine in this.ConductorControllerRoutines)
+      foreach (var routine in this.Routines.OfType<ConductorControllerRoutineBase>())
       {
-        conductorControllerRoutine.OnActivateItem(screen,
-                                                  item);
+        routine.OnActivateItem(screen,
+                               item);
       }
     }
 
@@ -80,11 +94,11 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var conductorControllerRoutine in this.ConductorControllerRoutines)
+      foreach (var routine in this.Routines.OfType<ConductorControllerRoutineBase>())
       {
-        conductorControllerRoutine.OnDeactivateItem(screen,
-                                                    item,
-                                                    close);
+        routine.OnDeactivateItem(screen,
+                                 item,
+                                 close);
       }
     }
   }

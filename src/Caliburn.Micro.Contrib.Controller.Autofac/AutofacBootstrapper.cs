@@ -10,7 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
   public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
-    where TRootController : ControllerBase
+    where TRootController : IController
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
 
@@ -46,7 +46,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
-               .As<ControllerRoutineBase>()
+               .As<IRoutine>()
                .InstancePerDependency();
       }
     }
@@ -81,7 +81,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
     protected async Task<TController> DisplayViewFor<TController>([CanBeNull] object options = null,
                                                                   [CanBeNull] object context = null,
-                                                                  [CanBeNull] IDictionary<string, object> settings = null) where TController : ControllerBase
+                                                                  [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
     {
       var controllerManager = IoC.Get<IControllerManager>();
       var controller = await controllerManager.ShowWindowAsync<TController>(options,

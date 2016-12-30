@@ -3,27 +3,22 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
+namespace Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods
 {
   public static class MethodInfoExtensions
   {
     /// <exception cref="ArgumentNullException"><paramref name="methodInfo" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="name" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="returnType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="parameterTypes" /> is <see langword="null" /></exception>
     [Pure]
     public static bool DoesSignatureMatch([NotNull] this MethodInfo methodInfo,
-                                          [NotNull] string name,
                                           [NotNull] Type returnType,
-                                          [NotNull] [ItemNotNull] Type[] parameterTypes)
+                                          [NotNull] [ItemNotNull] Type[] parameterTypes,
+                                          [CanBeNull] string name = null)
     {
       if (methodInfo == null)
       {
         throw new ArgumentNullException(nameof(methodInfo));
-      }
-      if (name == null)
-      {
-        throw new ArgumentNullException(nameof(name));
       }
       if (returnType == null)
       {
@@ -34,10 +29,14 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
         throw new ArgumentNullException(nameof(parameterTypes));
       }
 
-      if (methodInfo.Name != name)
+      if (name != null)
       {
-        return false;
+        if (methodInfo.Name != name)
+        {
+          return false;
+        }
       }
+
       if (methodInfo.ReturnType != returnType)
       {
         return false;

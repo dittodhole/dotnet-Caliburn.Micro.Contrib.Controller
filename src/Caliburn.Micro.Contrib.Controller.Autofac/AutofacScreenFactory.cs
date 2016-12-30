@@ -7,22 +7,18 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
-using Castle.DynamicProxy;
 using JetBrains.Annotations;
+using TypeExtensions = Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods.TypeExtensions;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
   public class AutofacScreenFactory : ScreenFactory
   {
-    protected const BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
     protected const string GetConstructorBindingsMethodName = "GetConstructorBindings";
 
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="mixinLocator" /> is <see langword="null" /></exception>
-    public AutofacScreenFactory([NotNull] ILifetimeScope lifetimeScope,
-                                [NotNull] ILocator<object> mixinLocator)
-      : base(mixinLocator)
+    public AutofacScreenFactory([NotNull] ILifetimeScope lifetimeScope)
     {
       if (lifetimeScope == null)
       {
@@ -53,47 +49,33 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
                                               Type[] additionalInterfaces,
                                               object[] mixinInstances,
                                               CustomAttributeBuilder[] customAttributeBuilders,
-                                              IInterceptor interceptor)
+                                              object[] constructorParameters,
+                                              object interceptor)
     {
-      object[] constructorArguments;
-
-      IComponentRegistration registration;
-      var service = new TypedService(screenType);
-      if (this.LifetimeScope.ComponentRegistry.TryGetRegistration(service,
-                                                                  out registration))
+      if (constructorParameters == null)
       {
-        constructorArguments = this.GetResolvedConstructorArgumentsFromRegistration(screenType,
-                                                                                    registration);
-      }
-      else
-      {
-        constructorArguments = null;
-      }
-
-      var proxyGenerationOptions = new ProxyGenerationOptions();
-      foreach (var mixinInstance in mixinInstances)
-      {
-        proxyGenerationOptions.AddMixinInstance(mixinInstance);
-      }
-      foreach (var customAttributeBuilder in customAttributeBuilders)
-      {
-        proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
+        IComponentRegistration registration;
+        var service = new TypedService(screenType);
+        if (this.LifetimeScope.ComponentRegistry.TryGetRegistration(service,
+                                                                    out registration))
+        {
+          constructorParameters = this.GetResolvedConstructorArgumentsFromRegistration(screenType,
+                                                                                       registration);
+        }
+        else
+        {
+          constructorParameters = null;
+        }
       }
 
-      var proxyGenerator = new ProxyGenerator();
+      var screen = base.CreateInternal(screenType,
+                                       additionalInterfaces,
+                                       mixinInstances,
+                                       customAttributeBuilders,
+                                       constructorParameters,
+                                       interceptor);
 
-      var proxy = proxyGenerator.CreateClassProxy(screenType,
-                                                  additionalInterfaces,
-                                                  proxyGenerationOptions,
-                                                  constructorArguments,
-                                                  interceptor);
-
-      var screen = (IScreen) proxy;
-
-      if (registration != null)
-      {
-        this.LifetimeScope.InjectProperties(screen);
-      }
+      this.LifetimeScope.InjectProperties(screen);
 
       return screen;
     }
@@ -134,7 +116,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       var constructors = reflectionActivator.ConstructorFinder.FindConstructors(screenType);
 
       var constructorBindings = (IEnumerable<ConstructorParameterBinding>) activatorType.GetMethod(AutofacScreenFactory.GetConstructorBindingsMethodName,
-                                                                                                   AutofacScreenFactory.DefaultBindingFlags)
+                                                                                                   TypeExtensions.DefaultBindingFlags)
                                                                                         .Invoke(reflectionActivator,
                                                                                                 new object[]
                                                                                                 {

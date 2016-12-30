@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Caliburn.Micro.Contrib.Controller")]
-[assembly: AssemblyDescription("Extend Caliburn.Micro's MVVM-implementation with a Controller - you'll get 'MVVM w/ Controller' :beers:.")]
+[assembly: AssemblyTitle("Caliburn.Micro.Contrib.Controller.Proxy")]
+[assembly: AssemblyDescription("Provides proxy implementations for the 'MVVM w/ Controller' pattern.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Andreas Niedermair (@dittodhole)")]
-[assembly: AssemblyProduct("Caliburn.Micro.Contrib.Controller")]
+[assembly: AssemblyProduct("Caliburn.Micro.Contrib.Controller.Proxy")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,4 +21,4 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid("f81eced7-dd29-4ff2-8aca-8dee7370ce3d")]
+[assembly: Guid("940e320a-8f5f-4f12-ade8-46826e458c4d")]

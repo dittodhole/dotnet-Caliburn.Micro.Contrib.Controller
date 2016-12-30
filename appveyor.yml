@@ -8,6 +8,9 @@ environment:
   project_name: '%solution_name%'
   project_dir: '%solution_dir%%project_name%\'
   project_file: '%project_dir%%project_name%.csproj'
+  proxy_project_name: Caliburn.Micro.Contrib.Controller.Proxy
+  proxy_project_dir: '%solution_dir%%proxy_project_name%\'
+  proxy_project_file: '%proxy_project_dir%%proxy_project_name%.csproj'
   extras_project_name: Caliburn.Micro.Contrib.Controller.Extras
   extras_project_dir: '%solution_dir%%extras_project_name%\'
   extras_project_file: '%extras_project_dir%%extras_project_name%.csproj'
@@ -28,10 +31,13 @@ build:
   verbosity: detailed
 after_build:
 - cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -symbols
+- cmd: nuget pack "%proxy_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
 - cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
 - cmd: nuget pack "%autofac_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%proxy_project_name%.%GitVersion_NuGetVersion%.nupkg"
+- cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%proxy_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%extras_project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%autofac_project_name%.%GitVersion_NuGetVersion%.nupkg"

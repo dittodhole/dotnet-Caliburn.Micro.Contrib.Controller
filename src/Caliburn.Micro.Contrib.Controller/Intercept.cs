@@ -9,10 +9,10 @@ namespace Caliburn.Micro.Contrib.Controller
   public static class Intercept<TScreen>
     where TScreen : IScreen
   {
-    public interface IHandle : IScreenMixin<Micro.IHandle> {}
+    public interface IHandle : IMixinInterface<Micro.IHandle> {}
 
     public interface IHandle<TMessage> : IHandle,
-                                         IScreenMixin<Micro.IHandle<TMessage>>
+                                         IMixinInterface<Micro.IHandle<TMessage>>
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
@@ -22,7 +22,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     public interface IHandleWithCoroutine<TMessage> : IHandle,
-                                                      IScreenMixin<Micro.IHandleWithCoroutine<TMessage>>
+                                                      IMixinInterface<Micro.IHandleWithCoroutine<TMessage>>
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
@@ -34,7 +34,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     public interface IHandleWithTask<TMessage> : IHandle,
-                                                 IScreenMixin<Micro.IHandleWithTask<TMessage>>
+                                                 IMixinInterface<Micro.IHandleWithTask<TMessage>>
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>

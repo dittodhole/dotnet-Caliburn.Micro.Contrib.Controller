@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller
+namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
-  public interface IInterceptScreenEvents
+  public interface IRoutine
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
@@ -25,8 +26,9 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     /// <remarks>Should be used for funky UI stuff (like initial validation, initial focus, ... stuff ... :beers:)</remarks>
-    void OnViewReady([NotNull] IScreen screen,
-                     [NotNull] object view);
+    [NotNull]
+    Task OnViewReadyAsync([NotNull] IScreen screen,
+                          [NotNull] object view);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />

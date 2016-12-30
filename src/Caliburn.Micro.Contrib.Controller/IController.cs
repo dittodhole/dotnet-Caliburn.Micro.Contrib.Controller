@@ -5,28 +5,15 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [PublicAPI]
-  public interface IController : IInterceptScreenEvents
+  public interface IController
   {
-    /// <exception cref="InvalidOperationException" />
-    [Pure]
-    [CanBeNull]
-    IScreen CreateScreen([CanBeNull] object options = null);
-
-    /// <exception cref="InvalidOperationException" />
-    [Pure]
-    [NotNull]
-    Type GetScreenType([CanBeNull] object options = null);
-
     [NotNull]
     [ItemNotNull]
-    IEnumerable<IControllerRoutine> Routines { get; }
+    ICollection<IRoutine> Routines { get; } // TODO
 
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception" />
+    [Pure]
     [NotNull]
-    T RegisterRoutine<T>([NotNull] T controllerRoutine) where T : IControllerRoutine;
-
-    /// <exception cref="ArgumentNullException"><paramref name="controllerRoutine" /> is <see langword="null" /></exception>
-    bool UnregisterRoutine([NotNull] IControllerRoutine controllerRoutine);
+    IScreen CreateScreen([CanBeNull] object options = null);
   }
 }
