@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
@@ -9,22 +8,23 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
   public sealed class InterceptProxyMethodAttributeBasedInterceptor : IInterceptor
   {
     /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
-    public InterceptProxyMethodAttributeBasedInterceptor([NotNull] object interceptionTarget)
+    public InterceptProxyMethodAttributeBasedInterceptor([NotNull] object interceptionTarget,
+                                                         [NotNull] InterceptionTargetTypeMethodMapping interceptionTargetTypeMethodMapping)
     {
       if (interceptionTarget == null)
       {
         throw new ArgumentNullException(nameof(interceptionTarget));
       }
+      if (interceptionTargetTypeMethodMapping == null)
+      {
+        throw new ArgumentNullException(nameof(interceptionTargetTypeMethodMapping));
+      }
       this.InterceptionTarget = interceptionTarget;
-      this.InterceptionTargetTypeMethodMapping = InterceptProxyMethodAttributeBasedInterceptor.InterceptionTargetTypeMethodMappings.GetOrAdd(interceptionTarget.GetType(),
-                                                                                                                                             InterceptionTargetTypeMethodMapping.Create);
+      this.InterceptionTargetTypeMethodMapping = interceptionTargetTypeMethodMapping;
     }
 
     [NotNull]
     private InterceptionTargetTypeMethodMapping InterceptionTargetTypeMethodMapping { get; }
-
-    [NotNull]
-    private static ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping> InterceptionTargetTypeMethodMappings { get; } = new ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping>();
 
     [NotNull]
     private object InterceptionTarget { get; }

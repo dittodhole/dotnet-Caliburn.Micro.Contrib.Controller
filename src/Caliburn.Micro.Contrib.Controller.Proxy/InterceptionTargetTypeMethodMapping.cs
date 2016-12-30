@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Proxy
 {
-  internal sealed class InterceptionTargetTypeMethodMapping
+  public sealed class InterceptionTargetTypeMethodMapping
   {
     /// <exception cref="ArgumentNullException"><paramref name="interceptionTargetType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="targetMethods" /> is <see langword="null" /></exception>
@@ -130,7 +130,7 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
       return interceptionTargetTypeMethodMapping;
     }
 
-    internal sealed class TargetMethod
+    public sealed class TargetMethod
     {
       /// <exception cref="ArgumentNullException"><paramref name="methodInfo" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="interceptProxyMethodAttribute" /> is <see langword="null" /></exception>

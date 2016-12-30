@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -49,6 +50,10 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
 
+    [NotNull]
+    private ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping> InterceptionTargetTypeMethodMappings { get; } = new ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping>();
+
+
     public virtual void Dispose()
     {
       this.Screens.Dispose();
@@ -75,7 +80,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(interceptionTarget));
       }
 
-      var interceptor = new InterceptProxyMethodAttributeBasedInterceptor(interceptionTarget);
+      var interceptionTargetTypeMethodMapping = this.InterceptionTargetTypeMethodMappings.GetOrAdd(interceptionTarget.GetType(),
+                                                                                                   InterceptionTargetTypeMethodMapping.Create);
+      var interceptor = new InterceptProxyMethodAttributeBasedInterceptor(interceptionTarget,
+                                                                          interceptionTargetTypeMethodMapping);
 
       var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
       var mixinInstances = this.GetMixinInstances(mixinProviders);
