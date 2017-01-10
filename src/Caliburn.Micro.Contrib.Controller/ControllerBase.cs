@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Proxy;
@@ -66,6 +67,11 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         this.RegisterRoutine(routine);
       }
+    }
+
+    public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
+    {
+      return TaskEx.FromResult<object>(null);
     }
   }
 
