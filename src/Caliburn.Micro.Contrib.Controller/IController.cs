@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -15,5 +17,8 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     IScreen CreateScreen([CanBeNull] object options = null);
+
+    [NotNull]
+    Task<object> GetResultAsync(CancellationToken cancellationToken);
   }
 }
