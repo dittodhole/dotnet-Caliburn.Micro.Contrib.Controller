@@ -63,7 +63,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <exception cref="TargetInvocationException">Thrown when constructor of type <paramref name="screenType" /> throws an exception.</exception>
+    /// <exception cref="ArgumentException">Thrown when no constructor exists on type <paramref name="screenType" /> with matching parameters.</exception>
     public virtual IScreen Create(Type screenType,
                                   IEnumerable<IMixinProvider> mixinProviders,
                                   object interceptionTarget)
@@ -138,16 +139,21 @@ namespace Caliburn.Micro.Contrib.Controller
                                                              {
                                                                LogTo.FatalException($"Could not get interfaces for {type}.",
                                                                                     targetInvocationException);
-                                                               return Enumerable.Empty<Type>();
+                                                               return Enumerable.Empty<GenericDefinition>();
                                                              }
 
                                                              var result = interfaces.Where(@interface => @interface.IsGenericType)
                                                                                     .Where(@interface => @interface.IsDescendant<IMixinProvider>())
-                                                                                    .Select(@interface => new
-                                                                                                          {
-                                                                                                            GenericTypeDefinition = @interface.GetGenericTypeDefinition(),
-                                                                                                            GenericArguments = @interface.GetGenericArguments()
-                                                                                                          })
+                                                                                    .Select(@interface =>
+                                                                                            {
+                                                                                              var genericTypeDefinition = @interface.GetGenericTypeDefinition();
+                                                                                              var genericArguments = @interface.GetGenericArguments();
+
+                                                                                              var genericDefinition = new GenericDefinition(genericTypeDefinition,
+                                                                                                                                            genericArguments);
+
+                                                                                              return genericDefinition;
+                                                                                            })
                                                                                     .Where(@interface => @interface.GenericTypeDefinition == typeof(IMixinInterface<>));
 
                                                              return result;
@@ -184,21 +190,25 @@ namespace Caliburn.Micro.Contrib.Controller
                                                        {
                                                          LogTo.FatalException($"Could not get interfaces for {type}.",
                                                                               targetInvocationException);
-                                                         return Enumerable.Empty<Type>();
-
+                                                         return Enumerable.Empty<MixinDefinition>();
                                                        }
 
                                                        var result = interfaces.Where(@interface => @interface.IsGenericType)
                                                                               .Where(@interface => @interface.IsDescendant<IMixinProvider>())
-                                                                              .Select(@interface => new
-                                                                                                    {
-                                                                                                      Type = type,
-                                                                                                      MethodInfos = methodInfos,
-                                                                                                      Interface = @interface,
-                                                                                                      GenericTypeDefinition = @interface.GetGenericTypeDefinition(),
-                                                                                                      GenericArguments = @interface.GetGenericArguments(),
-                                                                                                      MixinProvider = arg
-                                                                                                    })
+                                                                              .Select(@interface =>
+                                                                                      {
+                                                                                        var genericTypeDefinition = @interface.GetGenericTypeDefinition();
+                                                                                        var genericArguments = @interface.GetGenericArguments();
+
+                                                                                        var mixinDefinition = new MixinDefinition(type,
+                                                                                                                                  methodInfos,
+                                                                                                                                  @interface,
+                                                                                                                                  genericTypeDefinition,
+                                                                                                                                  genericArguments,
+                                                                                                                                  arg);
+
+                                                                                        return mixinDefinition;
+                                                                                      })
                                                                               .Where(@interface => @interface.GenericTypeDefinition == typeof(IMixinInstance<>));
 
                                                        return result;
@@ -206,14 +216,26 @@ namespace Caliburn.Micro.Contrib.Controller
                                          .Select(arg =>
                                                  {
                                                    var mixinType = arg.GenericArguments.Single();
-                                                   var mixinInstance = arg.MethodInfos.Single(methodInfo => methodInfo.DoesSignatureMatch(mixinType,
-                                                                                                                                          new Type[0],
-                                                                                                                                          nameof(IMixinInstance<object>.CreateMixinInstance)))
-                                                                          .Invoke(arg.MixinProvider,
-                                                                                  null);
+
+                                                   object mixinInstance;
+                                                   try
+                                                   {
+                                                     mixinInstance = arg.MethodInfos.SingleOrDefault(methodInfo => methodInfo.DoesSignatureMatch(mixinType,
+                                                                                                                                                 new Type[0],
+                                                                                                                                                 nameof(IMixinInstance<object>.CreateMixinInstance)))
+                                                                        ?.Invoke(arg.MixinProvider,
+                                                                                 null);
+                                                   }
+                                                   catch (TargetException targetException)
+                                                   {
+                                                     LogTo.FatalException($"Could not call {nameof(IMixinInstance<object>.CreateMixinInstance)}",
+                                                                          targetException);
+                                                     mixinInstance = null;
+                                                   }
 
                                                    return mixinInstance;
                                                  })
+                                         .Where(arg => arg != null)
                                          .ToArray();
 
       return mixinInstances;
@@ -306,6 +328,58 @@ namespace Caliburn.Micro.Contrib.Controller
       var screen = (IScreen) proxy;
 
       return screen;
+    }
+
+    private sealed class MixinDefinition
+    {
+      public MixinDefinition([NotNull] Type type,
+                             [NotNull] MethodInfo[] methodInfos,
+                             [NotNull] Type @interface,
+                             [NotNull] Type genericTypeDefinition,
+                             [NotNull] Type[] genericArguments,
+                             [NotNull] IMixinProvider mixinProvider)
+      {
+        this.Type = type;
+        this.MethodInfos = methodInfos;
+        this.Interface = @interface;
+        this.GenericTypeDefinition = genericTypeDefinition;
+        this.GenericArguments = genericArguments;
+        this.MixinProvider = mixinProvider;
+      }
+
+      [NotNull]
+      public Type Type { get; }
+
+      [NotNull]
+      public MethodInfo[] MethodInfos { get; }
+
+      [NotNull]
+      public Type Interface { get; }
+
+      [NotNull]
+      public Type GenericTypeDefinition { get; }
+
+      [NotNull]
+      public Type[] GenericArguments { get; }
+
+      [NotNull]
+      public IMixinProvider MixinProvider { get; }
+    }
+
+    private sealed class GenericDefinition
+    {
+      public GenericDefinition([NotNull] Type genericTypeDefinition,
+                               [NotNull] Type[] genericArguments)
+      {
+        this.GenericTypeDefinition = genericTypeDefinition;
+        this.GenericArguments = genericArguments;
+      }
+
+      [NotNull]
+      public Type GenericTypeDefinition { get; }
+
+      [NotNull]
+      public Type[] GenericArguments { get; }
     }
   }
 }

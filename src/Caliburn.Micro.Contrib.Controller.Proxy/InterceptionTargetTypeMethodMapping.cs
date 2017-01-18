@@ -33,6 +33,8 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
     [NotNull]
     private IDictionary<string, TargetMethod[]> TargetMethods { get; }
 
+    /// <exception cref="ArgumentNullException"><paramref name="proxyType"/> is <see langword="null"/></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="proxyMethodInfo"/> is <see langword="null"/></exception>
     [Pure]
     [NotNull]
     [ItemNotNull]

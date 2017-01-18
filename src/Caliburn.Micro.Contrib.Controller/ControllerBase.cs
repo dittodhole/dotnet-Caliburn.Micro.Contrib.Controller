@@ -40,6 +40,26 @@ namespace Caliburn.Micro.Contrib.Controller
       return TaskEx.FromResult<object>(null);
     }
 
+    /// <exception cref="ArgumentNullException">If <see cref="Type" /> returned by <see cref="GetScreenType" /> is <see langword="null" /></exception>
+    public virtual IScreen CreateScreen(object options = null)
+    {
+      var screenType = this.GetScreenType(options);
+      var mixinProviders = new object[]
+                           {
+                             this
+                           }.Concat(this.Routines)
+                            .OfType<IMixinProvider>()
+                            .ToArray();
+      var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       mixinProviders,
+                                                       this);
+
+      screen = this.BuildUp(screen,
+                            options);
+
+      return screen;
+    }
+
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
@@ -209,26 +229,6 @@ namespace Caliburn.Micro.Contrib.Controller
         routine.OnDeactivate(screen,
                              close);
       }
-    }
-
-    /// <exception cref="Exception" />
-    public virtual IScreen CreateScreen(object options = null)
-    {
-      var screenType = this.GetScreenType(options);
-      var mixinProviders = new object[]
-                           {
-                             this
-                           }.Concat(this.Routines)
-                            .OfType<IMixinProvider>()
-                            .ToArray();
-      var screen = (TScreen) this.ScreenFactory.Create(screenType,
-                                                       mixinProviders,
-                                                       this);
-
-      screen = this.BuildUp(screen,
-                            options);
-
-      return screen;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
