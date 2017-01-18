@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Anotar.LibLog;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
@@ -29,12 +30,11 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
     [NotNull]
     private object InterceptionTarget { get; }
 
-    /// <exception cref="ArgumentNullException"><paramref name="invocation" /> is <see langword="null" /></exception>
     public void Intercept(IInvocation invocation)
     {
       if (invocation == null)
       {
-        throw new ArgumentNullException(nameof(invocation));
+        return;
       }
 
       var proxyMethodInfo = invocation.Method;
@@ -65,8 +65,18 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
 
         foreach (var targetMethod in targetMethods)
         {
-          var returnValue = targetMethod.MethodInfo.Invoke(this.InterceptionTarget,
-                                                           targetMethodParameters);
+          object returnValue;
+          try
+          {
+            returnValue = targetMethod.MethodInfo.Invoke(this.InterceptionTarget,
+                                                         targetMethodParameters);
+          }
+          catch (Exception exception)
+          {
+            LogTo.FatalException($"Could not invoke {targetMethod.MethodInfo.Name}.",
+                                 exception);
+            continue;
+          }
 
           if (!callBase)
           {

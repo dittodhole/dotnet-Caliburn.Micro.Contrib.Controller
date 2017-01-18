@@ -2,7 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
+using Anotar.LibLog;
 using Caliburn.Micro.Contrib.Controller.Proxy;
 using Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods;
 using Castle.DynamicProxy;
@@ -52,7 +54,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     private ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping> InterceptionTargetTypeMethodMappings { get; } = new ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping>();
-
 
     public virtual void Dispose()
     {
@@ -127,7 +128,18 @@ namespace Caliburn.Micro.Contrib.Controller
       var additionalInterfaces = mixinProviders.SelectMany(arg =>
                                                            {
                                                              var type = arg.GetType();
-                                                             var interfaces = type.GetInterfaces();
+
+                                                             Type[] interfaces;
+                                                             try
+                                                             {
+                                                               interfaces = type.GetInterfaces();
+                                                             }
+                                                             catch (TargetInvocationException targetInvocationException)
+                                                             {
+                                                               LogTo.FatalException($"Could not get interfaces for {type}.",
+                                                                                    targetInvocationException);
+                                                               return Enumerable.Empty<Type>();
+                                                             }
 
                                                              var result = interfaces.Where(@interface => @interface.IsGenericType)
                                                                                     .Where(@interface => @interface.IsDescendant<IMixinProvider>())
@@ -161,8 +173,21 @@ namespace Caliburn.Micro.Contrib.Controller
       var mixinInstances = mixinProviders.SelectMany(arg =>
                                                      {
                                                        var type = arg.GetType();
+
+                                                       Type[] interfaces;
                                                        var methodInfos = type.GetMethods(TypeExtensions.DefaultBindingFlags);
-                                                       var interfaces = type.GetInterfaces();
+                                                       try
+                                                       {
+                                                         interfaces = type.GetInterfaces();
+                                                       }
+                                                       catch (TargetInvocationException targetInvocationException)
+                                                       {
+                                                         LogTo.FatalException($"Could not get interfaces for {type}.",
+                                                                              targetInvocationException);
+                                                         return Enumerable.Empty<Type>();
+
+                                                       }
+
                                                        var result = interfaces.Where(@interface => @interface.IsGenericType)
                                                                               .Where(@interface => @interface.IsDescendant<IMixinProvider>())
                                                                               .Select(@interface => new
@@ -217,7 +242,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="mixinInstances" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="customAttributeBuilders" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="interceptor" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <exception cref="TargetInvocationException">Thrown when constructor of type <paramref name="screenType" /> throws an exception.</exception>
+    /// <exception cref="T:System.ArgumentException">Thrown when no constructor exists on type <paramref name="screenType" /> with matching parameters.</exception>
     [Pure]
     [NotNull]
     protected virtual IScreen CreateInternal([NotNull] Type screenType,
