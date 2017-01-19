@@ -33,6 +33,8 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     private IScreenFactory ScreenFactory { get; }
 
+    [NotNull]
+    [ItemNotNull]
     public virtual ICollection<IRoutine> Routines { get; }
 
     public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
@@ -40,8 +42,15 @@ namespace Caliburn.Micro.Contrib.Controller
       return TaskEx.FromResult<object>(null);
     }
 
+    IScreen IController.CreateScreen(object options = null)
+    {
+      return this.CreateScreen(options);
+    }
+
     /// <exception cref="ArgumentNullException">If <see cref="Type" /> returned by <see cref="GetScreenType" /> is <see langword="null" /></exception>
-    public virtual IScreen CreateScreen(object options = null)
+    [Pure]
+    [NotNull]
+    public virtual TScreen CreateScreen([CanBeNull] object options = null)
     {
       var screenType = this.GetScreenType(options);
       var mixinProviders = new object[]
@@ -143,7 +152,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [Pure]
     [NotNull]
-    protected virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
+    public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     public virtual void OnClose([NotNull] TScreen screen,
