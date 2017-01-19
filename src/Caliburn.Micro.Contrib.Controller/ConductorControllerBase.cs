@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Proxy;
@@ -14,7 +15,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
-                                      [NotNull] [ItemNotNull] params IRoutine[] routines)
+                                      [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
       : base(screenFactory,
              routines) {}
 
