@@ -48,6 +48,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException">If <see cref="Type" /> returned by <see cref="GetScreenType" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception" />
     [Pure]
     [NotNull]
     public virtual TScreen CreateScreen([CanBeNull] object options = null)
