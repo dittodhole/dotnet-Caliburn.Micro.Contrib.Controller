@@ -35,7 +35,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [NotNull]
     [ItemNotNull]
-    public virtual ICollection<IRoutine> Routines { get; }
+    public virtual IEnumerable<IRoutine> Routines { get; }
 
     public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
     {
