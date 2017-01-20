@@ -42,7 +42,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return TaskEx.FromResult<object>(null);
     }
 
-    IScreen IController.CreateScreen(object options = null)
+    IScreen IController.CreateScreen(object options)
     {
       return this.CreateScreen(options);
     }
