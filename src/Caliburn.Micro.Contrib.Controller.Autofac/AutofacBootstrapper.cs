@@ -79,6 +79,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
+    /// <exception cref="Exception" />
     protected async Task<TController> DisplayViewFor<TController>([CanBeNull] object options = null,
                                                                   [CanBeNull] object context = null,
                                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController

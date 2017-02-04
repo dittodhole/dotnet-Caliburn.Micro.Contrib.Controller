@@ -1,4 +1,5 @@
 ﻿using System;
+using Anotar.LibLog;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras
@@ -20,8 +21,16 @@ namespace Caliburn.Micro.Contrib.Controller.Extras
 
     public void Dispose()
     {
-      this.Action?.Invoke(this);
-      this.Action = null;
+      try
+      {
+        this.Action?.Invoke(this);
+        this.Action = null;
+      }
+      catch (Exception exception)
+      {
+        LogTo.ErrorException($"Calling {nameof(this.Action)} raised an exception.",
+                             exception);
+      }
     }
   }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Anotar.LibLog;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Proxy;
 using JetBrains.Annotations;
@@ -166,8 +167,16 @@ namespace Caliburn.Micro.Contrib.Controller
 
       foreach (var routine in this.Routines)
       {
-        routine.OnClose(screen,
-                        dialogResult);
+        try
+        {
+          routine.OnClose(screen,
+                          dialogResult);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnClose)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
       }
     }
 
@@ -182,7 +191,15 @@ namespace Caliburn.Micro.Contrib.Controller
 
       foreach (var routine in this.Routines)
       {
-        routine.OnInitialize(screen);
+        try
+        {
+          routine.OnInitialize(screen);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnInitialize)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
       }
     }
 
@@ -203,9 +220,17 @@ namespace Caliburn.Micro.Contrib.Controller
 
       foreach (var routine in this.Routines)
       {
-        await routine.OnViewReadyAsync(screen,
-                                       view)
-                     .ConfigureAwait(false);
+        try
+        {
+          await routine.OnViewReadyAsync(screen,
+                                         view)
+                       .ConfigureAwait(false);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnViewReadyAsync)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
       }
     }
 
@@ -220,7 +245,15 @@ namespace Caliburn.Micro.Contrib.Controller
 
       foreach (var routine in this.Routines)
       {
-        routine.OnActivate(screen);
+        try
+        {
+          routine.OnActivate(screen);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnActivate)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
       }
     }
 
@@ -236,8 +269,16 @@ namespace Caliburn.Micro.Contrib.Controller
 
       foreach (var routine in this.Routines)
       {
-        routine.OnDeactivate(screen,
-                             close);
+        try
+        {
+          routine.OnDeactivate(screen,
+                               close);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnDeactivate)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
       }
     }
 

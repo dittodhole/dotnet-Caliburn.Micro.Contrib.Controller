@@ -65,6 +65,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
     /// <exception cref="TargetInvocationException">Thrown when constructor of type <paramref name="screenType" /> throws an exception.</exception>
     /// <exception cref="ArgumentException">Thrown when no constructor exists on type <paramref name="screenType" /> with matching parameters.</exception>
+    /// <exception cref="Exception" />
     public virtual IScreen Create(Type screenType,
                                   IEnumerable<IMixinProvider> mixinProviders,
                                   object interceptionTarget)

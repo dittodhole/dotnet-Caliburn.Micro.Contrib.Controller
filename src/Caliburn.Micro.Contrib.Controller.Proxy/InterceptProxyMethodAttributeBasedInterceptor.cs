@@ -38,50 +38,57 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy
       }
 
       var proxyMethodInfo = invocation.Method;
-      var proxy = invocation.Proxy;
-      var proxyType = proxy.GetType();
-      var targetMethods = this.InterceptionTargetTypeMethodMapping.GetTargetMethods(proxyType,
-                                                                                    proxyMethodInfo);
-      if (!targetMethods.Any())
+      if (proxyMethodInfo == null)
       {
         invocation.Proceed();
       }
       else
       {
-        var callBase = targetMethods.Any(targetMethod => targetMethod.InterceptProxyMethodAttribute.CallBase);
-        if (callBase)
+        var proxy = invocation.Proxy;
+        var proxyType = proxy.GetType();
+        var targetMethods = this.InterceptionTargetTypeMethodMapping.GetTargetMethods(proxyType,
+                                                                                      proxyMethodInfo);
+        if (targetMethods.Any())
+        {
+          var callBase = targetMethods.Any(targetMethod => targetMethod.InterceptProxyMethodAttribute.CallBase);
+          if (callBase)
+          {
+            invocation.Proceed();
+          }
+
+          var proxyMethodParameters = invocation.Arguments;
+          var targetMethodParameters = new object[proxyMethodParameters.Length + 1];
+          targetMethodParameters[0] = proxy;
+          Array.Copy(proxyMethodParameters,
+                     0,
+                     targetMethodParameters,
+                     1,
+                     proxyMethodParameters.Length);
+
+          foreach (var targetMethod in targetMethods)
+          {
+            object returnValue;
+            try
+            {
+              returnValue = targetMethod.MethodInfo.Invoke(this.InterceptionTarget,
+                                                           targetMethodParameters);
+            }
+            catch (Exception exception)
+            {
+              LogTo.FatalException($"Could not invoke {targetMethod.MethodInfo.Name}.",
+                                   exception);
+              continue;
+            }
+
+            if (!callBase)
+            {
+              invocation.ReturnValue = returnValue;
+            }
+          }
+        }
+        else
         {
           invocation.Proceed();
-        }
-
-        var proxyMethodParameters = invocation.Arguments;
-        var targetMethodParameters = new object[proxyMethodParameters.Length + 1];
-        targetMethodParameters[0] = proxy;
-        Array.Copy(proxyMethodParameters,
-                   0,
-                   targetMethodParameters,
-                   1,
-                   proxyMethodParameters.Length);
-
-        foreach (var targetMethod in targetMethods)
-        {
-          object returnValue;
-          try
-          {
-            returnValue = targetMethod.MethodInfo.Invoke(this.InterceptionTarget,
-                                                         targetMethodParameters);
-          }
-          catch (Exception exception)
-          {
-            LogTo.FatalException($"Could not invoke {targetMethod.MethodInfo.Name}.",
-                                 exception);
-            continue;
-          }
-
-          if (!callBase)
-          {
-            invocation.ReturnValue = returnValue;
-          }
         }
       }
     }

@@ -28,6 +28,8 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       return instance;
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     public override async Task OnViewReadyAsync(IScreen screen,
                                                 object view)
     {
