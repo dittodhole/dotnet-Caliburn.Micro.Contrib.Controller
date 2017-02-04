@@ -62,7 +62,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
         throw new ArgumentNullException(nameof(screen));
       }
 
-      DisposeAction result;
+      DisposeAction result = null;
 
       var canBeBlocked = screen as ICanBeBlocked;
       if (canBeBlocked != null)
@@ -74,6 +74,8 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                                    {
                                      canBeBlocked.IsBlocked = false;
                                      screen.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
+
+                                     this.DisposeActions.Remove(result);
                                    });
 
         this.DisposeActions.Add(result);
