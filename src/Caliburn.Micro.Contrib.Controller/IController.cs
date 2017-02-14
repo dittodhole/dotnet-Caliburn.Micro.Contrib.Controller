@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -9,16 +7,27 @@ namespace Caliburn.Micro.Contrib.Controller
 {
   public interface IController
   {
-    /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    IScreen CreateScreen([CanBeNull] object options = null);
-
-    [NotNull]
-    Task<object> GetResultAsync(CancellationToken cancellationToken);
-
     [NotNull]
     [ItemNotNull]
     IEnumerable<IRoutine> Routines { get; }
+
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
+    Type GetScreenType([CanBeNull] object options = null);
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [NotNull]
+    IScreen BuildUp([NotNull] IScreen screen,
+                    [CanBeNull] object options = null);
+  }
+
+  public interface IController<TScreen>
+    where TScreen : IScreen
+  {
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [NotNull]
+    TScreen BuildUp([NotNull] TScreen screen,
+                    [CanBeNull] object options = null);
   }
 }

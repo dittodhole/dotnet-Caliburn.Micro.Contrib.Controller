@@ -68,7 +68,6 @@
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
-    <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="InterceptionTargetTypeMethodMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InterceptProxyMethodAttributeBasedInterceptor.cs" />

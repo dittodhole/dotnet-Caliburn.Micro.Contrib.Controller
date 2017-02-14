@@ -8,8 +8,8 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [PublicAPI]
-  public abstract class ControllerBase : IController
+  public abstract class ControllerBase : IController,
+                                         IProvideScreenEventHandlers
   {
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] [ItemNotNull] ICollection<IRoutine> routines)
@@ -21,22 +21,26 @@ namespace Caliburn.Micro.Contrib.Controller
       this.Routines = routines;
     }
 
-    public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
-    {
-      return TaskEx.FromResult<object>(null);
-    }
-
     public virtual IEnumerable<IRoutine> Routines { get; }
 
-    IScreen IController.CreateScreen(object options = null)
+    public abstract Type GetScreenType(object options = null);
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    public virtual IScreen BuildUp(IScreen screen,
+                                   object options = null)
     {
-      throw new NotImplementedException();
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      return screen;
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    public virtual void OnViewReady([NotNull] IScreen screen,
-                                    [NotNull] object view)
+    public virtual void OnViewReady(IScreen screen,
+                                    object view)
     {
       if (screen == null)
       {
@@ -51,21 +55,19 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         try
         {
-          routine.OnViewReadyAsync(screen,
-                                   view)
-                 .RunSynchronously();
+          routine.OnViewReady(screen,
+                              view);
         }
         catch (InvalidCastException invalidCastException)
         {
-          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnViewReadyAsync)} on instance of {routine.GetType()}.",
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnViewReady)} on instance of {routine.GetType()}.",
                                invalidCastException);
         }
       }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    [UsedImplicitly]
-    public virtual void OnActivate([NotNull] IScreen screen)
+    public virtual void OnActivate(IScreen screen)
     {
       if (screen == null)
       {
@@ -87,8 +89,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    [UsedImplicitly]
-    public virtual void OnDeactivate([NotNull] IScreen screen,
+    public virtual void OnDeactivate(IScreen screen,
                                      bool close)
     {
       if (screen == null)
@@ -117,8 +118,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    [UsedImplicitly]
-    public virtual void OnInitialize([NotNull] IScreen screen)
+    public virtual void OnInitialize(IScreen screen)
     {
       if (screen == null)
       {
@@ -140,8 +140,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    [UsedImplicitly]
-    public virtual void OnClose([NotNull] IScreen screen,
+    public virtual void OnClose(IScreen screen,
                                 bool? dialogResult = null)
     {
       if (screen == null)
@@ -163,45 +162,35 @@ namespace Caliburn.Micro.Contrib.Controller
         }
       }
     }
+
+    // ReSharper disable UnusedMember.Global
+    [NotNull]
+    [ItemCanBeNull]
+    public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
+    {
+      return TaskEx.FromResult<object>(null);
+    }
+
+    // ReSharper restore UnusedMember.Global
   }
 
   public abstract class ControllerBase<TScreen> : ControllerBase,
-                                                  IController
+                                                  IController<TScreen>,
+                                                  IProvideScreenEventHandlers<TScreen>
     where TScreen : IScreen
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] IScreenFactory screenFactory,
-                             [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
-      : base(routines)
+    protected ControllerBase([NotNull] [ItemNotNull] ICollection<IRoutine> routines)
+      : base(routines) {}
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    public virtual TScreen BuildUp(TScreen screen,
+                                   object options = null)
     {
-      if (screenFactory == null)
+      if (screen == null)
       {
-        throw new ArgumentNullException(nameof(screenFactory));
+        throw new ArgumentNullException(nameof(screen));
       }
-      this.ScreenFactory = screenFactory;
-    }
-
-    [NotNull]
-    private IScreenFactory ScreenFactory { get; }
-
-    IScreen IController.CreateScreen(object options)
-    {
-      return this.CreateScreen(options);
-    }
-
-    /// <exception cref="ArgumentNullException">If <see cref="Type" /> returned by <see cref="GetScreenType" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    public virtual TScreen CreateScreen([CanBeNull] object options = null)
-    {
-      var screenType = this.GetScreenType(options);
-      var screen = (TScreen) this.ScreenFactory.Create(screenType,
-                                                       this);
-
-      screen = this.BuildUp(screen,
-                            options);
 
       return screen;
     }
@@ -242,7 +231,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    [UsedImplicitly]
     public override void OnInitialize(IScreen screen)
     {
       base.OnInitialize(screen);
@@ -262,12 +250,8 @@ namespace Caliburn.Micro.Contrib.Controller
                    dialogResult);
     }
 
-    [Pure]
-    [NotNull]
-    public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
-
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    public virtual void OnClose([NotNull] TScreen screen,
+    public virtual void OnClose(TScreen screen,
                                 bool? dialogResult = null)
     {
       if (screen == null)
@@ -278,7 +262,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to prepare <paramref name="screen" /></remarks>
-    public virtual void OnInitialize([NotNull] TScreen screen)
+    public virtual void OnInitialize(TScreen screen)
     {
       if (screen == null)
       {
@@ -288,8 +272,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="sceen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    public virtual void OnViewReady([NotNull] TScreen sceen,
-                                    [NotNull] object view)
+    public virtual void OnViewReady(TScreen sceen,
+                                    object view)
     {
       if (sceen == null)
       {
@@ -303,7 +287,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to attach events</remarks>
-    public virtual void OnActivate([NotNull] TScreen screen)
+    public virtual void OnActivate(TScreen screen)
     {
       if (screen == null)
       {
@@ -313,7 +297,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to detach events</remarks>
-    public virtual void OnDeactivate([NotNull] TScreen screen,
+    public virtual void OnDeactivate(TScreen screen,
                                      bool close)
     {
       if (screen == null)
@@ -322,15 +306,18 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
+    public override Type GetScreenType(object options = null) => typeof(TScreen);
+
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    [NotNull]
-    public virtual TScreen BuildUp([NotNull] TScreen screen,
-                                   [CanBeNull] object options = null)
+    /// <exception cref="InvalidCastException" />
+    public override IScreen BuildUp(IScreen screen,
+                                    object options = null)
     {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
+      screen = base.BuildUp(screen,
+                            options);
+
+      screen = this.BuildUp((TScreen) screen,
+                            options);
 
       return screen;
     }

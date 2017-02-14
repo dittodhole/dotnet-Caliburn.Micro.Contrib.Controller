@@ -12,7 +12,6 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
-  [PublicAPI]
   public class AutofacScreenFactory : ProxyScreenFactory
   {
     protected const string GetConstructorBindingsMethodName = "GetConstructorBindings";

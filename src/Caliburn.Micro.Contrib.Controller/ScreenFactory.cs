@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public interface IScreenFactory
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
@@ -14,7 +15,6 @@ namespace Caliburn.Micro.Contrib.Controller
                    [NotNull] IController controller);
   }
 
-  [PublicAPI]
   public class ScreenFactory : IScreenFactory,
                                IDisposable
   {

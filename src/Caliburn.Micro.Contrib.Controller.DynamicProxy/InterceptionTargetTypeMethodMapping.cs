@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Caliburn.Micro.Contrib.Controller.DynamicProxy.ExtensionMethods;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.Core.Internal;
 using JetBrains.Annotations;
 

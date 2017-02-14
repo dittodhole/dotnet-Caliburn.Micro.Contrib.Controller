@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
@@ -30,12 +29,11 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    public override async Task OnViewReadyAsync(IScreen screen,
-                                                object view)
+    public override void OnViewReady(IScreen screen,
+                                     object view)
     {
-      await base.OnViewReadyAsync(screen,
-                                  view)
-                .ConfigureAwait(false);
+      base.OnViewReady(screen,
+                       view);
 
       var binding = new Binding
                     {
@@ -44,15 +42,14 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                       Converter = new NegateBoolConverter()
                     };
 
-      await Execute.OnUIThreadAsync(() =>
-                                    {
-                                      var dependencyObject = (DependencyObject) view;
+      Execute.OnUIThread(() =>
+                         {
+                           var dependencyObject = (DependencyObject) view;
 
-                                      BindingOperations.SetBinding(dependencyObject,
-                                                                   UIElement.IsEnabledProperty,
-                                                                   binding);
-                                    })
-                   .ConfigureAwait(false);
+                           BindingOperations.SetBinding(dependencyObject,
+                                                        UIElement.IsEnabledProperty,
+                                                        binding);
+                         });
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>

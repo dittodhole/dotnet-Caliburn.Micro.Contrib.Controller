@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
@@ -35,8 +34,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    public virtual Task OnViewReadyAsync(IScreen screen,
-                                         object view)
+    public virtual void OnViewReady(IScreen screen,
+                                    object view)
     {
       if (screen == null)
       {
@@ -46,8 +45,6 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       {
         throw new ArgumentNullException(nameof(view));
       }
-
-      return TaskEx.FromResult<object>(null);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
