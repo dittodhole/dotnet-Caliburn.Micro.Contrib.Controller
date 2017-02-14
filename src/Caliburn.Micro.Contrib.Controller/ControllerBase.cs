@@ -34,8 +34,6 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     private IScreenFactory ScreenFactory { get; }
 
-    [NotNull]
-    [ItemNotNull]
     public virtual IEnumerable<IRoutine> Routines { get; }
 
     public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
