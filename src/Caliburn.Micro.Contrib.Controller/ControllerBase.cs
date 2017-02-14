@@ -4,41 +4,186 @@ using System.Threading;
 using System.Threading.Tasks;
 using Anotar.LibLog;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.Proxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  public abstract class ControllerBase : IController
+  {
+    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
+    protected ControllerBase([NotNull] [ItemNotNull] ICollection<IRoutine> routines)
+    {
+      if (routines == null)
+      {
+        throw new ArgumentNullException(nameof(routines));
+      }
+      this.Routines = routines;
+    }
+
+    public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
+    {
+      return TaskEx.FromResult<object>(null);
+    }
+
+    public virtual IEnumerable<IRoutine> Routines { get; }
+
+    IScreen IController.CreateScreen(object options = null)
+    {
+      throw new NotImplementedException();
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
+    public virtual void OnViewReady([NotNull] IScreen screen,
+                                    [NotNull] object view)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+      if (view == null)
+      {
+        throw new ArgumentNullException(nameof(view));
+      }
+
+      foreach (var routine in this.Routines)
+      {
+        try
+        {
+          routine.OnViewReadyAsync(screen,
+                                   view)
+                 .RunSynchronously();
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnViewReadyAsync)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
+      }
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [UsedImplicitly]
+    public virtual void OnActivate([NotNull] IScreen screen)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      foreach (var routine in this.Routines)
+      {
+        try
+        {
+          routine.OnActivate(screen);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnActivate)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
+      }
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [UsedImplicitly]
+    public virtual void OnDeactivate([NotNull] IScreen screen,
+                                     bool close)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      foreach (var routine in this.Routines)
+      {
+        try
+        {
+          routine.OnDeactivate(screen,
+                               close);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnDeactivate)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
+      }
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [UsedImplicitly]
+    public virtual void OnInitialize([NotNull] IScreen screen)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      foreach (var routine in this.Routines)
+      {
+        try
+        {
+          routine.OnInitialize(screen);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnInitialize)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
+      }
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [UsedImplicitly]
+    public virtual void OnClose([NotNull] IScreen screen,
+                                bool? dialogResult = null)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      foreach (var routine in this.Routines)
+      {
+        try
+        {
+          routine.OnClose(screen,
+                          dialogResult);
+        }
+        catch (InvalidCastException invalidCastException)
+        {
+          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnClose)} on instance of {routine.GetType()}.",
+                               invalidCastException);
+        }
+      }
+    }
+  }
+
   [PublicAPI]
-  public abstract class ControllerBase<TScreen> : IController
+  public abstract class ControllerBase<TScreen> : ControllerBase,
+                                                  IController
     where TScreen : IScreen
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ControllerBase([NotNull] IScreenFactory screenFactory,
                              [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
+      : base(routines)
     {
       if (screenFactory == null)
       {
         throw new ArgumentNullException(nameof(screenFactory));
       }
-      if (routines == null)
-      {
-        throw new ArgumentNullException(nameof(routines));
-      }
       this.ScreenFactory = screenFactory;
-      this.Routines = routines;
     }
 
     [NotNull]
     private IScreenFactory ScreenFactory { get; }
-
-    public virtual IEnumerable<IRoutine> Routines { get; }
-
-    public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
-    {
-      return TaskEx.FromResult<object>(null);
-    }
 
     IScreen IController.CreateScreen(object options)
     {
@@ -64,49 +209,32 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    [UsedImplicitly]
-    [InterceptProxyMethod(MethodName = "OnViewReady", CallBase = true)]
-    internal void OnViewReady([NotNull] IScreen screen,
-                              [NotNull] object view)
+    public override void OnViewReady(IScreen screen,
+                                     object view)
     {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (view == null)
-      {
-        throw new ArgumentNullException(nameof(view));
-      }
+      base.OnViewReady(screen,
+                       view);
 
-      TaskEx.Run(() => this.OnViewReadyAsync((TScreen) screen,
-                                             view));
+      this.OnViewReady((TScreen) screen,
+                       view);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    [UsedImplicitly]
-    [InterceptProxyMethod(MethodName = "OnActivate", CallBase = true)]
-    internal void OnActivate([NotNull] IScreen screen)
+    public override void OnActivate(IScreen screen)
     {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
+      base.OnActivate(screen);
 
       this.OnActivate((TScreen) screen);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    [UsedImplicitly]
-    [InterceptProxyMethod(MethodName = "OnDeactivate", CallBase = true)]
-    internal void OnDeactivate([NotNull] IScreen screen,
-                               bool close)
+    public override void OnDeactivate(IScreen screen,
+                                      bool close)
     {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
+      base.OnDeactivate(screen,
+                        close);
 
       this.OnDeactivate((TScreen) screen,
                         close);
@@ -115,28 +243,20 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
-    [InterceptProxyMethod(MethodName = "OnInitialize", CallBase = true)]
-    internal void OnInitialize([NotNull] IScreen screen)
+    public override void OnInitialize(IScreen screen)
     {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
+      base.OnInitialize(screen);
 
       this.OnInitialize((TScreen) screen);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="InvalidCastException" />
-    [UsedImplicitly]
-    [InterceptProxyMethod(MethodName = nameof(IClose.TryClose), CallBase = true)]
-    internal void OnClose([NotNull] IScreen screen,
-                          bool? dialogResult = null)
+    public override void OnClose(IScreen screen,
+                                 bool? dialogResult = null)
     {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
+      base.OnClose(screen,
+                   dialogResult);
 
       this.OnClose((TScreen) screen,
                    dialogResult);
@@ -154,20 +274,6 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
-
-      foreach (var routine in this.Routines)
-      {
-        try
-        {
-          routine.OnClose(screen,
-                          dialogResult);
-        }
-        catch (InvalidCastException invalidCastException)
-        {
-          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnClose)} on instance of {routine.GetType()}.",
-                               invalidCastException);
-        }
-      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -178,49 +284,20 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
-
-      foreach (var routine in this.Routines)
-      {
-        try
-        {
-          routine.OnInitialize(screen);
-        }
-        catch (InvalidCastException invalidCastException)
-        {
-          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnInitialize)} on instance of {routine.GetType()}.",
-                               invalidCastException);
-        }
-      }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="sceen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    /// <remarks>Should be used for funky UI stuff (like initial validation, initial focus, ... stuff ... :beers:)</remarks>
-    public virtual async Task OnViewReadyAsync([NotNull] TScreen screen,
-                                               [NotNull] object view)
+    public virtual void OnViewReady([NotNull] TScreen sceen,
+                                    [NotNull] object view)
     {
-      if (screen == null)
+      if (sceen == null)
       {
-        throw new ArgumentNullException(nameof(screen));
+        throw new ArgumentNullException(nameof(sceen));
       }
       if (view == null)
       {
         throw new ArgumentNullException(nameof(view));
-      }
-
-      foreach (var routine in this.Routines)
-      {
-        try
-        {
-          await routine.OnViewReadyAsync(screen,
-                                         view)
-                       .ConfigureAwait(false);
-        }
-        catch (InvalidCastException invalidCastException)
-        {
-          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnViewReadyAsync)} on instance of {routine.GetType()}.",
-                               invalidCastException);
-        }
       }
     }
 
@@ -232,19 +309,6 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
-
-      foreach (var routine in this.Routines)
-      {
-        try
-        {
-          routine.OnActivate(screen);
-        }
-        catch (InvalidCastException invalidCastException)
-        {
-          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnActivate)} on instance of {routine.GetType()}.",
-                               invalidCastException);
-        }
-      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -255,20 +319,6 @@ namespace Caliburn.Micro.Contrib.Controller
       if (screen == null)
       {
         throw new ArgumentNullException(nameof(screen));
-      }
-
-      foreach (var routine in this.Routines)
-      {
-        try
-        {
-          routine.OnDeactivate(screen,
-                               close);
-        }
-        catch (InvalidCastException invalidCastException)
-        {
-          LogTo.ErrorException($"Tried to call {nameof(IRoutine.OnDeactivate)} on instance of {routine.GetType()}.",
-                               invalidCastException);
-        }
       }
     }
 

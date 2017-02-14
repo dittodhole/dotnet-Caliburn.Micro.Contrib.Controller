@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using Caliburn.Micro.Contrib.Controller.Proxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -24,7 +23,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
     [InterceptProxyMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
-    internal void OnActivateItem([NotNull] IScreen screen,
+    public void OnActivateItem([NotNull] IScreen screen,
                                  [NotNull] IScreen item)
     {
       if (screen == null)
@@ -45,7 +44,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidCastException" />
     [UsedImplicitly]
     [InterceptProxyMethod(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
-    internal void OnDeactivateItem([NotNull] IScreen screen,
+    public void OnDeactivateItem([NotNull] IScreen screen,
                                    [NotNull] IScreen item,
                                    bool close)
     {

@@ -7,13 +7,13 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
+using Caliburn.Micro.Contrib.Controller.DynamicProxy;
 using JetBrains.Annotations;
-using TypeExtensions = Caliburn.Micro.Contrib.Controller.DynamicProxy.ExtensionMethods.TypeExtensions;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
-  public class AutofacScreenFactory : ScreenFactory
+  public class AutofacScreenFactory : ProxyScreenFactory
   {
     protected const string GetConstructorBindingsMethodName = "GetConstructorBindings";
 
