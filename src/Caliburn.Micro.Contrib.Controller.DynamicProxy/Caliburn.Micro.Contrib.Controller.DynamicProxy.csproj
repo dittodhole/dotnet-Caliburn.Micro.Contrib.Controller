@@ -71,7 +71,6 @@
     <Compile Include="InterceptionTargetTypeMethodMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InterceptProxyMethodAttributeBasedInterceptor.cs" />
-    <Compile Include="InterceptProxyMethodAttribute.cs" />
     <Compile Include="ProxyScreenFactory.cs" />
   </ItemGroup>
   <ItemGroup>

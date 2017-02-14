@@ -33,65 +33,6 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
                                              return viewType;
                                            };
-
-      TypeDescriptor.CreateProperty(typeof(IProvideScreenEventHandlers),
-                                    nameof(IProvideScreenEventHandlers.OnViewReady),
-                                    typeof(void),
-                                    new InterceptProxyMethodAttribute
-                                    {
-                                      MethodName = "OnViewReady",
-                                      CallBase = true
-                                    });
-      TypeDescriptor.CreateProperty(typeof(IProvideScreenEventHandlers),
-                                    nameof(IProvideScreenEventHandlers.OnActivate),
-                                    typeof(void),
-                                    new InterceptProxyMethodAttribute
-                                    {
-                                      MethodName = "OnActivate",
-                                      CallBase = true
-                                    });
-      TypeDescriptor.CreateProperty(typeof(IProvideScreenEventHandlers),
-                                    nameof(IProvideScreenEventHandlers.OnDeactivate),
-                                    typeof(void),
-                                    new InterceptProxyMethodAttribute
-                                    {
-                                      MethodName = "OnDeactivate",
-                                      CallBase = true
-                                    });
-      TypeDescriptor.CreateProperty(typeof(IProvideScreenEventHandlers),
-                                    nameof(IProvideScreenEventHandlers.OnInitialize),
-                                    typeof(void),
-                                    new InterceptProxyMethodAttribute
-                                    {
-                                      MethodName = "OnInitialize",
-                                      CallBase = true
-                                    });
-      TypeDescriptor.CreateProperty(typeof(IProvideScreenEventHandlers),
-                                    nameof(IProvideScreenEventHandlers.OnClose),
-                                    typeof(void),
-                                    new InterceptProxyMethodAttribute
-                                    {
-                                      MethodName = nameof(IClose.TryClose),
-                                      CallBase = true
-                                    });
-
-      TypeDescriptor.CreateProperty(typeof(ConductorControllerBase),
-                                    nameof(ConductorControllerBase.OnActivateItem),
-                                    typeof(void),
-                                    new InterceptProxyMethodAttribute
-                                    {
-                                      MethodName = nameof(IConductor.ActivateItem),
-                                      CallBase = true
-                                    });
-      TypeDescriptor.CreateProperty(typeof(ConductorControllerBase),
-                                    nameof(ConductorControllerBase.OnDeactivateItem),
-                                    typeof(void),
-                                    new InterceptProxyMethodAttribute
-                                    {
-                                      MethodName = nameof(IConductor.DeactivateItem),
-                                      CallBase = true
-                                    });
-
     }
 
     [NotNull]

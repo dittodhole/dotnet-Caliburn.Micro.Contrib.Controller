@@ -1,11 +1,10 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
+namespace Caliburn.Micro.Contrib.Controller
 {
-  [PublicAPI]
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-  public sealed class InterceptProxyMethodAttribute : Attribute
+  public sealed class HandlesEvent : Attribute
   {
     public bool CallBase { get; set; } = true;
 

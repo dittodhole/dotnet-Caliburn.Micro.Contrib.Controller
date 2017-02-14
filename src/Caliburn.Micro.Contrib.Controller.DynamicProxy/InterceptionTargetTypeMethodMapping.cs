@@ -34,8 +34,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     [NotNull]
     private IDictionary<string, TargetMethod[]> TargetMethods { get; }
 
-    /// <exception cref="ArgumentNullException"><paramref name="proxyType"/> is <see langword="null"/></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="proxyMethodInfo"/> is <see langword="null"/></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="proxyType" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="proxyMethodInfo" /> is <see langword="null" /></exception>
     [Pure]
     [NotNull]
     [ItemNotNull]
@@ -74,7 +74,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                 return false;
                                               }
 
-                                              var targetMethodParameterTypes = targetMethod.InterceptProxyMethodAttribute.MethodParamterTypes;
+                                              var targetMethodParameterTypes = targetMethod.HandlesEventAttribute.MethodParamterTypes;
                                               if (targetMethodParameterTypes == null)
                                               {
                                                 targetMethodParameterTypes = targetMethodParameterInfos.Skip(1)
@@ -112,19 +112,19 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                 .Select(methodInfo => new
                                                                       {
                                                                         MethodInfo = methodInfo,
-                                                                        Attributes = methodInfo.GetAttributes<InterceptProxyMethodAttribute>()
+                                                                        HandlesEventAttributes = methodInfo.GetAttributes<HandlesEvent>()
                                                                       })
-                                                .Where(arg => arg.Attributes.Any())
-                                                .SelectMany(arg => arg.Attributes.Select(attribute => new
-                                                                                                      {
-                                                                                                        Attribute = attribute,
-                                                                                                        arg.MethodInfo,
-                                                                                                        ProxyMethodName = attribute.MethodName ?? arg.MethodInfo.Name
-                                                                                                      }))
+                                                .Where(arg => arg.HandlesEventAttributes.Any())
+                                                .SelectMany(arg => arg.HandlesEventAttributes.Select(handlesEventAttribute => new
+                                                                                                                              {
+                                                                                                                                HandlesEventAttribute = handlesEventAttribute,
+                                                                                                                                arg.MethodInfo,
+                                                                                                                                ProxyMethodName = handlesEventAttribute.MethodName ?? arg.MethodInfo.Name
+                                                                                                                              }))
                                                 .GroupBy(arg => arg.ProxyMethodName)
                                                 .ToDictionary(group => group.Key,
                                                               group => group.Select(arg => new TargetMethod(arg.MethodInfo,
-                                                                                                            arg.Attribute))
+                                                                                                            arg.HandlesEventAttribute))
                                                                             .ToArray());
 
       var interceptionTargetTypeMethodMapping = new InterceptionTargetTypeMethodMapping(interceptionTargetType,
@@ -136,27 +136,27 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     public sealed class TargetMethod
     {
       /// <exception cref="ArgumentNullException"><paramref name="methodInfo" /> is <see langword="null" /></exception>
-      /// <exception cref="ArgumentNullException"><paramref name="interceptProxyMethodAttribute" /> is <see langword="null" /></exception>
+      /// <exception cref="ArgumentNullException"><paramref name="handlesEventAttribute" /> is <see langword="null" /></exception>
       public TargetMethod([NotNull] MethodInfo methodInfo,
-                          [NotNull] InterceptProxyMethodAttribute interceptProxyMethodAttribute)
+                          [NotNull] HandlesEvent handlesEventAttribute)
       {
         if (methodInfo == null)
         {
           throw new ArgumentNullException(nameof(methodInfo));
         }
-        if (interceptProxyMethodAttribute == null)
+        if (handlesEventAttribute == null)
         {
-          throw new ArgumentNullException(nameof(interceptProxyMethodAttribute));
+          throw new ArgumentNullException(nameof(handlesEventAttribute));
         }
         this.MethodInfo = methodInfo;
-        this.InterceptProxyMethodAttribute = interceptProxyMethodAttribute;
+        this.HandlesEventAttribute = handlesEventAttribute;
       }
 
       [NotNull]
       public MethodInfo MethodInfo { get; }
 
       [NotNull]
-      public InterceptProxyMethodAttribute InterceptProxyMethodAttribute { get; }
+      public HandlesEvent HandlesEventAttribute { get; }
     }
   }
 }

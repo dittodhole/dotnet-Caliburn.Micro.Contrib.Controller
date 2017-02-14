@@ -7,20 +7,25 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnViewReady", CallBase = true)]
     void OnViewReady([NotNull] IScreen screen,
                      [NotNull] object view);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnActivate", CallBase = true)]
     void OnActivate([NotNull] IScreen screen);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnDeactivate", CallBase = true)]
     void OnDeactivate([NotNull] IScreen screen,
                       bool close);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnInitialize", CallBase = true)]
     void OnInitialize([NotNull] IScreen screen);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = nameof(IClose.TryClose), CallBase = true)]
     void OnClose([NotNull] IScreen screen,
                  bool? dialogResult = null);
   }

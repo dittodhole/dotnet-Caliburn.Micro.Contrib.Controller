@@ -50,7 +50,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                                                       proxyMethodInfo);
         if (targetMethods.Any())
         {
-          var callBase = targetMethods.Any(targetMethod => targetMethod.InterceptProxyMethodAttribute.CallBase);
+          var callBase = targetMethods.Any(targetMethod => targetMethod.HandlesEventAttribute.CallBase);
           if (callBase)
           {
             invocation.Proceed();
