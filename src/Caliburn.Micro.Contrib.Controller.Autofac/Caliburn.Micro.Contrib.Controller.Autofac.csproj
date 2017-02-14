@@ -96,7 +96,6 @@
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="AutofacBootstrapper.cs" />
-    <Compile Include="AutofacScreenFactory.cs" />
     <Compile Include="LocatorAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -109,13 +108,13 @@
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Caliburn.Micro.Contrib.Controller.Extras\Caliburn.Micro.Contrib.Controller.Extras.csproj">
-      <Project>{2f4a6caf-52a9-452b-9079-3a1b605c6d3a}</Project>
-      <Name>Caliburn.Micro.Contrib.Controller.Extras</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Caliburn.Micro.Contrib.Controller.DynamicProxy\Caliburn.Micro.Contrib.Controller.DynamicProxy.csproj">
       <Project>{940e320a-8f5f-4f12-ade8-46826e458c4d}</Project>
       <Name>Caliburn.Micro.Contrib.Controller.DynamicProxy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Caliburn.Micro.Contrib.Controller.Extras\Caliburn.Micro.Contrib.Controller.Extras.csproj">
+      <Project>{2f4a6caf-52a9-452b-9079-3a1b605c6d3a}</Project>
+      <Name>Caliburn.Micro.Contrib.Controller.Extras</Name>
     </ProjectReference>
     <ProjectReference Include="..\Caliburn.Micro.Contrib.Controller\Caliburn.Micro.Contrib.Controller.csproj">
       <Project>{f81eced7-dd29-4ff2-8aca-8dee7370ce3d}</Project>

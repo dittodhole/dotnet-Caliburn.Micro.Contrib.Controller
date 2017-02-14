@@ -7,13 +7,11 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    [HandlesEvent(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     void OnActivateItem([NotNull] IScreen screen,
                         [NotNull] IScreen item);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    [HandlesEvent(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
     void OnDeactivateItem([NotNull] IScreen screen,
                           [NotNull] IScreen item,
                           bool close);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.DynamicProxy;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -29,7 +30,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
              .As<IControllerManager>()
              .SingleInstance();
 
-      builder.RegisterType<AutofacScreenFactory>()
+      builder.RegisterType<ProxyScreenFactory>()
              .As<IScreenFactory>()
              .SingleInstance();
 
@@ -59,9 +60,9 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected async Task<TRootController> DisplayRootView([CanBeNull] object options = null,
-                                                          [CanBeNull] object context = null,
-                                                          [CanBeNull] IDictionary<string, object> settings = null)
+    protected async Task<TRootController> DisplayRootViewAsync([CanBeNull] object options = null,
+                                                               [CanBeNull] object context = null,
+                                                               [CanBeNull] IDictionary<string, object> settings = null)
     {
       var rootController = await this.DisplayViewFor<TRootController>(options,
                                                                       context,

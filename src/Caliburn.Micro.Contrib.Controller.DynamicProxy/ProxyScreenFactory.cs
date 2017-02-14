@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Anotar.LibLog;
-using Caliburn.Micro.Contrib.Controller.DynamicProxy.ExtensionMethods;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
@@ -34,9 +31,6 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                              return viewType;
                                            };
     }
-
-    [NotNull]
-    private ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping> InterceptionTargetTypeMethodMappings { get; } = new ConcurrentDictionary<Type, InterceptionTargetTypeMethodMapping>();
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     [Pure]
@@ -76,12 +70,10 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         throw new ArgumentNullException(nameof(controller));
       }
 
-      var interceptionTargetTypeMethodMapping = this.InterceptionTargetTypeMethodMappings.GetOrAdd(interceptionTarget.GetType(),
-                                                                                                   InterceptionTargetTypeMethodMapping.Create);
-      var interceptor = new InterceptProxyMethodAttributeBasedInterceptor(interceptionTarget,
-                                                                          interceptionTargetTypeMethodMapping);
+      var interceptor = new ControllerHandlesEventsInterceptor(controller);
 
       var mixinProviders = this.GetMixinProviders(controller);
+
       var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
       var mixinInstances = this.GetMixinInstances(mixinProviders);
       var customAttributeBuilders = this.GetCustomAttributeBuilders(mixinProviders);
@@ -98,22 +90,10 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       var proxyGenerator = new ProxyGenerator();
 
-      object proxy;
-      if (constructorParameters == null)
-      {
-        proxy = proxyGenerator.CreateClassProxy(screenType,
-                                                additionalInterfaces,
-                                                proxyGenerationOptions,
-                                                (IInterceptor) interceptor);
-      }
-      else
-      {
-        proxy = proxyGenerator.CreateClassProxy(screenType,
-                                                additionalInterfaces,
-                                                proxyGenerationOptions,
-                                                constructorParameters,
-                                                (IInterceptor) interceptor);
-      }
+      var proxy = proxyGenerator.CreateClassProxy(screenType,
+                                                  additionalInterfaces,
+                                                  proxyGenerationOptions,
+                                                  (IInterceptor) interceptor);
 
       var screen = (IScreen) proxy;
 

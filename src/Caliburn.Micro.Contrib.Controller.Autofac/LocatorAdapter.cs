@@ -2,7 +2,6 @@
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
-using Caliburn.Micro.Contrib.Controller.DynamicProxy.ExtensionMethods;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using JetBrains.Annotations;
 

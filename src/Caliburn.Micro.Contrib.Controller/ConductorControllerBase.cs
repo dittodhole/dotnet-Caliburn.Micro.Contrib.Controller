@@ -15,6 +15,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     public virtual void OnActivateItem(IScreen screen,
                                        IScreen item)
     {
@@ -36,6 +37,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
     public virtual void OnDeactivateItem(IScreen screen,
                                          IScreen item,
                                          bool close)

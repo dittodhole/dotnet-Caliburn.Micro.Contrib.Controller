@@ -6,29 +6,24 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
-  public sealed class InterceptProxyMethodAttributeBasedInterceptor : IInterceptor
+  public sealed class ControllerHandlesEventsInterceptor : IInterceptor
   {
-    /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
-    public InterceptProxyMethodAttributeBasedInterceptor([NotNull] object interceptionTarget,
-                                                         [NotNull] InterceptionTargetTypeMethodMapping interceptionTargetTypeMethodMapping)
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    public ControllerHandlesEventsInterceptor([NotNull] IController controller)
     {
-      if (interceptionTarget == null)
+      if (controller == null)
       {
-        throw new ArgumentNullException(nameof(interceptionTarget));
+        throw new ArgumentNullException(nameof(controller));
       }
-      if (interceptionTargetTypeMethodMapping == null)
-      {
-        throw new ArgumentNullException(nameof(interceptionTargetTypeMethodMapping));
-      }
-      this.InterceptionTarget = interceptionTarget;
-      this.InterceptionTargetTypeMethodMapping = interceptionTargetTypeMethodMapping;
+      this.Controller = controller;
+      this.ControllerTypeMethodsMap = ControllerTypeMethodsMap.Create(controller.GetType());
     }
 
     [NotNull]
-    private InterceptionTargetTypeMethodMapping InterceptionTargetTypeMethodMapping { get; }
+    private ControllerTypeMethodsMap ControllerTypeMethodsMap { get; }
 
     [NotNull]
-    private object InterceptionTarget { get; }
+    private IController Controller { get; }
 
     public void Intercept(IInvocation invocation)
     {
@@ -46,8 +41,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       {
         var proxy = invocation.Proxy;
         var proxyType = proxy.GetType();
-        var targetMethods = this.InterceptionTargetTypeMethodMapping.GetTargetMethods(proxyType,
-                                                                                      proxyMethodInfo);
+        var targetMethods = this.ControllerTypeMethodsMap.GetTargetMethods(proxyType,
+                                                                           proxyMethodInfo);
         if (targetMethods.Any())
         {
           var callBase = targetMethods.Any(targetMethod => targetMethod.HandlesEventAttribute.CallBase);
@@ -70,7 +65,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
             object returnValue;
             try
             {
-              returnValue = targetMethod.MethodInfo.Invoke(this.InterceptionTarget,
+              returnValue = targetMethod.MethodInfo.Invoke(this.Controller,
                                                            targetMethodParameters);
             }
             catch (Exception exception)

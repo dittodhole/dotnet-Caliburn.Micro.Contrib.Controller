@@ -39,6 +39,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnViewReady", CallBase = true)]
     public virtual void OnViewReady(IScreen screen,
                                     object view)
     {
@@ -67,6 +68,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnActivate", CallBase = true)]
     public virtual void OnActivate(IScreen screen)
     {
       if (screen == null)
@@ -89,6 +91,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnDeactivate", CallBase = true)]
     public virtual void OnDeactivate(IScreen screen,
                                      bool close)
     {
@@ -118,6 +121,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = "OnInitialize", CallBase = true)]
     public virtual void OnInitialize(IScreen screen)
     {
       if (screen == null)
@@ -140,6 +144,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = nameof(IClose.TryClose), CallBase = true)]
     public virtual void OnClose(IScreen screen,
                                 bool? dialogResult = null)
     {
