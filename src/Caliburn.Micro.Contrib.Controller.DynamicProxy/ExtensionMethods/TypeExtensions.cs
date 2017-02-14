@@ -2,7 +2,7 @@
 using System.Reflection;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy.ExtensionMethods
 {
   public static class TypeExtensions
   {

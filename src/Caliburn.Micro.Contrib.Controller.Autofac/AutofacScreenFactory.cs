@@ -8,7 +8,7 @@ using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
 using JetBrains.Annotations;
-using TypeExtensions = Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods.TypeExtensions;
+using TypeExtensions = Caliburn.Micro.Contrib.Controller.DynamicProxy.ExtensionMethods.TypeExtensions;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.Proxy
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   [PublicAPI]
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]

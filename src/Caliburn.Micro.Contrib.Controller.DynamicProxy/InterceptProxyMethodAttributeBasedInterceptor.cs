@@ -4,7 +4,7 @@ using Anotar.LibLog;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.Proxy
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   public sealed class InterceptProxyMethodAttributeBasedInterceptor : IInterceptor
   {

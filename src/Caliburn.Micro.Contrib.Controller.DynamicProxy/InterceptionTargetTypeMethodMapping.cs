@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods;
+using Caliburn.Micro.Contrib.Controller.DynamicProxy.ExtensionMethods;
 using Castle.Core.Internal;
 using JetBrains.Annotations;
 
-namespace Caliburn.Micro.Contrib.Controller.Proxy
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   public sealed class InterceptionTargetTypeMethodMapping
   {
