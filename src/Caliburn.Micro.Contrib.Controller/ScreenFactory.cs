@@ -15,14 +15,12 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IScreenFactory
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
     IScreen Create([NotNull] Type screenType,
-                   [NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders,
-                   [NotNull] object interceptionTarget);
+                   [NotNull] IController controller);
   }
 
   [PublicAPI]
@@ -61,32 +59,35 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="interceptionTarget" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="TargetInvocationException">Thrown when constructor of type <paramref name="screenType" /> throws an exception.</exception>
     /// <exception cref="ArgumentException">Thrown when no constructor exists on type <paramref name="screenType" /> with matching parameters.</exception>
     /// <exception cref="Exception" />
     public virtual IScreen Create(Type screenType,
-                                  IEnumerable<IMixinProvider> mixinProviders,
-                                  object interceptionTarget)
+                                  IController controller)
     {
       if (screenType == null)
       {
         throw new ArgumentNullException(nameof(screenType));
       }
-      if (mixinProviders == null)
+      if (controller == null)
       {
-        throw new ArgumentNullException(nameof(mixinProviders));
-      }
-      if (interceptionTarget == null)
-      {
-        throw new ArgumentNullException(nameof(interceptionTarget));
+        throw new ArgumentNullException(nameof(controller));
       }
 
+      var mixinProviders = new object[]
+                           {
+                             controller
+                           }.Concat(controller.Routines)
+                            .OfType<IMixinProvider>()
+                            .ToArray();
+
+      /*
       var interceptionTargetTypeMethodMapping = this.InterceptionTargetTypeMethodMappings.GetOrAdd(interceptionTarget.GetType(),
                                                                                                    InterceptionTargetTypeMethodMapping.Create);
       var interceptor = new InterceptProxyMethodAttributeBasedInterceptor(interceptionTarget,
                                                                           interceptionTargetTypeMethodMapping);
+      */
 
       var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
       var mixinInstances = this.GetMixinInstances(mixinProviders);

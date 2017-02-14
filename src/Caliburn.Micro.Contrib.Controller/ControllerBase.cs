@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Anotar.LibLog;
@@ -53,14 +52,7 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual TScreen CreateScreen([CanBeNull] object options = null)
     {
       var screenType = this.GetScreenType(options);
-      var mixinProviders = new object[]
-                           {
-                             this
-                           }.Concat(this.Routines)
-                            .OfType<IMixinProvider>()
-                            .ToArray();
       var screen = (TScreen) this.ScreenFactory.Create(screenType,
-                                                       mixinProviders,
                                                        this);
 
       screen = this.BuildUp(screen,
