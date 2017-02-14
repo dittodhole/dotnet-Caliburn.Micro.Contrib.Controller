@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public abstract class ControllerBase : IController
   {
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
@@ -164,7 +165,6 @@ namespace Caliburn.Micro.Contrib.Controller
     }
   }
 
-  [PublicAPI]
   public abstract class ControllerBase<TScreen> : ControllerBase,
                                                   IController
     where TScreen : IScreen
