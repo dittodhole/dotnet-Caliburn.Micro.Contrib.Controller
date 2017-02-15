@@ -37,9 +37,21 @@ namespace Caliburn.Micro.Contrib.Controller
                                                   IProvideScreenEventHandlers<TScreen>
     where TScreen : IScreen
   {
+    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
-    protected ControllerBase([NotNull] [ItemNotNull] ICollection<IRoutine> routines)
-      : base(routines) {}
+    protected ControllerBase([NotNull] IScreenFactory screenFactory,
+                             [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
+      : base(routines)
+    {
+      if (screenFactory == null)
+      {
+        throw new ArgumentNullException(nameof(screenFactory));
+      }
+      this.ScreenFactory = screenFactory;
+    }
+
+    [NotNull]
+    private IScreenFactory ScreenFactory { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     public virtual TScreen BuildUp(TScreen screen,
@@ -53,7 +65,19 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
-    public Type GetScreenType(object options = null) => typeof(TScreen);
+    public virtual Type GetScreenType(object options = null) => typeof(TScreen);
+
+    /// <exception cref="Exception" />
+    public virtual TScreen CreateScreen(object options = null)
+    {
+      var screenType = this.GetScreenType(options);
+      var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       this);
+      screen = this.BuildUp(screen,
+                            options);
+
+      return screen;
+    }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     [HandlesViewModelMethod(MethodName = nameof(IClose.TryClose), CallBase = true)]

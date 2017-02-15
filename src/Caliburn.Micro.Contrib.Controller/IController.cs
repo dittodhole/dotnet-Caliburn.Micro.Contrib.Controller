@@ -24,5 +24,10 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     TScreen BuildUp([NotNull] TScreen screen,
                     [CanBeNull] object options = null);
+
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
+    TScreen CreateScreen([CanBeNull] object options = null);
   }
 }

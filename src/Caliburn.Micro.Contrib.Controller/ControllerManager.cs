@@ -21,28 +21,15 @@ namespace Caliburn.Micro.Contrib.Controller
     Task<TController> ShowDialogAsync<TController>([CanBeNull] object options = null,
                                                    [CanBeNull] object context = null,
                                                    [CanBeNull] IDictionary<string, object> settings = null) where TController : IController<IScreen>;
-
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    TScreen CreateScreen<TScreen>([NotNull] IController<TScreen> controller,
-                                  [CanBeNull] object options = null) where TScreen : IScreen;
   }
 
   public class ControllerManager : IControllerManager
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controllerLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="windowManagerLocator" /> is <see langword="null" /></exception>
-    public ControllerManager([NotNull] IScreenFactory screenFactory,
-                             [NotNull] ILocator<IController> controllerLocator,
+    public ControllerManager([NotNull] ILocator<IController> controllerLocator,
                              [NotNull] ILocator<IWindowManager> windowManagerLocator)
     {
-      if (screenFactory == null)
-      {
-        throw new ArgumentNullException(nameof(screenFactory));
-      }
       if (controllerLocator == null)
       {
         throw new ArgumentNullException(nameof(controllerLocator));
@@ -51,13 +38,9 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(windowManagerLocator));
       }
-      this.ScreenFactory = screenFactory;
       this.ControllerLocator = controllerLocator;
       this.WindowManagerLocator = windowManagerLocator;
     }
-
-    [NotNull]
-    private IScreenFactory ScreenFactory { get; }
 
     [NotNull]
     private ILocator<IController> ControllerLocator { get; }
@@ -72,8 +55,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                         IDictionary<string, object> settings = null) where TController : IController<IScreen>
     {
       var controller = this.ControllerLocator.Locate<TController>();
-      var screen = this.CreateScreen(controller,
-                                     options);
+      var screen = controller.CreateScreen(options);
 
       var windowManager = this.WindowManagerLocator.Locate();
 
@@ -92,8 +74,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                         IDictionary<string, object> settings = null) where TController : IController<IScreen>
     {
       var controller = this.ControllerLocator.Locate<TController>();
-      var screen = this.CreateScreen(controller,
-                                     options);
+      var screen = controller.CreateScreen(options);
 
       var windowManager = this.WindowManagerLocator.Locate();
 
@@ -103,25 +84,6 @@ namespace Caliburn.Micro.Contrib.Controller
                    .ConfigureAwait(false);
 
       return controller;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
-    public virtual TScreen CreateScreen<TScreen>(IController<TScreen> controller,
-                                                 object options = null) where TScreen : IScreen
-    {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-
-      var screenType = controller.GetScreenType(options);
-      var screen = (TScreen) this.ScreenFactory.Create(screenType,
-                                                       controller);
-      screen = controller.BuildUp(screen,
-                                  options);
-
-      return screen;
     }
   }
 }
