@@ -6,18 +6,56 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public abstract class ConductorControllerBase : ControllerBase,
-                                                  IProvideConductorEventHandlers
+  public abstract class ConductorControllerBase : ControllerBase
   {
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] ICollection<IRoutine> routines)
       : base(routines) {}
+  }
+
+  public abstract class ConductorControllerBase<TScreen, TItem> : ConductorControllerBase,
+                                                                  IController,
+                                                                  IProvideScreenEventHandlers<TScreen>,
+                                                                  IProvideConductorEventHandlers<TScreen, TItem>
+    where TScreen : IScreen
+    where TItem : IScreen
+  {
+    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
+    protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
+                                      [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
+      : base(routines)
+    {
+      if (screenFactory == null)
+      {
+        throw new ArgumentNullException(nameof(screenFactory));
+      }
+      this.ScreenFactory = screenFactory;
+    }
+
+    [NotNull]
+    private IScreenFactory ScreenFactory { get; }
+
+    IScreen IController.CreateScreen(object options = null)
+    {
+      return this.CreateScreen(options);
+    }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    public virtual void OnActivateItem(IScreen screen,
-                                       IScreen item)
+    [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
+    public virtual void OnActivateItem(TScreen screen,
+                                       TItem item)
     {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+      if (item == null)
+      {
+        throw new ArgumentNullException(nameof(item));
+      }
+
       if (screen == null)
       {
         throw new ArgumentNullException(nameof(screen));
@@ -36,72 +74,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    public virtual void OnDeactivateItem(IScreen screen,
-                                         IScreen item,
-                                         bool close)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
-      }
-
-      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
-      {
-        routine.OnDeactivateItem(screen,
-                                 item,
-                                 close);
-      }
-    }
-  }
-
-  public abstract class ConductorControllerBase<TScreen, TItem> : ConductorControllerBase,
-                                                                  IController<TScreen>,
-                                                                  IProvideScreenEventHandlers<TScreen>,
-                                                                  IProvideConductorEventHandlers<TScreen, TItem>
-    where TScreen : IScreen
-    where TItem : IScreen
-  {
-    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
-    protected ConductorControllerBase([NotNull] [ItemNotNull] ICollection<IRoutine> routines)
-      : base(routines) {}
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    public virtual TScreen BuildUp(TScreen screen,
-                                   object options = null)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-
-      return screen;
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
-    public virtual void OnActivateItem(TScreen screen,
-                                       TItem item)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
-      }
-
-      base.OnActivateItem(screen,
-                          item);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
     public virtual void OnDeactivateItem(TScreen screen,
                                          TItem item,
@@ -112,9 +84,12 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnDeactivateItem(screen,
-                            item,
-                            close);
+      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
+      {
+        routine.OnDeactivateItem(screen,
+                                 item,
+                                 close);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -127,8 +102,11 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnClose(screen,
-                   dialogResult);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnClose(screen,
+                        dialogResult);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -141,7 +119,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnInitialize(screen);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnInitialize(screen);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -159,8 +140,11 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(view));
       }
 
-      base.OnViewReady(screen,
-                       view);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnViewReady(screen,
+                            view);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -173,7 +157,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnActivate(screen);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnActivate(screen);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -187,21 +174,37 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnDeactivate(screen,
-                        close);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnDeactivate(screen,
+                             close);
+      }
     }
 
-    public override Type GetScreenType(object options = null) => typeof(TScreen);
-
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override IScreen BuildUp(IScreen screen,
-                                    object options = null)
+    [NotNull]
+    public virtual TScreen BuildUp([NotNull] TScreen screen,
+                                   [CanBeNull] object options = null)
     {
-      screen = base.BuildUp(screen,
-                            options);
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
 
-      screen = this.BuildUp((TScreen) screen,
+      return screen;
+    }
+
+    [NotNull]
+    public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
+
+    /// <exception cref="Exception" />
+    [NotNull]
+    public virtual TScreen CreateScreen([CanBeNull] object options = null)
+    {
+      var screenType = this.GetScreenType(options);
+      var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       this);
+      screen = this.BuildUp(screen,
                             options);
 
       return screen;

@@ -9,7 +9,6 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
-  [PublicAPI]
   public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
     where TRootController : IController
   {
@@ -60,13 +59,13 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    protected async Task<TRootController> DisplayRootViewAsync([CanBeNull] object options = null,
-                                                               [CanBeNull] object context = null,
-                                                               [CanBeNull] IDictionary<string, object> settings = null)
+    public virtual async Task<TRootController> DisplayRootViewAsync([CanBeNull] object options = null,
+                                                                    [CanBeNull] object context = null,
+                                                                    [CanBeNull] IDictionary<string, object> settings = null)
     {
-      var rootController = await this.DisplayViewFor<TRootController>(options,
-                                                                      context,
-                                                                      settings)
+      var rootController = await this.DisplayViewForAsync<TRootController>(options,
+                                                                           context,
+                                                                           settings)
                                      .ConfigureAwait(false);
       return rootController;
     }
@@ -81,9 +80,9 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
     /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
     /// <exception cref="Exception" />
-    protected async Task<TController> DisplayViewFor<TController>([CanBeNull] object options = null,
-                                                                  [CanBeNull] object context = null,
-                                                                  [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+    public virtual async Task<TController> DisplayViewForAsync<TController>([CanBeNull] object options = null,
+                                                                            [CanBeNull] object context = null,
+                                                                            [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
     {
       var controllerManager = IoC.Get<IControllerManager>();
       var controller = await controllerManager.ShowWindowAsync<TController>(options,

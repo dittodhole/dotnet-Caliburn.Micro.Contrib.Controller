@@ -1,4 +1,4 @@
 ﻿namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
-  public interface IRoutine : IProvideScreenEventHandlers {}
+  public interface IRoutine : IProvideScreenEventHandlers<IScreen> {}
 }
