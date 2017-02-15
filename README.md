@@ -18,10 +18,10 @@ https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller
 
-[![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Proxy.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Proxy)
-https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Proxy
+[![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.DynamicProxy.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.DynamicProxy)
+https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.DynamicProxy
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.Proxy
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.DynamicProxy
 
 [![NuGet Status](http://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Extras.svg?style=flat-square)](//www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras)
 https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras
@@ -42,10 +42,10 @@ https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Contr
 
     PM> Install-Package Caliburn.Micro.Contrib.Controller -pre
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Proxy.svg?style=flat-square)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Proxy)
-https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Proxy
+[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.DynamicProxy.svg?style=flat-square)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.DynamicProxy)
+https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.DynamicProxy
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.Proxy -pre
+    PM> Install-Package Caliburn.Micro.Contrib.Controller.DynamicProxy -pre
 
 [![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Extras.svg?style=flat-square)](//www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras)
 https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras
