@@ -3,29 +3,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public interface IProvideScreenEventHandlers
-  {
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    void OnViewReady([NotNull] IScreen screen,
-                     [NotNull] object view);
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    void OnActivate([NotNull] IScreen screen);
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    void OnDeactivate([NotNull] IScreen screen,
-                      bool close);
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    void OnInitialize([NotNull] IScreen screen);
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    void OnClose([NotNull] IScreen screen,
-                 bool? dialogResult = null);
-  }
-
-  public interface IProvideScreenEventHandlers<TScreen> : IProvideScreenEventHandlers
+  public interface IProvideScreenEventHandlers<TScreen>
     where TScreen : IScreen
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>

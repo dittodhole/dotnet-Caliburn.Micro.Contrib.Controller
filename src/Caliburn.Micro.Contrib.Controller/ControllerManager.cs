@@ -13,14 +13,21 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     Task<TController> ShowWindowAsync<TController>([CanBeNull] object options = null,
                                                    [CanBeNull] object context = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController;
+                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController<IScreen>;
 
     /// <exception cref="InvalidOperationException" />
     /// <exception cref="Exception" />
     [NotNull]
     Task<TController> ShowDialogAsync<TController>([CanBeNull] object options = null,
                                                    [CanBeNull] object context = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController;
+                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController<IScreen>;
+
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
+    TScreen CreateScreen<TScreen>([NotNull] IController<TScreen> controller,
+                                  [CanBeNull] object options = null) where TScreen : IScreen;
   }
 
   public class ControllerManager : IControllerManager
@@ -62,11 +69,11 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     public virtual async Task<TController> ShowWindowAsync<TController>(object options = null,
                                                                         object context = null,
-                                                                        IDictionary<string, object> settings = null) where TController : IController
+                                                                        IDictionary<string, object> settings = null) where TController : IController<IScreen>
     {
-      var controllerAndScreen = this.CreateScreen<TController>(options);
-      var controller = controllerAndScreen.Controller;
-      var screen = controllerAndScreen.Screen;
+      var controller = this.ControllerLocator.Locate<TController>();
+      var screen = this.CreateScreen(controller,
+                                     options);
 
       var windowManager = this.WindowManagerLocator.Locate();
 
@@ -82,11 +89,11 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     public virtual async Task<TController> ShowDialogAsync<TController>(object options = null,
                                                                         object context = null,
-                                                                        IDictionary<string, object> settings = null) where TController : IController
+                                                                        IDictionary<string, object> settings = null) where TController : IController<IScreen>
     {
-      var controllerAndScreen = this.CreateScreen<TController>(options);
-      var controller = controllerAndScreen.Controller;
-      var screen = controllerAndScreen.Screen;
+      var controller = this.ControllerLocator.Locate<TController>();
+      var screen = this.CreateScreen(controller,
+                                     options);
 
       var windowManager = this.WindowManagerLocator.Locate();
 
@@ -98,49 +105,23 @@ namespace Caliburn.Micro.Contrib.Controller
       return controller;
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    public virtual ControllerAndScreen<TController> CreateScreen<TController>([CanBeNull] object options = null) where TController : IController
+    public virtual TScreen CreateScreen<TScreen>(IController<TScreen> controller,
+                                                 object options = null) where TScreen : IScreen
     {
-      var controller = this.ControllerLocator.Locate<TController>();
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+
       var screenType = controller.GetScreenType(options);
-      var screen = this.ScreenFactory.Create(screenType,
-                                             controller);
+      var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       controller);
       screen = controller.BuildUp(screen,
                                   options);
 
-      var controllerAndScreen = new ControllerAndScreen<TController>(controller,
-                                                                     screen);
-
-      return controllerAndScreen;
-    }
-
-    public sealed class ControllerAndScreen<TController>
-      where TController : IController
-    {
-      /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-      /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-      public ControllerAndScreen([NotNull] TController controller,
-                                 [NotNull] IScreen screen)
-      {
-        if (controller == null)
-        {
-          throw new ArgumentNullException(nameof(controller));
-        }
-        if (screen == null)
-        {
-          throw new ArgumentNullException(nameof(screen));
-        }
-        this.Controller = controller;
-        this.Screen = screen;
-      }
-
-      [NotNull]
-      public TController Controller { get; }
-
-      [NotNull]
-      public IScreen Screen { get; }
+      return screen;
     }
   }
 }

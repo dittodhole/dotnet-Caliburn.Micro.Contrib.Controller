@@ -6,56 +6,11 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public abstract class ConductorControllerBase : ControllerBase,
-                                                  IProvideConductorEventHandlers
+  public abstract class ConductorControllerBase : ControllerBase
   {
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] ICollection<IRoutine> routines)
       : base(routines) {}
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    public virtual void OnActivateItem(IScreen screen,
-                                       IScreen item)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
-      }
-
-      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
-      {
-        routine.OnActivateItem(screen,
-                               item);
-      }
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    public virtual void OnDeactivateItem(IScreen screen,
-                                         IScreen item,
-                                         bool close)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
-      }
-
-      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
-      {
-        routine.OnDeactivateItem(screen,
-                                 item,
-                                 close);
-      }
-    }
   }
 
   public abstract class ConductorControllerBase<TScreen, TItem> : ConductorControllerBase,
@@ -81,6 +36,8 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
+    public Type GetScreenType(object options = null) => typeof(TScreen);
+
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
@@ -96,8 +53,20 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(item));
       }
 
-      base.OnActivateItem(screen,
-                          item);
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+      if (item == null)
+      {
+        throw new ArgumentNullException(nameof(item));
+      }
+
+      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
+      {
+        routine.OnActivateItem(screen,
+                               item);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -112,9 +81,12 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnDeactivateItem(screen,
-                            item,
-                            close);
+      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
+      {
+        routine.OnDeactivateItem(screen,
+                                 item,
+                                 close);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -127,8 +99,11 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnClose(screen,
-                   dialogResult);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnClose(screen,
+                        dialogResult);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -141,7 +116,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnInitialize(screen);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnInitialize(screen);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -159,8 +137,11 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(view));
       }
 
-      base.OnViewReady(screen,
-                       view);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnViewReady(screen,
+                            view);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -173,7 +154,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnActivate(screen);
+      foreach (var routine in this.Routines)
+      {
+        routine.OnActivate(screen);
+      }
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -187,24 +171,11 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      base.OnDeactivate(screen,
-                        close);
-    }
-
-    public override Type GetScreenType(object options = null) => typeof(TScreen);
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override IScreen BuildUp(IScreen screen,
-                                    object options = null)
-    {
-      screen = base.BuildUp(screen,
-                            options);
-
-      screen = this.BuildUp((TScreen) screen,
-                            options);
-
-      return screen;
+      foreach (var routine in this.Routines)
+      {
+        routine.OnDeactivate(screen,
+                             close);
+      }
     }
   }
 }

@@ -11,7 +11,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   [PublicAPI]
   public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
-    where TRootController : IController
+    where TRootController : IController<IScreen>
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
 
@@ -83,7 +83,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="Exception" />
     protected async Task<TController> DisplayViewFor<TController>([CanBeNull] object options = null,
                                                                   [CanBeNull] object context = null,
-                                                                  [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+                                                                  [CanBeNull] IDictionary<string, object> settings = null) where TController : IController<IScreen>
     {
       var controllerManager = IoC.Get<IControllerManager>();
       var controller = await controllerManager.ShowWindowAsync<TController>(options,
