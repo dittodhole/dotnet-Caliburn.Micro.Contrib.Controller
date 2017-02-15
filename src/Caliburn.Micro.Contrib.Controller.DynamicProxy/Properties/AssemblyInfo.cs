@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Caliburn.Micro.Contrib.Controller.Proxy")]
+[assembly: AssemblyTitle("Caliburn.Micro.Contrib.Controller.DynamicProxy")]
 [assembly: AssemblyDescription("Provides proxy implementations for the 'MVVM w/ Controller' pattern.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Andreas Niedermair (@dittodhole)")]
-[assembly: AssemblyProduct("Caliburn.Micro.Contrib.Controller.Proxy")]
+[assembly: AssemblyProduct("Caliburn.Micro.Contrib.Controller.DynamicProxy")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
