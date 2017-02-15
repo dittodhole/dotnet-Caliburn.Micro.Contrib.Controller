@@ -155,7 +155,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    [HandlesEvent(MethodName = nameof(IClose.TryClose), CallBase = true)]
+    [HandlesViewModelMethod(MethodName = nameof(IClose.TryClose), CallBase = true)]
     public virtual void OnClose(TScreen screen,
                                 bool? dialogResult = null)
     {
@@ -170,7 +170,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to prepare <paramref name="screen" /></remarks>
-    [HandlesEvent(MethodName = "OnInitialize", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnInitialize", CallBase = true)]
     public virtual void OnInitialize(TScreen screen)
     {
       if (screen == null)
@@ -183,7 +183,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    [HandlesEvent(MethodName = "OnViewReady", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnViewReady", CallBase = true)]
     public virtual void OnViewReady(TScreen screen,
                                     object view)
     {
@@ -202,7 +202,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to attach events</remarks>
-    [HandlesEvent(MethodName = "OnActivate", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnActivate", CallBase = true)]
     public virtual void OnActivate(TScreen screen)
     {
       if (screen == null)
@@ -215,7 +215,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to detach events</remarks>
-    [HandlesEvent(MethodName = "OnDeactivate", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnDeactivate", CallBase = true)]
     public virtual void OnDeactivate(TScreen screen,
                                      bool close)
     {

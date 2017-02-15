@@ -103,7 +103,7 @@
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="IController.cs" />
-    <Compile Include="HandlesEvent.cs" />
+    <Compile Include="HandlesViewModelMethodAttribute.cs" />
     <Compile Include="IProvideConductorEventHandlers.cs" />
     <Compile Include="IProvideScreenEventHandlers.cs" />
     <Compile Include="IMixinInstance.cs" />

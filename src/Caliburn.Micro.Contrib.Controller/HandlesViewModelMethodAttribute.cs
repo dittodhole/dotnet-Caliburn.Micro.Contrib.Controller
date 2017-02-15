@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller
 {
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-  public sealed class HandlesEvent : Attribute
+  public sealed class HandlesViewModelMethodAttribute : Attribute
   {
     public bool CallBase { get; set; } = true;
 

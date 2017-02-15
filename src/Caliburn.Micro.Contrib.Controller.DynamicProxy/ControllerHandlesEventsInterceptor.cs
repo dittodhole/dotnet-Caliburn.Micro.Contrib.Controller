@@ -45,7 +45,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                                            proxyMethodInfo);
         if (targetMethods.Any())
         {
-          var callBase = targetMethods.Any(targetMethod => targetMethod.HandlesEventAttribute.CallBase);
+          var callBase = targetMethods.Any(targetMethod => targetMethod.HandlesViewModelMethodAttribute.CallBase);
           if (callBase)
           {
             invocation.Proceed();

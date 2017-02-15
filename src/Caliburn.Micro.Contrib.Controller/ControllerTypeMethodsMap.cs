@@ -71,7 +71,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                 return false;
                                               }
 
-                                              var targetMethodParameterTypes = targetMethod.HandlesEventAttribute.MethodParamterTypes;
+                                              var targetMethodParameterTypes = targetMethod.HandlesViewModelMethodAttribute.MethodParamterTypes;
                                               if (targetMethodParameterTypes == null)
                                               {
                                                 targetMethodParameterTypes = targetMethodParameterInfos.Skip(1)
@@ -109,19 +109,19 @@ namespace Caliburn.Micro.Contrib.Controller
                                         .Select(methodInfo => new
                                                               {
                                                                 MethodInfo = methodInfo,
-                                                                HandlesEventAttributes = methodInfo.GetAttributes<HandlesEvent>(true)
+                                                                HandlesViewModelMethodAttributes = methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true)
                                                               })
-                                        .Where(arg => arg.HandlesEventAttributes.Any())
-                                        .SelectMany(arg => arg.HandlesEventAttributes.Select(handlesEventAttribute => new
+                                        .Where(arg => arg.HandlesViewModelMethodAttributes.Any())
+                                        .SelectMany(arg => arg.HandlesViewModelMethodAttributes.Select(handlesEventAttribute => new
                                                                                                                       {
-                                                                                                                        HandlesEventAttribute = handlesEventAttribute,
+                                                                                                                        HandlesViewModelMethodAttribute = handlesEventAttribute,
                                                                                                                         arg.MethodInfo,
                                                                                                                         ScreenMethodName = handlesEventAttribute.MethodName ?? arg.MethodInfo.Name
                                                                                                                       }))
                                         .GroupBy(arg => arg.ScreenMethodName)
                                         .ToDictionary(group => group.Key,
                                                       group => group.Select(arg => new TargetMethod(arg.MethodInfo,
-                                                                                                    arg.HandlesEventAttribute))
+                                                                                                    arg.HandlesViewModelMethodAttribute))
                                                                     .ToArray());
 
       var controllerTypeMethodsMap = new ControllerTypeMethodsMap(controllerType,
@@ -133,27 +133,27 @@ namespace Caliburn.Micro.Contrib.Controller
     public sealed class TargetMethod
     {
       /// <exception cref="ArgumentNullException"><paramref name="methodInfo" /> is <see langword="null" /></exception>
-      /// <exception cref="ArgumentNullException"><paramref name="handlesEventAttribute" /> is <see langword="null" /></exception>
+      /// <exception cref="ArgumentNullException"><paramref name="handlesViewModelMethodAttribute" /> is <see langword="null" /></exception>
       public TargetMethod([NotNull] MethodInfo methodInfo,
-                          [NotNull] HandlesEvent handlesEventAttribute)
+                          [NotNull] HandlesViewModelMethodAttribute handlesViewModelMethodAttribute)
       {
         if (methodInfo == null)
         {
           throw new ArgumentNullException(nameof(methodInfo));
         }
-        if (handlesEventAttribute == null)
+        if (handlesViewModelMethodAttribute == null)
         {
-          throw new ArgumentNullException(nameof(handlesEventAttribute));
+          throw new ArgumentNullException(nameof(handlesViewModelMethodAttribute));
         }
         this.MethodInfo = methodInfo;
-        this.HandlesEventAttribute = handlesEventAttribute;
+        this.HandlesViewModelMethodAttribute = handlesViewModelMethodAttribute;
       }
 
       [NotNull]
       public MethodInfo MethodInfo { get; }
 
       [NotNull]
-      public HandlesEvent HandlesEventAttribute { get; }
+      public HandlesViewModelMethodAttribute HandlesViewModelMethodAttribute { get; }
     }
   }
 }
