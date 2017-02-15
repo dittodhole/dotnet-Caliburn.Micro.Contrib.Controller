@@ -15,7 +15,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    [HandlesEvent(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     public virtual void OnActivateItem(IScreen screen,
                                        IScreen item)
     {
@@ -37,7 +36,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    [HandlesEvent(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
     public virtual void OnDeactivateItem(IScreen screen,
                                          IScreen item,
                                          bool close)
@@ -85,35 +83,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override void OnActivateItem(IScreen screen,
-                                        IScreen item)
-    {
-      base.OnActivateItem(screen,
-                          item);
-
-      this.OnActivateItem((TScreen) screen,
-                          (TItem) item);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override void OnDeactivateItem(IScreen screen,
-                                          IScreen item,
-                                          bool close)
-    {
-      base.OnDeactivateItem(screen,
-                            item,
-                            close);
-
-      this.OnDeactivateItem((TScreen) screen,
-                            (TItem) item,
-                            close);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     public virtual void OnActivateItem(TScreen screen,
                                        TItem item)
     {
@@ -125,10 +95,14 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(item));
       }
+
+      base.OnActivateItem(screen,
+                          item);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
     public virtual void OnDeactivateItem(TScreen screen,
                                          TItem item,
                                          bool close)
@@ -137,64 +111,14 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
+
+      base.OnDeactivateItem(screen,
+                            item,
+                            close);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override void OnViewReady(IScreen screen,
-                                     object view)
-    {
-      base.OnViewReady(screen,
-                       view);
-
-      this.OnViewReady((TScreen) screen,
-                       view);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override void OnActivate(IScreen screen)
-    {
-      base.OnActivate(screen);
-
-      this.OnActivate((TScreen) screen);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override void OnDeactivate(IScreen screen,
-                                      bool close)
-    {
-      base.OnDeactivate(screen,
-                        close);
-
-      this.OnDeactivate((TScreen) screen,
-                        close);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override void OnInitialize(IScreen screen)
-    {
-      base.OnInitialize(screen);
-
-      this.OnInitialize((TScreen) screen);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="InvalidCastException" />
-    public override void OnClose(IScreen screen,
-                                 bool? dialogResult = null)
-    {
-      base.OnClose(screen,
-                   dialogResult);
-
-      this.OnClose((TScreen) screen,
-                   dialogResult);
-    }
-
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [HandlesEvent(MethodName = nameof(IClose.TryClose), CallBase = true)]
     public virtual void OnClose(TScreen screen,
                                 bool? dialogResult = null)
     {
@@ -202,45 +126,59 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
+
+      base.OnClose(screen,
+                   dialogResult);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to prepare <paramref name="screen" /></remarks>
+    [HandlesEvent(MethodName = "OnInitialize", CallBase = true)]
     public virtual void OnInitialize(TScreen screen)
     {
       if (screen == null)
       {
         throw new ArgumentNullException(nameof(screen));
       }
+
+      base.OnInitialize(screen);
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="sceen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
-    public virtual void OnViewReady(TScreen sceen,
+    [HandlesEvent(MethodName = "OnViewReady", CallBase = true)]
+    public virtual void OnViewReady(TScreen screen,
                                     object view)
     {
-      if (sceen == null)
+      if (screen == null)
       {
-        throw new ArgumentNullException(nameof(sceen));
+        throw new ArgumentNullException(nameof(screen));
       }
       if (view == null)
       {
         throw new ArgumentNullException(nameof(view));
       }
+
+      base.OnViewReady(screen,
+                       view);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to attach events</remarks>
+    [HandlesEvent(MethodName = "OnActivate", CallBase = true)]
     public virtual void OnActivate(TScreen screen)
     {
       if (screen == null)
       {
         throw new ArgumentNullException(nameof(screen));
       }
+
+      base.OnActivate(screen);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <remarks>Should be used to detach events</remarks>
+    [HandlesEvent(MethodName = "OnDeactivate", CallBase = true)]
     public virtual void OnDeactivate(TScreen screen,
                                      bool close)
     {
@@ -248,6 +186,9 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
+
+      base.OnDeactivate(screen,
+                        close);
     }
 
     public override Type GetScreenType(object options = null) => typeof(TScreen);
