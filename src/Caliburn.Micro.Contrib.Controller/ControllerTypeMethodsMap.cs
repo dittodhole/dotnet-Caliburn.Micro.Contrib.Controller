@@ -71,13 +71,9 @@ namespace Caliburn.Micro.Contrib.Controller
                                                 return false;
                                               }
 
-                                              var targetMethodParameterTypes = targetMethod.HandlesViewModelMethodAttribute.MethodParamterTypes;
-                                              if (targetMethodParameterTypes == null)
-                                              {
-                                                targetMethodParameterTypes = targetMethodParameterInfos.Skip(1)
-                                                                                                       .Select(parameterInfo => parameterInfo.ParameterType)
-                                                                                                       .ToArray();
-                                              }
+                                              var targetMethodParameterTypes = targetMethodParameterInfos.Skip(1)
+                                                                                                         .Select(parameterInfo => parameterInfo.ParameterType)
+                                                                                                         .ToArray();
 
                                               var targetMethodReturnType = targetMethodInfo.ReturnType;
 
@@ -113,11 +109,11 @@ namespace Caliburn.Micro.Contrib.Controller
                                                               })
                                         .Where(arg => arg.HandlesViewModelMethodAttributes.Any())
                                         .SelectMany(arg => arg.HandlesViewModelMethodAttributes.Select(handlesEventAttribute => new
-                                                                                                                      {
-                                                                                                                        HandlesViewModelMethodAttribute = handlesEventAttribute,
-                                                                                                                        arg.MethodInfo,
-                                                                                                                        ScreenMethodName = handlesEventAttribute.MethodName ?? arg.MethodInfo.Name
-                                                                                                                      }))
+                                                                                                                                {
+                                                                                                                                  HandlesViewModelMethodAttribute = handlesEventAttribute,
+                                                                                                                                  arg.MethodInfo,
+                                                                                                                                  ScreenMethodName = handlesEventAttribute.MethodName ?? arg.MethodInfo.Name
+                                                                                                                                }))
                                         .GroupBy(arg => arg.ScreenMethodName)
                                         .ToDictionary(group => group.Key,
                                                       group => group.Select(arg => new TargetMethod(arg.MethodInfo,

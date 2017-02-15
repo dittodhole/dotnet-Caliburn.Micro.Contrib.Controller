@@ -10,8 +10,5 @@ namespace Caliburn.Micro.Contrib.Controller
 
     [CanBeNull]
     public string MethodName { get; set; }
-
-    [CanBeNull]
-    public Type[] MethodParamterTypes { get; set; }
   }
 }
