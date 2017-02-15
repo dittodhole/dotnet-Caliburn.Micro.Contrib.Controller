@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
   public abstract class AutofacBootstrapper<TRootController> : Micro.Autofac.AutofacBootstrapper<TRootController>
-    where TRootController : IController<IScreen>
+    where TRootController : IController
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
 
@@ -82,7 +82,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="Exception" />
     public virtual async Task<TController> DisplayViewForAsync<TController>([CanBeNull] object options = null,
                                                                             [CanBeNull] object context = null,
-                                                                            [CanBeNull] IDictionary<string, object> settings = null) where TController : IController<IScreen>
+                                                                            [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
     {
       var controllerManager = IoC.Get<IControllerManager>();
       var controller = await controllerManager.ShowWindowAsync<TController>(options,

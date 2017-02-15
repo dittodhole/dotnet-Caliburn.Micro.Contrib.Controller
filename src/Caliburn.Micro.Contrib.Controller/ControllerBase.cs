@@ -21,6 +21,11 @@ namespace Caliburn.Micro.Contrib.Controller
 
     public virtual IEnumerable<IRoutine> Routines { get; }
 
+    IScreen IController.CreateScreen(object options = null)
+    {
+      throw new NotImplementedException();
+    }
+
     // ReSharper disable UnusedMember.Global
     [NotNull]
     [ItemCanBeNull]
@@ -33,7 +38,7 @@ namespace Caliburn.Micro.Contrib.Controller
   }
 
   public abstract class ControllerBase<TScreen> : ControllerBase,
-                                                  IController<TScreen>,
+                                                  IController,
                                                   IProvideScreenEventHandlers<TScreen>
     where TScreen : IScreen
   {
@@ -53,30 +58,9 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     private IScreenFactory ScreenFactory { get; }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    public virtual TScreen BuildUp(TScreen screen,
-                                   object options = null)
+    IScreen IController.CreateScreen(object options = null)
     {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-
-      return screen;
-    }
-
-    public virtual Type GetScreenType(object options = null) => typeof(TScreen);
-
-    /// <exception cref="Exception" />
-    public virtual TScreen CreateScreen(object options = null)
-    {
-      var screenType = this.GetScreenType(options);
-      var screen = (TScreen) this.ScreenFactory.Create(screenType,
-                                                       this);
-      screen = this.BuildUp(screen,
-                            options);
-
-      return screen;
+      return this.CreateScreen(options);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -166,6 +150,35 @@ namespace Caliburn.Micro.Contrib.Controller
         routine.OnDeactivate(screen,
                              close);
       }
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    [NotNull]
+    public virtual TScreen BuildUp([NotNull] TScreen screen,
+                                   [CanBeNull] object options = null)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      return screen;
+    }
+
+    [NotNull]
+    public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
+
+    /// <exception cref="Exception" />
+    [NotNull]
+    public virtual TScreen CreateScreen([CanBeNull] object options = null)
+    {
+      var screenType = this.GetScreenType(options);
+      var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       this);
+      screen = this.BuildUp(screen,
+                            options);
+
+      return screen;
     }
   }
 }

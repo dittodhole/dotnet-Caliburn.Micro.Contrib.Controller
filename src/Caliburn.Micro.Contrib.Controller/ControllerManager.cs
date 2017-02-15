@@ -13,14 +13,14 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     Task<TController> ShowWindowAsync<TController>([CanBeNull] object options = null,
                                                    [CanBeNull] object context = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController<IScreen>;
+                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController;
 
     /// <exception cref="InvalidOperationException" />
     /// <exception cref="Exception" />
     [NotNull]
     Task<TController> ShowDialogAsync<TController>([CanBeNull] object options = null,
                                                    [CanBeNull] object context = null,
-                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController<IScreen>;
+                                                   [CanBeNull] IDictionary<string, object> settings = null) where TController : IController;
   }
 
   public class ControllerManager : IControllerManager
@@ -52,7 +52,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     public virtual async Task<TController> ShowWindowAsync<TController>(object options = null,
                                                                         object context = null,
-                                                                        IDictionary<string, object> settings = null) where TController : IController<IScreen>
+                                                                        IDictionary<string, object> settings = null) where TController : IController
     {
       var controller = this.ControllerLocator.Locate<TController>();
       var screen = controller.CreateScreen(options);
@@ -71,7 +71,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     public virtual async Task<TController> ShowDialogAsync<TController>(object options = null,
                                                                         object context = null,
-                                                                        IDictionary<string, object> settings = null) where TController : IController<IScreen>
+                                                                        IDictionary<string, object> settings = null) where TController : IController
     {
       var controller = this.ControllerLocator.Locate<TController>();
       var screen = controller.CreateScreen(options);
