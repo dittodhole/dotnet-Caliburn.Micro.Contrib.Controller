@@ -1,14 +1,14 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
-  public abstract class ConductorControllerRoutineBase : ControllerRoutineBase
+  public abstract class ConductorControllerRoutineBase : ControllerRoutineBase,
+                                                         IConductorRoutine
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    public virtual void OnActivateItem([NotNull] IScreen screen,
-                                       [NotNull] IScreen item)
+    public virtual void OnActivateItem(IScreen screen,
+                                       IScreen item)
     {
       if (screen == null)
       {
@@ -22,8 +22,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    public virtual void OnDeactivateItem([NotNull] IScreen screen,
-                                         [NotNull] IScreen item,
+    public virtual void OnDeactivateItem(IScreen screen,
+                                         IScreen item,
                                          bool close)
     {
       if (screen == null)

@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caliburn.Micro.Contrib.Cont
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caliburn.Micro.Contrib.Controller.Autofac", "Caliburn.Micro.Contrib.Controller.Autofac\Caliburn.Micro.Contrib.Controller.Autofac.csproj", "{CD07B998-7390-4570-8F42-ED74FB98DCA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caliburn.Micro.Contrib.Controller.Proxy", "Caliburn.Micro.Contrib.Controller.Proxy\Caliburn.Micro.Contrib.Controller.Proxy.csproj", "{940E320A-8F5F-4F12-ADE8-46826E458C4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caliburn.Micro.Contrib.Controller.DynamicProxy", "Caliburn.Micro.Contrib.Controller.DynamicProxy\Caliburn.Micro.Contrib.Controller.DynamicProxy.csproj", "{940E320A-8F5F-4F12-ADE8-46826E458C4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

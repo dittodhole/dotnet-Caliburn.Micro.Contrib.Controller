@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
@@ -28,12 +27,13 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       return instance;
     }
 
-    public override async Task OnViewReadyAsync(IScreen screen,
-                                                object view)
+    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
+    public override void OnViewReady(IScreen screen,
+                                     object view)
     {
-      await base.OnViewReadyAsync(screen,
-                                  view)
-                .ConfigureAwait(false);
+      base.OnViewReady(screen,
+                       view);
 
       var binding = new Binding
                     {
@@ -42,15 +42,14 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                       Converter = new NegateBoolConverter()
                     };
 
-      await Execute.OnUIThreadAsync(() =>
-                                    {
-                                      var dependencyObject = (DependencyObject) view;
+      Execute.OnUIThread(() =>
+                         {
+                           var dependencyObject = (DependencyObject) view;
 
-                                      BindingOperations.SetBinding(dependencyObject,
-                                                                   UIElement.IsEnabledProperty,
-                                                                   binding);
-                                    })
-                   .ConfigureAwait(false);
+                           BindingOperations.SetBinding(dependencyObject,
+                                                        UIElement.IsEnabledProperty,
+                                                        binding);
+                         });
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -62,7 +61,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
         throw new ArgumentNullException(nameof(screen));
       }
 
-      DisposeAction result;
+      DisposeAction result = null;
 
       var canBeBlocked = screen as ICanBeBlocked;
       if (canBeBlocked != null)
@@ -74,6 +73,8 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                                    {
                                      canBeBlocked.IsBlocked = false;
                                      screen.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
+
+                                     this.DisposeActions.Remove(result);
                                    });
 
         this.DisposeActions.Add(result);

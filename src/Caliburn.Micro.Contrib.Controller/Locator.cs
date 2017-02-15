@@ -1,10 +1,9 @@
 ﻿using System;
-using Caliburn.Micro.Contrib.Controller.Proxy.ExtensionMethods;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [PublicAPI]
   public interface ILocator<T>
     where T : class
   {
@@ -59,6 +58,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return instance;
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
     public virtual T Locate(Type type)
     {
       if (type == null)
@@ -83,6 +83,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return this.Locate();
     }
 
+    /// <exception cref="ArgumentNullException">type is <see langword="null"/></exception>
     public virtual T LocateOptional(Type type)
     {
       return this.Locate(type);

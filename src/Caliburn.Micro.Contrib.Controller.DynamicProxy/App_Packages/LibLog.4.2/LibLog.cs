@@ -40,23 +40,23 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "Caliburn.Micro.Contrib.Controller.Proxy.Logging")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Scope = "member", Target = "Caliburn.Micro.Contrib.Controller.Proxy.Logging.Logger.#Invoke(Caliburn.Micro.Contrib.Controller.Proxy.Logging.LogLevel,System.Func`1<System.String>,System.Exception,System.Object[])")]
+[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging")]
+[assembly: SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Scope = "member", Target = "Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging.Logger.#Invoke(Caliburn.Micro.Contrib.Controller.Proxy.Logging.LogLevel,System.Func`1<System.String>,System.Exception,System.Object[])")]
 
 // If you copied this file manually, you need to change all "YourRootNameSpace" so not to clash with other libraries
 // that use LibLog
 #if LIBLOG_PROVIDERS_ONLY
-namespace Caliburn.Micro.Contrib.Controller.Proxy.LibLog
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy.LibLog
 #else
-namespace Caliburn.Micro.Contrib.Controller.Proxy.Logging
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging
 #endif
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 #if LIBLOG_PROVIDERS_ONLY
-    using Caliburn.Micro.Contrib.Controller.Proxy.LibLog.LogProviders;
+    using Caliburn.Micro.Contrib.Controller.DynamicProxy.LibLog.LogProviders;
 #else
-    using Caliburn.Micro.Contrib.Controller.Proxy.Logging.LogProviders;
+    using Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging.LogProviders;
 #endif
     using System;
 #if !LIBLOG_PROVIDERS_ONLY
@@ -714,9 +714,9 @@ namespace Caliburn.Micro.Contrib.Controller.Proxy.Logging
 }
 
 #if LIBLOG_PROVIDERS_ONLY
-namespace Caliburn.Micro.Contrib.Controller.Proxy.LibLog.LogProviders
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy.LibLog.LogProviders
 #else
-namespace Caliburn.Micro.Contrib.Controller.Proxy.Logging.LogProviders
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging.LogProviders
 #endif
 {
     using System;
