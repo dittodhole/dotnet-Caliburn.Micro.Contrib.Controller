@@ -52,10 +52,6 @@
       <HintPath>..\packages\Caliburn.Micro.3.0.3\lib\net40\Caliburn.Micro.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
       <Private>True</Private>
@@ -94,6 +90,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\JetBrains.Annotations.cs">
+      <Link>JetBrains.Annotations.cs</Link>
+    </Compile>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="AutofacBootstrapper.cs" />
     <Compile Include="LocatorAdapter.cs" />
