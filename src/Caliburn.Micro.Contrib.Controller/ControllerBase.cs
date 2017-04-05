@@ -158,6 +158,7 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
 
     /// <exception cref="Exception" />
+    [PublicAPI]
     [NotNull]
     public virtual TScreen CreateScreen([CanBeNull] object options = null)
     {
