@@ -99,11 +99,13 @@
     <Compile Include="ControllerRoutine\IConductorRoutine.cs" />
     <Compile Include="ControllerRoutine\IRoutine.cs" />
     <Compile Include="ControllerTypeMethodsMap.cs" />
+    <Compile Include="ControllerWithResultBase.cs" />
     <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="HandlesViewModelMethodAttribute.cs" />
     <Compile Include="IProvideConductorEventHandlers.cs" />
+    <Compile Include="IProvideResultAsync.cs" />
     <Compile Include="IProvideScreenEventHandlers.cs" />
     <Compile Include="IMixinInstance.cs" />
     <Compile Include="IMixinInterface.cs" />

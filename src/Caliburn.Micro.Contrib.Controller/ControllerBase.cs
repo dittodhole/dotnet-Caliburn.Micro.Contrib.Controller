@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -25,16 +23,6 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       throw new NotImplementedException();
     }
-
-    // ReSharper disable UnusedMember.Global
-    [NotNull]
-    [ItemCanBeNull]
-    public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
-    {
-      return TaskEx.FromResult<object>(null);
-    }
-
-    // ReSharper restore UnusedMember.Global
   }
 
   public abstract class ControllerBase<TScreen> : ControllerBase,
