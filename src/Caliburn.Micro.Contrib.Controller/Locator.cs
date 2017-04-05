@@ -59,6 +59,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
+    /// <exception cref="ArgumentOutOfRangeException" />
+    /// <exception cref="Exception" />
     public virtual T Locate(Type type)
     {
       if (type == null)
@@ -84,6 +86,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException">type is <see langword="null"/></exception>
+    /// <exception cref="ArgumentOutOfRangeException" />
+    /// <exception cref="Exception" />
     public virtual T LocateOptional(Type type)
     {
       return this.Locate(type);
