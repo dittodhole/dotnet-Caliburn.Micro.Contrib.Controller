@@ -10,4 +10,7 @@
     <description>$description$</description>
     <tags>Caliburn Micro MVVM Controller WPF</tags>
   </metadata>
+  <files>
+    <file src="bin\$configuration$\$id$.xml" target="lib" />
+  </files>
 </package>
