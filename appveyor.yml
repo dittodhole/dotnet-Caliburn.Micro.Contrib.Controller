@@ -30,10 +30,10 @@ build:
   publish_nuget_symbols: false
   verbosity: detailed
 after_build:
-- cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -symbols
-- cmd: nuget pack "%dynamicproxy_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
-- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
-- cmd: nuget pack "%autofac_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols
+- cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -symbols -Exclude "**\FodyWeavers.xml"
+- cmd: nuget pack "%dynamicproxy_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols -Exclude "**\FodyWeavers.xml"
+- cmd: nuget pack "%extras_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols -Exclude "**\FodyWeavers.xml"
+- cmd: nuget pack "%autofac_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols -Exclude "**\FodyWeavers.xml"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%project_name%.%GitVersion_NuGetVersion%.symbols.nupkg"
 - cmd: appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%dynamicproxy_project_name%.%GitVersion_NuGetVersion%.nupkg"
