@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [PublicAPI]
   public interface ILocator<T>
     where T : class
   {
