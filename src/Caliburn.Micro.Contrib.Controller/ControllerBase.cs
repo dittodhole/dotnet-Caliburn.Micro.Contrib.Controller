@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -25,16 +23,6 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       throw new NotImplementedException();
     }
-
-    // ReSharper disable UnusedMember.Global
-    [NotNull]
-    [ItemCanBeNull]
-    public virtual Task<object> GetResultAsync(CancellationToken cancellationToken)
-    {
-      return TaskEx.FromResult<object>(null);
-    }
-
-    // ReSharper restore UnusedMember.Global
   }
 
   public abstract class ControllerBase<TScreen> : ControllerBase,
@@ -153,9 +141,10 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception" />
     [NotNull]
-    public virtual TScreen BuildUp([NotNull] TScreen screen,
-                                   [CanBeNull] object options = null)
+    protected virtual TScreen BuildUp([NotNull] TScreen screen,
+                                      [CanBeNull] object options = null)
     {
       if (screen == null)
       {
@@ -166,9 +155,10 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     [NotNull]
-    public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
+    protected virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
 
     /// <exception cref="Exception" />
+    [PublicAPI]
     [NotNull]
     public virtual TScreen CreateScreen([CanBeNull] object options = null)
     {
