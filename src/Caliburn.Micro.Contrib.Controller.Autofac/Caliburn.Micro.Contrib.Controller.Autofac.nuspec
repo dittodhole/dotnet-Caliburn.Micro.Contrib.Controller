@@ -11,6 +11,6 @@
     <tags>Caliburn Micro MVVM Controller WPF Autofac</tags>
   </metadata>
   <files>
-    <file src="bin\$configuration$\$id$.xml" target="lib" />
+    <file src="bin\$configuration$\$id$.xml" target="lib\net40" />
   </files>
 </package>
