@@ -182,6 +182,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     [PublicAPI]
     [NotNull]
@@ -196,16 +197,22 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
+    /// <exception cref="ArgumentException" />
+    /// <exception cref="Exception" />
     [PublicAPI]
     [NotNull]
     public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
 
+    /// <exception cref="ArgumentException" />
+    /// <exception cref="Exception" />
     [PublicAPI]
     [NotNull]
     public virtual object[] GetConstructorArguments([CanBeNull] object options = null) => new object[0];
 
+    /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     [PublicAPI]
+    [Pure]
     [NotNull]
     public virtual TScreen CreateScreen([CanBeNull] object options = null)
     {
