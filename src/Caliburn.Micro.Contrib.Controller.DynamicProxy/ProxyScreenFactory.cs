@@ -54,16 +54,22 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="constructorArguments" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="TargetInvocationException">Thrown when constructor of type <paramref name="screenType" /> throws an exception.</exception>
     /// <exception cref="ArgumentException">Thrown when no constructor exists on type <paramref name="screenType" /> with matching parameters.</exception>
     /// <exception cref="Exception" />
     protected override IScreen CreateImpl(Type screenType,
+                                          object[] constructorArguments,
                                           IController controller)
     {
       if (screenType == null)
       {
         throw new ArgumentNullException(nameof(screenType));
+      }
+      if (constructorArguments == null)
+      {
+        throw new ArgumentNullException(nameof(constructorArguments));
       }
       if (controller == null)
       {
@@ -93,7 +99,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       var proxy = proxyGenerator.CreateClassProxy(screenType,
                                                   additionalInterfaces,
                                                   proxyGenerationOptions,
-                                                  (IInterceptor) interceptor);
+                                                  constructorArguments,
+                                                  interceptor);
 
       var screen = (IScreen) proxy;
 
