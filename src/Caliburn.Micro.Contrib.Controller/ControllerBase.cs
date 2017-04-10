@@ -159,13 +159,19 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
 
+    [PublicAPI]
+    [NotNull]
+    public virtual object[] GetConstructorArguments([CanBeNull] object options = null) => new object[0];
+
     /// <exception cref="Exception" />
     [PublicAPI]
     [NotNull]
     public virtual TScreen CreateScreen([CanBeNull] object options = null)
     {
       var screenType = this.GetScreenType(options);
+      var constructorArguments = this.GetConstructorArguments(options);
       var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       constructorArguments,
                                                        this);
       screen = this.BuildUp(screen,
                             options);
