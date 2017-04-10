@@ -11,6 +11,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [ItemNotNull]
     IEnumerable<IRoutine> Routines { get; }
 
+    /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     [Pure]
     [NotNull]
