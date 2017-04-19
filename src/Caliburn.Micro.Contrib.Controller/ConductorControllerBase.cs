@@ -6,15 +6,8 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public abstract class ConductorControllerBase : ControllerBase
-  {
-    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
-    protected ConductorControllerBase([NotNull] ICollection<IRoutine> routines)
-      : base(routines) {}
-  }
-
-  public abstract class ConductorControllerBase<TScreen, TItem> : ConductorControllerBase,
-                                                                  IController,
+  public abstract class ConductorControllerBase<TScreen, TItem> : IController,
+                                                                  IScreenFactoryAdapter<TScreen>,
                                                                   IProvideScreenEventHandlers<TScreen>,
                                                                   IProvideConductorEventHandlers<TScreen, TItem>
     where TScreen : IScreen
@@ -24,22 +17,23 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
     protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
                                       [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
-      : base(routines)
     {
       if (screenFactory == null)
       {
         throw new ArgumentNullException(nameof(screenFactory));
       }
+      if (routines == null)
+      {
+        throw new ArgumentNullException(nameof(routines));
+      }
       this.ScreenFactory = screenFactory;
+      this.Routines = routines;
     }
 
     [NotNull]
     private IScreenFactory ScreenFactory { get; }
 
-    IScreen IController.CreateScreen(object options = null)
-    {
-      return this.CreateScreen(options);
-    }
+    public virtual IEnumerable<IRoutine> Routines { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
@@ -181,6 +175,26 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
+    /// <exception cref="ArgumentException" />
+    /// <exception cref="Exception" />
+    public virtual TScreen CreateScreen(object options = null)
+    {
+      var screenType = this.GetScreenType(options);
+      var constructorArguments = this.GetConstructorArguments(options);
+      var screen = (TScreen) this.ScreenFactory.Create(screenType,
+                                                       constructorArguments,
+                                                       this);
+      screen = this.BuildUp(screen,
+                            options);
+
+      return screen;
+    }
+
+    IScreen IScreenFactoryAdapter.CreateScreen(object options)
+    {
+      return this.CreateScreen(options);
+    }
+
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
@@ -201,30 +215,18 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception" />
     [PublicAPI]
     [NotNull]
-    public virtual Type GetScreenType([CanBeNull] object options = null) => typeof(TScreen);
-
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
-    [PublicAPI]
-    [NotNull]
-    public virtual object[] GetConstructorArguments([CanBeNull] object options = null) => new object[0];
-
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
-    [PublicAPI]
-    [Pure]
-    [NotNull]
-    public virtual TScreen CreateScreen([CanBeNull] object options = null)
+    public virtual Type GetScreenType([CanBeNull] object options = null)
     {
-      var screenType = this.GetScreenType(options);
-      var constructorArguments = this.GetConstructorArguments(options);
-      var screen = (TScreen) this.ScreenFactory.Create(screenType,
-                                                       constructorArguments,
-                                                       this);
-      screen = this.BuildUp(screen,
-                            options);
+      return typeof(TScreen);
+    }
 
-      return screen;
+    /// <exception cref="ArgumentException" />
+    /// <exception cref="Exception" />
+    [PublicAPI]
+    [NotNull]
+    public virtual object[] GetConstructorArguments([CanBeNull] object options = null)
+    {
+      return new object[0];
     }
   }
 }

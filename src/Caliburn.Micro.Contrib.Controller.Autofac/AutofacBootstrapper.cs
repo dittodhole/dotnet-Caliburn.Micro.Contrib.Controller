@@ -25,8 +25,8 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     {
       base.ConfigureContainer(builder);
 
-      builder.RegisterType<ControllerManager>()
-             .As<IControllerManager>()
+      builder.RegisterType<ScreenManager>()
+             .As<IScreenManager>()
              .SingleInstance();
 
       builder.RegisterType<ProxyScreenFactory>()
@@ -52,45 +52,25 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     }
 
     /// <summary>
-    ///   Locates the controller for <typeparamref name="TRootController" />, locates view model, locates the associate view, binds them and shows it as the root view.
-    /// </summary>
-    /// <param name="options">The optional view model options.</param>
-    /// <param name="context">The optional view model context.</param>
-    /// <param name="settings">The optional window settings.</param>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
-    public virtual async Task<TRootController> DisplayRootViewAsync([CanBeNull] object options = null,
-                                                                    [CanBeNull] object context = null,
-                                                                    [CanBeNull] IDictionary<string, object> settings = null)
-    {
-      var rootController = await this.DisplayViewForAsync<TRootController>(options,
-                                                                           context,
-                                                                           settings)
-                                     .ConfigureAwait(false);
-      return rootController;
-    }
-
-    /// <summary>
     ///   Locates the controller, locates view model, locates the associate view, binds them and shows it as the root view.
     /// </summary>
-    /// <typeparam name="TController">The controller model type.</typeparam>
     /// <param name="options">The optional view model options.</param>
     /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> does not implement <see cref="ControllerBase" />.</exception>
-    /// <exception cref="InvalidOperationException">If <typeparamref name="TRootController" /> could not create a <see cref="IScreen" /> for <paramref name="options" />.</exception>
     /// <exception cref="Exception" />
-    public virtual async Task<TController> DisplayViewForAsync<TController>([CanBeNull] object options = null,
-                                                                            [CanBeNull] object context = null,
-                                                                            [CanBeNull] IDictionary<string, object> settings = null) where TController : IController
+    [PublicAPI]
+    public virtual async Task<TScreenFactoryAdapter> DisplayViewForAsync<TScreenFactoryAdapter>([CanBeNull] object options = null,
+                                                                                                [CanBeNull] object context = null,
+                                                                                                [CanBeNull] IDictionary<string, object> settings = null)
+      where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      var controllerManager = IoC.Get<IControllerManager>();
-      var controller = await controllerManager.ShowWindowAsync<TController>(options,
-                                                                            context,
-                                                                            settings)
-                                              .ConfigureAwait(false);
+      var screenManager = IoC.Get<IScreenManager>();
+      var screenFactoryAdapter = await screenManager.ShowWindowAsync<TScreenFactoryAdapter>(options,
+                                                                                            context,
+                                                                                            settings)
+                                                    .ConfigureAwait(false);
 
-      return controller;
+      return screenFactoryAdapter;
     }
 
     protected override void OnExit(object sender,

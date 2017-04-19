@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using JetBrains.Annotations;
 
@@ -10,11 +9,5 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     [ItemNotNull]
     IEnumerable<IRoutine> Routines { get; }
-
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    IScreen CreateScreen([CanBeNull] object options = null);
   }
 }
