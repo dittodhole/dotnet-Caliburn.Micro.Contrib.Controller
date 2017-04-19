@@ -180,7 +180,8 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual TScreen CreateScreen(object options = null)
     {
       var screenType = this.GetScreenType(options);
-      var constructorArguments = this.GetConstructorArguments(options);
+      var constructorArguments = this.GetConstructorArguments(screenType,
+                                                              options);
       var screen = (TScreen) this.ScreenFactory.Create(screenType,
                                                        constructorArguments,
                                                        this);
@@ -220,12 +221,19 @@ namespace Caliburn.Micro.Contrib.Controller
       return typeof(TScreen);
     }
 
+    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     [PublicAPI]
     [NotNull]
-    public virtual object[] GetConstructorArguments([CanBeNull] object options = null)
+    public virtual object[] GetConstructorArguments([NotNull] Type screenType,
+                                                    [CanBeNull] object options = null)
     {
+      if (screenType == null)
+      {
+        throw new ArgumentNullException(nameof(screenType));
+      }
+
       return new object[0];
     }
   }
