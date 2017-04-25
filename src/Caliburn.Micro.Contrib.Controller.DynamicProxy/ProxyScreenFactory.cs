@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Anotar.LibLog;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
+using Castle.Core.Logging;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
@@ -31,6 +32,42 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                              return viewType;
                                            };
     }
+
+    /// <exception cref="ArgumentNullException"><paramref name="proxyGenerator" /> is <see langword="null" /></exception>
+    public ProxyScreenFactory([NotNull] ProxyGenerator proxyGenerator)
+    {
+      if (proxyGenerator == null)
+      {
+        throw new ArgumentNullException(nameof(proxyGenerator));
+      }
+      this.ProxyGenerator = proxyGenerator;
+    }
+
+    /// <exception cref="ArgumentNullException"><paramref name="logger" /> is <see langword="null" /></exception>
+    public ProxyScreenFactory([NotNull] ILogger logger)
+    {
+      if (logger == null)
+      {
+        throw new ArgumentNullException(nameof(logger));
+      }
+      this.ProxyGenerator = new ProxyGenerator
+                            {
+                              Logger = logger
+                            };
+    }
+
+    public ProxyScreenFactory()
+    {
+      var loggerName = this.GetType()
+                           .FullName;
+      this.ProxyGenerator = new ProxyGenerator
+                            {
+                              Logger = new LoggerAdapter(loggerName)
+                            };
+    }
+
+    [NotNull]
+    private ProxyGenerator ProxyGenerator { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     [Pure]
@@ -94,13 +131,11 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
       }
 
-      var proxyGenerator = new ProxyGenerator();
-
-      var proxy = proxyGenerator.CreateClassProxy(screenType,
-                                                  additionalInterfaces,
-                                                  proxyGenerationOptions,
-                                                  constructorArguments,
-                                                  interceptor);
+      var proxy = this.ProxyGenerator.CreateClassProxy(screenType,
+                                                       additionalInterfaces,
+                                                       proxyGenerationOptions,
+                                                       constructorArguments,
+                                                       interceptor);
 
       var screen = (IScreen) proxy;
 
