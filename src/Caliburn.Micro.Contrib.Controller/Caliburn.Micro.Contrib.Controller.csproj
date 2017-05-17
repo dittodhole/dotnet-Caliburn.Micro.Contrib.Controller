@@ -95,7 +95,7 @@
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="ConductorControllerBase.cs" />
     <Compile Include="ControllerBase.cs" />
-    <Compile Include="DisallowMultipleDisplayAttribute.cs" />
+    <Compile Include="DisallowConcurrentScreenCreation.cs" />
     <Compile Include="IScreenFactory.cs" />
     <Compile Include="ReflectionBasedScreenFactory.cs" />
     <Compile Include="ScreenManager.cs" />

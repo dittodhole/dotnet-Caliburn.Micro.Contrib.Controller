@@ -53,7 +53,7 @@ namespace Caliburn.Micro.Contrib.Controller
     private ILocator<IWindowManager> WindowManagerLocator { get; }
 
     [NotNull]
-    private ConcurrentDictionary<Type, IScreenFactoryAdapter> SingletonScreenTypes { get; } = new ConcurrentDictionary<Type, IScreenFactoryAdapter>();
+    private ConcurrentDictionary<Type, IScreenFactoryAdapter> SingletonScreenFactoryAdapters { get; } = new ConcurrentDictionary<Type, IScreenFactoryAdapter>();
 
     /// <exception cref="InvalidOperationException" />
     /// <exception cref="Exception" />
@@ -62,11 +62,10 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                                             IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      var screenFactoryAdapter = this.ScreenFactoryAdapterLocator.Locate<TScreenFactoryAdapter>();
-
+      TScreenFactoryAdapter screenFactoryAdapter;
       IScreen screen;
-      if (!this.TryCreateScreen(ref screenFactoryAdapter,
-                                options,
+      if (!this.TryCreateScreen(options,
+                                out screenFactoryAdapter,
                                 out screen))
       {
         return screenFactoryAdapter;
@@ -89,11 +88,10 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                                             IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      var screenFactoryAdapter = this.ScreenFactoryAdapterLocator.Locate<TScreenFactoryAdapter>();
-
+      TScreenFactoryAdapter screenFactoryAdapter;
       IScreen screen;
-      if (!this.TryCreateScreen(ref screenFactoryAdapter,
-                                options,
+      if (!this.TryCreateScreen(options,
+                                out screenFactoryAdapter,
                                 out screen))
       {
         return screenFactoryAdapter;
@@ -109,59 +107,87 @@ namespace Caliburn.Micro.Contrib.Controller
       return screenFactoryAdapter;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screenFactoryAdapter" /> is <see langword="null" /></exception>
-    public virtual bool TryCreateScreen<TScreenFactoryAdapter>([NotNull] ref TScreenFactoryAdapter screenFactoryAdapter,
-                                                               [CanBeNull] object options,
+    public virtual bool TryCreateScreen<TScreenFactoryAdapter>([CanBeNull] object options,
+                                                               [NotNull] out TScreenFactoryAdapter screenFactoryAdapter,
                                                                [CanBeNull] out IScreen screen)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      if (screenFactoryAdapter == null)
+      bool result;
+
+      if (this.AllowMultipleScreenCreation<TScreenFactoryAdapter>())
       {
-        throw new ArgumentNullException(nameof(screenFactoryAdapter));
-      }
-
-      // TODO maybe refactor the DisallowMultipleDisplayAttribute-part
-      // to be done in ControllerBase.CreateScreen (returning null),
-      // but atm this seems like a big change, and might be better
-      // off within the scope of Screen*Manager* though ...
-
-      var screenType = screenFactoryAdapter.GetScreenType(options);
-
-      var disallowMultipleDisplayAttribute = screenType.GetAttributes<DisallowMultipleDisplayAttribute>(true)
-                                                       .FirstOrDefault();
-      if (disallowMultipleDisplayAttribute == null)
-      {
+        screenFactoryAdapter = this.ScreenFactoryAdapterLocator.Locate<TScreenFactoryAdapter>();
         screen = screenFactoryAdapter.CreateScreen(options);
-        return true;
+        result = true;
       }
-
-      var bondedScreenFactoryAdapter = this.SingletonScreenTypes.GetOrAdd(screenType,
-                                                                          screenFactoryAdapter);
-      if (object.ReferenceEquals(bondedScreenFactoryAdapter,
-                                 screenFactoryAdapter))
+      else
       {
-        var screenInstance = screenFactoryAdapter.CreateScreen(options);
+        if (this.CreateOrGet(out screenFactoryAdapter))
+        {
+          var screenInstance = screenFactoryAdapter.CreateScreen(options);
 
-        EventHandler<DeactivationEventArgs> onDeactived = null;
-        onDeactived = (sender,
-                       args) =>
-                      {
-                        if (args.WasClosed)
+          EventHandler<DeactivationEventArgs> onDeactived = null;
+          onDeactived = (sender,
+                         args) =>
                         {
-                          screenInstance.Deactivated -= onDeactived;
-                          this.SingletonScreenTypes.TryRemove(screenType,
-                                                              out bondedScreenFactoryAdapter);
-                        }
-                      };
-        screenInstance.Deactivated += onDeactived;
+                          if (args.WasClosed)
+                          {
+                            screenInstance.Deactivated -= onDeactived;
 
-        screen = screenInstance;
-        return true;
+                            this.Release<TScreenFactoryAdapter>();
+                          }
+                        };
+          screenInstance.Deactivated += onDeactived;
+
+          screen = screenInstance;
+          result = true;
+        }
+        else
+        {
+          screen = null;
+          result = false;
+        }
       }
 
-      screenFactoryAdapter = (TScreenFactoryAdapter) bondedScreenFactoryAdapter;
-      screen = null;
-      return false;
+      return result;
+    }
+
+    public virtual bool AllowMultipleScreenCreation<TScreenFactoryAdapter>()
+      where TScreenFactoryAdapter : IScreenFactoryAdapter
+    {
+      var disallowConcurrentScreenCreation = typeof(TScreenFactoryAdapter).GetAttributes<DisallowConcurrentScreenCreation>(true)
+                                                                          .FirstOrDefault();
+
+      var result = disallowConcurrentScreenCreation == null;
+
+      return result;
+    }
+
+    public virtual bool CreateOrGet<TScreenFactoryAdapter>(out TScreenFactoryAdapter screenFactoryAdapter)
+      where TScreenFactoryAdapter : IScreenFactoryAdapter
+    {
+      var created = false;
+      var instance = this.SingletonScreenFactoryAdapters.GetOrAdd(typeof(TScreenFactoryAdapter),
+                                                                  screenFactoryAdapterType =>
+                                                                  {
+                                                                    created = true;
+
+                                                                    return this.ScreenFactoryAdapterLocator.Locate(screenFactoryAdapterType);
+                                                                  });
+
+      screenFactoryAdapter = (TScreenFactoryAdapter) instance;
+
+      return created;
+    }
+
+    public virtual bool Release<TScreenFactoryAdapter>()
+      where TScreenFactoryAdapter : IScreenFactoryAdapter
+    {
+      IScreenFactoryAdapter instance;
+      var result = this.SingletonScreenFactoryAdapters.TryRemove(typeof(TScreenFactoryAdapter),
+                                                                 out instance);
+
+      return result;
     }
   }
 }
