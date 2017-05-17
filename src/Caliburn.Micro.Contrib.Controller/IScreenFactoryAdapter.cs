@@ -11,6 +11,12 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     IScreen CreateScreen([CanBeNull] object options = null);
+
+    /// <exception cref="ArgumentException" />
+    /// <exception cref="Exception" />
+    [Pure]
+    [NotNull]
+    Type GetScreenType([CanBeNull] object options = null);
   }
 
   public interface IScreenFactoryAdapter<TScreen> : IScreenFactoryAdapter

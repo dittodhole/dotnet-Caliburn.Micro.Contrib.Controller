@@ -95,6 +95,9 @@
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="ConductorControllerBase.cs" />
     <Compile Include="ControllerBase.cs" />
+    <Compile Include="DisallowMultipleDisplayAttribute.cs" />
+    <Compile Include="IScreenFactory.cs" />
+    <Compile Include="ReflectionBasedScreenFactory.cs" />
     <Compile Include="ScreenManager.cs" />
     <Compile Include="ControllerRoutine\ConductorControllerRoutineBase.cs" />
     <Compile Include="ControllerRoutine\ControllerRoutineBase.cs" />
@@ -117,7 +120,7 @@
     <Compile Include="IMixinProvider.cs" />
     <Compile Include="IMixinAttributes.cs" />
     <Compile Include="WeakCollection.cs" />
-    <Compile Include="ScreenFactory.cs" />
+    <Compile Include="ScreenFactoryBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
