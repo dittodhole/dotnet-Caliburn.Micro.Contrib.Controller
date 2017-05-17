@@ -3,22 +3,8 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [PublicAPI]
-  public interface IScreenFactory
-  {
-    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="constructorArguments" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    IScreen Create([NotNull] Type screenType,
-                   [NotNull] [ItemCanBeNull] object[] constructorArguments,
-                   [NotNull] IController controller);
-  }
-
-  public class ScreenFactory : IScreenFactory,
-                               IDisposable
+  public abstract class ScreenFactoryBase : IScreenFactory,
+                                            IDisposable
   {
     [NotNull]
     private IWeakCollection<IScreen> Screens { get; } = new WeakCollection<IScreen>();
@@ -62,27 +48,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     [NotNull]
-    protected virtual IScreen CreateImpl([NotNull] Type screenType,
-                                         [NotNull] [ItemCanBeNull] object[] constructorArguments,
-                                         [NotNull] IController controller)
-    {
-      if (screenType == null)
-      {
-        throw new ArgumentNullException(nameof(screenType));
-      }
-      if (constructorArguments == null)
-      {
-        throw new ArgumentNullException(nameof(constructorArguments));
-      }
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-
-      var screen = (IScreen) Activator.CreateInstance(screenType,
-                                                      constructorArguments);
-
-      return screen;
-    }
+    protected abstract IScreen CreateImpl([NotNull] Type screenType,
+                                          [NotNull] [ItemCanBeNull] object[] constructorArguments,
+                                          [NotNull] IController controller);
   }
 }

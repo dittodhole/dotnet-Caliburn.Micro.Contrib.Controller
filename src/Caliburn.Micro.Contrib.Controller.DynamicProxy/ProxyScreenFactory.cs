@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
-  public class ProxyScreenFactory : ScreenFactory
+  public class ProxyScreenFactory : ScreenFactoryBase
   {
     static ProxyScreenFactory()
     {
