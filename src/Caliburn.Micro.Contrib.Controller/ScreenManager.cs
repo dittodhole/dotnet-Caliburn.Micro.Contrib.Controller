@@ -30,7 +30,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenFactoryAdapterLocator" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="windowManagerLocator" /> is <see langword="null" /></exception>
     public ScreenManager([NotNull] ILocator<IScreenFactoryAdapter> screenFactoryAdapterLocator,
-                             [NotNull] ILocator<IWindowManager> windowManagerLocator)
+                         [NotNull] ILocator<IWindowManager> windowManagerLocator)
     {
       if (screenFactoryAdapterLocator == null)
       {
@@ -59,6 +59,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       var screenFactoryAdapter = this.ScreenFactoryAdapterLocator.Locate<TScreenFactoryAdapter>();
       var screen = screenFactoryAdapter.CreateScreen(options);
+      screen.Deactivated
 
       var windowManager = this.WindowManagerLocator.Locate();
 
