@@ -59,7 +59,6 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       var screenFactoryAdapter = this.ScreenFactoryAdapterLocator.Locate<TScreenFactoryAdapter>();
       var screen = screenFactoryAdapter.CreateScreen(options);
-      screen.Deactivated
 
       var windowManager = this.WindowManagerLocator.Locate();
 
