@@ -14,6 +14,15 @@ namespace Caliburn.Micro.Contrib.Controller
     void Remove([NotNull] T instance);
   }
 
+  /// <remarks>
+  ///   <see cref="WeakCollection{T}" /> acts rather as a closed bag than
+  ///   a collection (no public enumeration available), and will dispose any
+  ///   captured instances (internally referenced in a weak manner), which
+  ///   implement <see cref="IDisposable" />, upon disposal of a
+  ///   <see cref="WeakCollection{T}" /> instance.
+  ///   This can be used to link the disposal of a items to the declaring
+  ///   type of <see cref="WeakCollection{T}" />.
+  /// </remarks>
   public class WeakCollection<T> : IWeakCollection<T>
     where T : class
   {
