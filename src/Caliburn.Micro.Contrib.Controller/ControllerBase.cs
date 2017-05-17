@@ -142,6 +142,11 @@ namespace Caliburn.Micro.Contrib.Controller
       return this.CreateScreen(options);
     }
 
+    public virtual Type GetScreenType(object options = null)
+    {
+      return typeof(TScreen);
+    }
+
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
@@ -156,15 +161,6 @@ namespace Caliburn.Micro.Contrib.Controller
       }
 
       return screen;
-    }
-
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
-    [PublicAPI]
-    [NotNull]
-    public virtual Type GetScreenType([CanBeNull] object options = null)
-    {
-      return typeof(TScreen);
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
