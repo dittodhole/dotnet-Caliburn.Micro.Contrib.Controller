@@ -10,7 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller
   [PublicAPI]
   public interface IScreenManager
   {
-    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     [NotNull]
     Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>([CanBeNull] object options = null,
@@ -18,7 +18,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                        [CanBeNull] IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter;
 
-    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     [NotNull]
     Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>([CanBeNull] object options = null,
@@ -55,7 +55,7 @@ namespace Caliburn.Micro.Contrib.Controller
     [NotNull]
     private ConcurrentDictionary<Type, IScreenFactoryAdapter> SingletonScreenFactoryAdapters { get; } = new ConcurrentDictionary<Type, IScreenFactoryAdapter>();
 
-    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     public virtual async Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object options = null,
                                                                                             object context = null,
@@ -81,7 +81,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return screenFactoryAdapter;
     }
 
-    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
     public virtual async Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>(object options = null,
                                                                                             object context = null,
@@ -107,6 +107,8 @@ namespace Caliburn.Micro.Contrib.Controller
       return screenFactoryAdapter;
     }
 
+    /// <exception cref="ArgumentException" />
+    /// <exception cref="Exception" />
     public virtual bool TryCreateScreen<TScreenFactoryAdapter>([CanBeNull] object options,
                                                                [NotNull] out TScreenFactoryAdapter screenFactoryAdapter,
                                                                [CanBeNull] out IScreen screen)
