@@ -54,11 +54,9 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                                             IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      TScreenFactoryAdapter screenFactoryAdapter;
-      IScreen screen;
       if (!this.TryCreateScreen(options,
-                                out screenFactoryAdapter,
-                                out screen))
+                                out TScreenFactoryAdapter screenFactoryAdapter,
+                                out IScreen screen))
       {
         return screenFactoryAdapter;
       }
@@ -80,11 +78,9 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                                             IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      TScreenFactoryAdapter screenFactoryAdapter;
-      IScreen screen;
       if (!this.TryCreateScreen(options,
-                                out screenFactoryAdapter,
-                                out screen))
+                                out TScreenFactoryAdapter screenFactoryAdapter,
+                                out IScreen screen))
       {
         return screenFactoryAdapter;
       }
@@ -177,9 +173,8 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual bool Release<TScreenFactoryAdapter>()
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      IScreenFactoryAdapter instance;
       var result = this.SingletonScreenFactoryAdapters.TryRemove(typeof(TScreenFactoryAdapter),
-                                                                 out instance);
+                                                                 out IScreenFactoryAdapter instance);
 
       return result;
     }
