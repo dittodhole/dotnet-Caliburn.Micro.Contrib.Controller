@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using Anotar.LibLog;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.Core.Logging;
@@ -119,16 +118,16 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
       var mixinInstances = this.GetMixinInstances(mixinProviders);
-      var customAttributeBuilders = this.GetCustomAttributeBuilders(mixinProviders);
+      var customAttributeInfos = this.GetCustomAttributeInfos(mixinProviders);
 
       var proxyGenerationOptions = new ProxyGenerationOptions();
       foreach (var mixinInstance in mixinInstances)
       {
         proxyGenerationOptions.AddMixinInstance(mixinInstance);
       }
-      foreach (var customAttributeBuilder in customAttributeBuilders)
+      foreach (var customAttributeInfo in customAttributeInfos)
       {
-        proxyGenerationOptions.AdditionalAttributes.Add(customAttributeBuilder);
+        proxyGenerationOptions.AdditionalAttributes.Add(customAttributeInfo);
       }
 
       var proxy = this.ProxyGenerator.CreateClassProxy(screenType,
@@ -272,18 +271,18 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     [Pure]
     [NotNull]
     [ItemNotNull]
-    public virtual CustomAttributeBuilder[] GetCustomAttributeBuilders([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
+    public virtual CustomAttributeInfo[] GetCustomAttributeInfos([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)
       {
         throw new ArgumentNullException(nameof(mixinProviders));
       }
 
-      var customAttributeBuilders = mixinProviders.OfType<IMixinAttributes>()
-                                                  .SelectMany(arg => arg.GetCustomAttributeBuilders())
-                                                  .ToArray();
+      var customAttributeInfos = mixinProviders.OfType<IMixinAttributes>()
+                                               .SelectMany(arg => arg.GetCustomAttributeInfos())
+                                               .ToArray();
 
-      return customAttributeBuilders;
+      return customAttributeInfos;
     }
 
     private sealed class MixinDefinition
