@@ -10,11 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     /// <exception cref="ArgumentNullException"><paramref name="loggerName" /> is <see langword="null" /></exception>
     public LoggerAdapter([NotNull] string loggerName)
     {
-      if (loggerName == null)
-      {
-        throw new ArgumentNullException(nameof(loggerName));
-      }
-      this.LoggerName = loggerName;
+      this.LoggerName = loggerName ?? throw new ArgumentNullException(nameof(loggerName));
       this.Logger = LogProvider.GetLogger(this.LoggerName);
     }
 

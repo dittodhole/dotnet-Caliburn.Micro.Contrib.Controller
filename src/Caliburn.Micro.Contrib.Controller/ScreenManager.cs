@@ -34,16 +34,8 @@ namespace Caliburn.Micro.Contrib.Controller
     public ScreenManager([NotNull] ILocator<IScreenFactoryAdapter> screenFactoryAdapterLocator,
                          [NotNull] ILocator<IWindowManager> windowManagerLocator)
     {
-      if (screenFactoryAdapterLocator == null)
-      {
-        throw new ArgumentNullException(nameof(screenFactoryAdapterLocator));
-      }
-      if (windowManagerLocator == null)
-      {
-        throw new ArgumentNullException(nameof(windowManagerLocator));
-      }
-      this.ScreenFactoryAdapterLocator = screenFactoryAdapterLocator;
-      this.WindowManagerLocator = windowManagerLocator;
+      this.ScreenFactoryAdapterLocator = screenFactoryAdapterLocator ?? throw new ArgumentNullException(nameof(screenFactoryAdapterLocator));
+      this.WindowManagerLocator = windowManagerLocator ?? throw new ArgumentNullException(nameof(windowManagerLocator));
     }
 
     [NotNull]

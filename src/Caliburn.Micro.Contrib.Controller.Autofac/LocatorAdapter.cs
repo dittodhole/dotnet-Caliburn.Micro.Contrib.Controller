@@ -13,11 +13,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="ArgumentNullException"><paramref name="lifetimeScope" /> is <see langword="null" /></exception>
     public LocatorAdapter([NotNull] ILifetimeScope lifetimeScope)
     {
-      if (lifetimeScope == null)
-      {
-        throw new ArgumentNullException(nameof(lifetimeScope));
-      }
-      this.LifetimeScope = lifetimeScope;
+      this.LifetimeScope = lifetimeScope ?? throw new ArgumentNullException(nameof(lifetimeScope));
     }
 
     [NotNull]

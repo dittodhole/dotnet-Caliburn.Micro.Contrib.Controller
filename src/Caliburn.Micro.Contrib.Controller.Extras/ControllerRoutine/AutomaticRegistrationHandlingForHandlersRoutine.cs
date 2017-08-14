@@ -10,11 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
     /// <exception cref="ArgumentNullException"><paramref name="eventAggregatorLocator" /> is <see langword="null" /></exception>
     public AutomaticRegistrationHandlingForHandlersRoutine([NotNull] ILocator<IEventAggregator> eventAggregatorLocator)
     {
-      if (eventAggregatorLocator == null)
-      {
-        throw new ArgumentNullException(nameof(eventAggregatorLocator));
-      }
-      this.EventAggregatorLocator = eventAggregatorLocator;
+      this.EventAggregatorLocator = eventAggregatorLocator ?? throw new ArgumentNullException(nameof(eventAggregatorLocator));
     }
 
     [NotNull]

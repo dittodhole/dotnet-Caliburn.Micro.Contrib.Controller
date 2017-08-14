@@ -35,11 +35,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     /// <exception cref="ArgumentNullException"><paramref name="proxyGenerator" /> is <see langword="null" /></exception>
     public ProxyScreenFactory([NotNull] ProxyGenerator proxyGenerator)
     {
-      if (proxyGenerator == null)
-      {
-        throw new ArgumentNullException(nameof(proxyGenerator));
-      }
-      this.ProxyGenerator = proxyGenerator;
+      this.ProxyGenerator = proxyGenerator ?? throw new ArgumentNullException(nameof(proxyGenerator));
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="logger" /> is <see langword="null" /></exception>

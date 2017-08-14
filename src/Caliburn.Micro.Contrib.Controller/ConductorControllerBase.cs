@@ -18,16 +18,8 @@ namespace Caliburn.Micro.Contrib.Controller
     protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
                                       [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
     {
-      if (screenFactory == null)
-      {
-        throw new ArgumentNullException(nameof(screenFactory));
-      }
-      if (routines == null)
-      {
-        throw new ArgumentNullException(nameof(routines));
-      }
-      this.ScreenFactory = screenFactory;
-      this.Routines = routines;
+      this.ScreenFactory = screenFactory ?? throw new ArgumentNullException(nameof(screenFactory));
+      this.Routines = routines ?? throw new ArgumentNullException(nameof(routines));
     }
 
     [NotNull]
