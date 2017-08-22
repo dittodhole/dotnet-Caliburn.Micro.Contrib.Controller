@@ -111,7 +111,6 @@
     <Compile Include="IMixinInstance.cs" />
     <Compile Include="IMixinInterface.cs" />
     <Compile Include="IScreenFactoryAdapter.cs" />
-    <Compile Include="Locator.cs" />
     <Compile Include="Intercept.cs" />
     <Compile Include="IMixinProvider.cs" />
     <Compile Include="IMixinAttributes.cs" />

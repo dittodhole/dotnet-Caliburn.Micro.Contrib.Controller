@@ -29,21 +29,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
   public class ScreenManager : IScreenManager
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenFactoryAdapterLocator" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="windowManagerLocator" /> is <see langword="null" /></exception>
-    public ScreenManager([NotNull] ILocator<IScreenFactoryAdapter> screenFactoryAdapterLocator,
-                         [NotNull] ILocator<IWindowManager> windowManagerLocator)
-    {
-      this.ScreenFactoryAdapterLocator = screenFactoryAdapterLocator ?? throw new ArgumentNullException(nameof(screenFactoryAdapterLocator));
-      this.WindowManagerLocator = windowManagerLocator ?? throw new ArgumentNullException(nameof(windowManagerLocator));
-    }
-
-    [NotNull]
-    private ILocator<IScreenFactoryAdapter> ScreenFactoryAdapterLocator { get; }
-
-    [NotNull]
-    private ILocator<IWindowManager> WindowManagerLocator { get; }
-
     [NotNull]
     private ConcurrentDictionary<Type, IScreenFactoryAdapter> SingletonScreenFactoryAdapters { get; } = new ConcurrentDictionary<Type, IScreenFactoryAdapter>();
 
@@ -61,7 +46,7 @@ namespace Caliburn.Micro.Contrib.Controller
         return screenFactoryAdapter;
       }
 
-      var windowManager = this.WindowManagerLocator.Locate();
+      var windowManager = IoC.Get<IWindowManager>();
 
       await Execute.OnUIThreadAsync(() => windowManager.ShowWindow(screen,
                                                                    context,
@@ -85,7 +70,7 @@ namespace Caliburn.Micro.Contrib.Controller
         return screenFactoryAdapter;
       }
 
-      var windowManager = this.WindowManagerLocator.Locate();
+      var windowManager = IoC.Get<IWindowManager>();
 
       await Execute.OnUIThreadAsync(() => windowManager.ShowDialog(screen,
                                                                    context,
@@ -106,7 +91,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
       if (this.AllowMultipleScreenCreation<TScreenFactoryAdapter>())
       {
-        screenFactoryAdapter = this.ScreenFactoryAdapterLocator.Locate<TScreenFactoryAdapter>();
+        screenFactoryAdapter = IoC.Get<TScreenFactoryAdapter>();
         screen = screenFactoryAdapter.CreateScreen(options);
         result = true;
       }
@@ -158,11 +143,11 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       var created = false;
       var instance = this.SingletonScreenFactoryAdapters.GetOrAdd(typeof(TScreenFactoryAdapter),
-                                                                  screenFactoryAdapterType =>
+                                                                  arg =>
                                                                   {
                                                                     created = true;
 
-                                                                    return this.ScreenFactoryAdapterLocator.Locate(screenFactoryAdapterType);
+                                                                    return IoC.Get<TScreenFactoryAdapter>();
                                                                   });
 
       screenFactoryAdapter = (TScreenFactoryAdapter) instance;

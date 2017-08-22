@@ -33,10 +33,6 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
              .As<IScreenFactory>()
              .SingleInstance();
 
-      builder.RegisterGeneric(typeof(LocatorAdapter<>))
-             .As(typeof(ILocator<>))
-             .InstancePerDependency();
-
       builder.RegisterType<BlockingRoutine>()
              .InstancePerDependency();
       builder.RegisterType<BlockingRoutine.CanBeBlocked>()
