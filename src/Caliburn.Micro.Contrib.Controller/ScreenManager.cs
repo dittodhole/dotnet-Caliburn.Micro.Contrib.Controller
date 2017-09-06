@@ -41,7 +41,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       if (!this.TryCreateScreen(options,
                                 out TScreenFactoryAdapter screenFactoryAdapter,
-                                out IScreen screen))
+                                out var screen))
       {
         return screenFactoryAdapter;
       }
@@ -65,7 +65,7 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       if (!this.TryCreateScreen(options,
                                 out TScreenFactoryAdapter screenFactoryAdapter,
-                                out IScreen screen))
+                                out var screen))
       {
         return screenFactoryAdapter;
       }
@@ -159,7 +159,7 @@ namespace Caliburn.Micro.Contrib.Controller
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       var result = this.SingletonScreenFactoryAdapters.TryRemove(typeof(TScreenFactoryAdapter),
-                                                                 out IScreenFactoryAdapter instance);
+                                                                 out var instance);
 
       return result;
     }

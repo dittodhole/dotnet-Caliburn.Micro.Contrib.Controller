@@ -48,7 +48,7 @@ namespace Caliburn.Micro.Contrib.Controller
       var screenMethodName = screenMethodInfo.Name;
 
       if (this.TargetMethods.TryGetValue(screenMethodName,
-                                         out TargetMethod[] targetMethods))
+                                         out var targetMethods))
       {
         targetMethods = targetMethods.Where(targetMethod =>
                                             {
