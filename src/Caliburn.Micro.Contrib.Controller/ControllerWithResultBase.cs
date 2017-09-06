@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
@@ -11,8 +10,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                      IProvideResultAsync<TResult>
     where TScreen : IScreen
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
+    /// <inheritdoc />
     protected ControllerWithResultBase([NotNull] IScreenFactory screenFactory,
                                        [NotNull] ICollection<IRoutine> routines)
       : base(screenFactory,
