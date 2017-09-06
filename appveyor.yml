@@ -28,7 +28,7 @@ build:
   project: '%solution_file%'
   publish_nuget: false
   publish_nuget_symbols: false
-  verbosity: detailed
+  verbosity: quiet
 after_build:
 - cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -symbols -Exclude "**\FodyWeavers.xml"
 - cmd: nuget pack "%dynamicproxy_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols -Exclude "**\FodyWeavers.xml"
