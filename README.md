@@ -62,7 +62,3 @@ Providing you with documentation and examples, which can be found in the [Wiki](
 ## License
 
 dotnet-Caliburn.Micro.Contrib.Controller is published under [WTFNMFPLv3](https://github.com/dittodhole/WTFNMFPLv3).
-
-## Icon
-
-[Aztec-geometry](https://thenounproject.com/term/aztec-geometry/710304/) by [Alice Noir](https://thenounproject.com/AliceNoir/) from the Noun Project.
