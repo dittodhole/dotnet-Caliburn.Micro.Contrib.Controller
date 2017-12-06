@@ -1,5 +1,3 @@
-![](assets/noun_710304_cc.png)
-
 # dotnet-Caliburn.Micro.Contrib.Controller
 > Extend Caliburn.Micro's MVVM-implementation with a Controller - you'll get 'MVVM w/ Controller' :beers:.
 
