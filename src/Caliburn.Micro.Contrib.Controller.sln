@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.10
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caliburn.Micro.Contrib.Controller", "Caliburn.Micro.Contrib.Controller\Caliburn.Micro.Contrib.Controller.csproj", "{F81ECED7-DD29-4FF2-8ACA-8DEE7370CE3D}"
 EndProject
@@ -10,7 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		..\appveyor.yml = ..\appveyor.yml
 		..\GitVersion.yml = ..\GitVersion.yml
-		JetBrains.Annotations.cs = JetBrains.Annotations.cs
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
@@ -54,5 +53,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D0138C7A-92E2-452B-B4DE-6BA8B8E2ABC4} = {6D5743C5-F998-4957-A1FD-0453F5C9D844}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0D05AAE-8828-4BEE-BF2F-F92478F716C1}
 	EndGlobalSection
 EndGlobal

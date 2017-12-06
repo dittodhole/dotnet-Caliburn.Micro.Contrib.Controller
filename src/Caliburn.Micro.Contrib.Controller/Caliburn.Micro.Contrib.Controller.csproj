@@ -85,10 +85,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\JetBrains.Annotations.cs">
-      <Link>JetBrains.Annotations.cs</Link>
-    </Compile>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="App_Packages\Source.JetBrains.Annotations_11.1.0\JetBrains.Annotations.cs" />
     <Compile Include="ConductorControllerBase.cs" />
     <Compile Include="ControllerBase.cs" />
     <Compile Include="DisallowConcurrentScreenCreation.cs" />
