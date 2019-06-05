@@ -28,7 +28,6 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual IEnumerable<IRoutine> Routines { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     public virtual void OnActivateItem(TScreen screen,
                                        TItem item)
@@ -36,19 +35,6 @@ namespace Caliburn.Micro.Contrib.Controller
       if (screen == null)
       {
         throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
-      }
-
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
       }
 
       foreach (var routine in this.Routines.OfType<IConductorRoutine>())
