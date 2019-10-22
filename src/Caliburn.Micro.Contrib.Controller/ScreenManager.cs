@@ -34,50 +34,44 @@ namespace Caliburn.Micro.Contrib.Controller
 
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    public virtual async Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object options = null,
-                                                                                            object context = null,
-                                                                                            IDictionary<string, object> settings = null)
+    public virtual Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object options = null,
+                                                                                      object context = null,
+                                                                                      IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      if (!this.TryCreateScreen(options,
-                                out TScreenFactoryAdapter screenFactoryAdapter,
-                                out var screen))
+      if (this.TryCreateScreen(options,
+                               out TScreenFactoryAdapter screenFactoryAdapter,
+                               out var screen))
       {
-        return screenFactoryAdapter;
+        var windowManager = IoC.Get<IWindowManager>();
+
+        Execute.OnUIThread(() => windowManager.ShowWindow(screen,
+                                                          context,
+                                                          settings));
       }
 
-      var windowManager = IoC.Get<IWindowManager>();
-
-      await Execute.OnUIThreadAsync(() => windowManager.ShowWindow(screen,
-                                                                   context,
-                                                                   settings))
-                   .ConfigureAwait(false);
-
-      return screenFactoryAdapter;
+      return TaskEx.FromResult(screenFactoryAdapter);
     }
 
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    public virtual async Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>(object options = null,
-                                                                                            object context = null,
-                                                                                            IDictionary<string, object> settings = null)
+    public virtual Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>(object options = null,
+                                                                                      object context = null,
+                                                                                      IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      if (!this.TryCreateScreen(options,
-                                out TScreenFactoryAdapter screenFactoryAdapter,
-                                out var screen))
+      if (this.TryCreateScreen(options,
+                               out TScreenFactoryAdapter screenFactoryAdapter,
+                               out var screen))
       {
-        return screenFactoryAdapter;
+        var windowManager = IoC.Get<IWindowManager>();
+
+        Execute.OnUIThread(() => windowManager.ShowDialog(screen,
+                                                          context,
+                                                          settings));
       }
 
-      var windowManager = IoC.Get<IWindowManager>();
-
-      await Execute.OnUIThreadAsync(() => windowManager.ShowDialog(screen,
-                                                                   context,
-                                                                   settings))
-                   .ConfigureAwait(false);
-
-      return screenFactoryAdapter;
+      return TaskEx.FromResult(screenFactoryAdapter);
     }
 
     /// <exception cref="ArgumentException" />
