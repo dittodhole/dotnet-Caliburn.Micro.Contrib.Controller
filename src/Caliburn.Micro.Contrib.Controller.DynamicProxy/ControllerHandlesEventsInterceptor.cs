@@ -11,11 +11,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     public ControllerHandlesEventsInterceptor([NotNull] IController controller)
     {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-      this.Controller = controller;
+      this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
       this.ControllerTypeMethodsMap = ControllerTypeMethodsMap.Create(controller.GetType());
     }
 

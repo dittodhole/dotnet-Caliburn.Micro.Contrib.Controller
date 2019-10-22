@@ -18,16 +18,8 @@ namespace Caliburn.Micro.Contrib.Controller
     protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
                                       [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
     {
-      if (screenFactory == null)
-      {
-        throw new ArgumentNullException(nameof(screenFactory));
-      }
-      if (routines == null)
-      {
-        throw new ArgumentNullException(nameof(routines));
-      }
-      this.ScreenFactory = screenFactory;
-      this.Routines = routines;
+      this.ScreenFactory = screenFactory ?? throw new ArgumentNullException(nameof(screenFactory));
+      this.Routines = routines ?? throw new ArgumentNullException(nameof(routines));
     }
 
     [NotNull]
@@ -36,7 +28,6 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual IEnumerable<IRoutine> Routines { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     public virtual void OnActivateItem(TScreen screen,
                                        TItem item)
@@ -44,19 +35,6 @@ namespace Caliburn.Micro.Contrib.Controller
       if (screen == null)
       {
         throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
-      }
-
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
       }
 
       foreach (var routine in this.Routines.OfType<IConductorRoutine>())
@@ -212,11 +190,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
-    [PublicAPI]
-    [NotNull]
-    public virtual Type GetScreenType([CanBeNull] object options = null)
+    public virtual Type GetScreenType(object options = null)
     {
       return typeof(TScreen);
     }

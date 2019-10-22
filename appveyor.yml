@@ -1,5 +1,5 @@
 version: '{build}-{branch}'
-image: Visual Studio 2015
+image: Visual Studio 2017
 configuration: Release
 environment:
   solution_name: Caliburn.Micro.Contrib.Controller
@@ -28,7 +28,7 @@ build:
   project: '%solution_file%'
   publish_nuget: false
   publish_nuget_symbols: false
-  verbosity: detailed
+  verbosity: quiet
 after_build:
 - cmd: nuget pack "%project_file%" -properties "Configuration=%configuration%" -symbols -Exclude "**\FodyWeavers.xml"
 - cmd: nuget pack "%dynamicproxy_project_file%" -properties "Configuration=%configuration%" -IncludeReferencedProjects -symbols -Exclude "**\FodyWeavers.xml"
@@ -56,14 +56,14 @@ deploy:
 - provider: NuGet
   name: NuGet
   api_key:
-    secure: U6199dIr+h5NLeO9aWtxR2ihfMjDX3rrhqjdN3ByzlLzU9t3T00+MtjNQPkfrToY
+    secure: eKeaC+5KqtdxIqHjRQ8yJjK+z32hyfmuD5ZXPV4f2gLsafckIeyJGixpn9WnXbJm
 #  skip_symbols: true
   on:
     branch: master
 - provider: NuGet
   name: NuGet (pre release)
   api_key:
-    secure: U6199dIr+h5NLeO9aWtxR2ihfMjDX3rrhqjdN3ByzlLzU9t3T00+MtjNQPkfrToY
+    secure: eKeaC+5KqtdxIqHjRQ8yJjK+z32hyfmuD5ZXPV4f2gLsafckIeyJGixpn9WnXbJm
 #  skip_symbols: true
   on:
     branch: /release\/.*/

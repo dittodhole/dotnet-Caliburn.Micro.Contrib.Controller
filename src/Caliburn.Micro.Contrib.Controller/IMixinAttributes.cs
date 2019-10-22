@@ -1,4 +1,4 @@
-﻿using System.Reflection.Emit;
+﻿using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
@@ -8,6 +8,6 @@ namespace Caliburn.Micro.Contrib.Controller
     [Pure]
     [NotNull]
     [ItemNotNull]
-    CustomAttributeBuilder[] GetCustomAttributeBuilders();
+    CustomAttributeInfo[] GetCustomAttributeInfos();
   }
 }

@@ -9,11 +9,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras
     /// <exception cref="ArgumentNullException"><paramref name="action" /> is <see langword="null" /></exception>
     public DisposeAction([NotNull] Action<DisposeAction> action)
     {
-      if (action == null)
-      {
-        throw new ArgumentNullException(nameof(action));
-      }
-      this.Action = action;
+      this.Action = action ?? throw new ArgumentNullException(nameof(action));
     }
 
     [CanBeNull]

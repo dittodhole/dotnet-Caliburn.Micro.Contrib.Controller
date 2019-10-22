@@ -29,82 +29,49 @@ namespace Caliburn.Micro.Contrib.Controller
 
   public class ScreenManager : IScreenManager
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenFactoryAdapterLocator" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="windowManagerLocator" /> is <see langword="null" /></exception>
-    public ScreenManager([NotNull] ILocator<IScreenFactoryAdapter> screenFactoryAdapterLocator,
-                         [NotNull] ILocator<IWindowManager> windowManagerLocator)
-    {
-      if (screenFactoryAdapterLocator == null)
-      {
-        throw new ArgumentNullException(nameof(screenFactoryAdapterLocator));
-      }
-      if (windowManagerLocator == null)
-      {
-        throw new ArgumentNullException(nameof(windowManagerLocator));
-      }
-      this.ScreenFactoryAdapterLocator = screenFactoryAdapterLocator;
-      this.WindowManagerLocator = windowManagerLocator;
-    }
-
-    [NotNull]
-    private ILocator<IScreenFactoryAdapter> ScreenFactoryAdapterLocator { get; }
-
-    [NotNull]
-    private ILocator<IWindowManager> WindowManagerLocator { get; }
-
     [NotNull]
     private ConcurrentDictionary<Type, IScreenFactoryAdapter> SingletonScreenFactoryAdapters { get; } = new ConcurrentDictionary<Type, IScreenFactoryAdapter>();
 
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    public virtual async Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object options = null,
-                                                                                            object context = null,
-                                                                                            IDictionary<string, object> settings = null)
+    public virtual Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object options = null,
+                                                                                      object context = null,
+                                                                                      IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      TScreenFactoryAdapter screenFactoryAdapter;
-      IScreen screen;
-      if (!this.TryCreateScreen(options,
-                                out screenFactoryAdapter,
-                                out screen))
+      if (this.TryCreateScreen(options,
+                               out TScreenFactoryAdapter screenFactoryAdapter,
+                               out var screen))
       {
-        return screenFactoryAdapter;
+        var windowManager = IoC.Get<IWindowManager>();
+
+        Execute.OnUIThread(() => windowManager.ShowWindow(screen,
+                                                          context,
+                                                          settings));
       }
 
-      var windowManager = this.WindowManagerLocator.Locate();
-
-      await Execute.OnUIThreadAsync(() => windowManager.ShowWindow(screen,
-                                                                   context,
-                                                                   settings))
-                   .ConfigureAwait(false);
-
-      return screenFactoryAdapter;
+      return TaskEx.FromResult(screenFactoryAdapter);
     }
 
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    public virtual async Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>(object options = null,
-                                                                                            object context = null,
-                                                                                            IDictionary<string, object> settings = null)
+    public virtual Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>(object options = null,
+                                                                                      object context = null,
+                                                                                      IDictionary<string, object> settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      TScreenFactoryAdapter screenFactoryAdapter;
-      IScreen screen;
-      if (!this.TryCreateScreen(options,
-                                out screenFactoryAdapter,
-                                out screen))
+      if (this.TryCreateScreen(options,
+                               out TScreenFactoryAdapter screenFactoryAdapter,
+                               out var screen))
       {
-        return screenFactoryAdapter;
+        var windowManager = IoC.Get<IWindowManager>();
+
+        Execute.OnUIThread(() => windowManager.ShowDialog(screen,
+                                                          context,
+                                                          settings));
       }
 
-      var windowManager = this.WindowManagerLocator.Locate();
-
-      await Execute.OnUIThreadAsync(() => windowManager.ShowDialog(screen,
-                                                                   context,
-                                                                   settings))
-                   .ConfigureAwait(false);
-
-      return screenFactoryAdapter;
+      return TaskEx.FromResult(screenFactoryAdapter);
     }
 
     /// <exception cref="ArgumentException" />
@@ -118,7 +85,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
       if (this.AllowMultipleScreenCreation<TScreenFactoryAdapter>())
       {
-        screenFactoryAdapter = this.ScreenFactoryAdapterLocator.Locate<TScreenFactoryAdapter>();
+        screenFactoryAdapter = IoC.Get<TScreenFactoryAdapter>();
         screen = screenFactoryAdapter.CreateScreen(options);
         result = true;
       }
@@ -170,11 +137,11 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       var created = false;
       var instance = this.SingletonScreenFactoryAdapters.GetOrAdd(typeof(TScreenFactoryAdapter),
-                                                                  screenFactoryAdapterType =>
+                                                                  arg =>
                                                                   {
                                                                     created = true;
 
-                                                                    return this.ScreenFactoryAdapterLocator.Locate(screenFactoryAdapterType);
+                                                                    return IoC.Get<TScreenFactoryAdapter>();
                                                                   });
 
       screenFactoryAdapter = (TScreenFactoryAdapter) instance;
@@ -185,9 +152,8 @@ namespace Caliburn.Micro.Contrib.Controller
     public virtual bool Release<TScreenFactoryAdapter>()
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
-      IScreenFactoryAdapter instance;
       var result = this.SingletonScreenFactoryAdapters.TryRemove(typeof(TScreenFactoryAdapter),
-                                                                 out instance);
+                                                                 out var instance);
 
       return result;
     }

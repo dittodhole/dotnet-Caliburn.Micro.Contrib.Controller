@@ -18,12 +18,8 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(controllerType));
       }
-      if (targetMethods == null)
-      {
-        throw new ArgumentNullException(nameof(targetMethods));
-      }
       this.ControllerType = controllerType;
-      this.TargetMethods = targetMethods;
+      this.TargetMethods = targetMethods ?? throw new ArgumentNullException(nameof(targetMethods));
     }
 
     [NotNull]
@@ -51,9 +47,8 @@ namespace Caliburn.Micro.Contrib.Controller
 
       var screenMethodName = screenMethodInfo.Name;
 
-      TargetMethod[] targetMethods;
       if (this.TargetMethods.TryGetValue(screenMethodName,
-                                         out targetMethods))
+                                         out var targetMethods))
       {
         targetMethods = targetMethods.Where(targetMethod =>
                                             {
@@ -137,12 +132,8 @@ namespace Caliburn.Micro.Contrib.Controller
         {
           throw new ArgumentNullException(nameof(methodInfo));
         }
-        if (handlesViewModelMethodAttribute == null)
-        {
-          throw new ArgumentNullException(nameof(handlesViewModelMethodAttribute));
-        }
         this.MethodInfo = methodInfo;
-        this.HandlesViewModelMethodAttribute = handlesViewModelMethodAttribute;
+        this.HandlesViewModelMethodAttribute = handlesViewModelMethodAttribute ?? throw new ArgumentNullException(nameof(handlesViewModelMethodAttribute));
       }
 
       [NotNull]
