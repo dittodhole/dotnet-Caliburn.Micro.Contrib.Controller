@@ -45,9 +45,9 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         var windowManager = IoC.Get<IWindowManager>();
 
-        Execute.OnUIThread(() => windowManager.ShowWindow(screen,
-                                                          context,
-                                                          settings));
+        Execute.BeginOnUIThread(() => windowManager.ShowWindow(screen,
+                                                               context,
+                                                               settings));
       }
 
       return TaskEx.FromResult(screenFactoryAdapter);
@@ -66,9 +66,9 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         var windowManager = IoC.Get<IWindowManager>();
 
-        Execute.OnUIThread(() => windowManager.ShowDialog(screen,
-                                                          context,
-                                                          settings));
+        Execute.BeginOnUIThread(() => windowManager.ShowDialog(screen,
+                                                               context,
+                                                               settings));
       }
 
       return TaskEx.FromResult(screenFactoryAdapter);
