@@ -1,64 +1,87 @@
+![](assets/noun_710304_cc.png)
+
 # dotnet-Caliburn.Micro.Contrib.Controller
+
 > Extend Caliburn.Micro's MVVM-implementation with a Controller - you'll get 'MVVM w/ Controller' :beers:.
 
-**master** branch status
-[![Build status](https://ci.appveyor.com/api/projects/status/7kceqcal6m29lwx5)](https://ci.appveyor.com/project/dittodhole/dotnet-caliburn-micro-contrib-controller)
+## Build status
 
-**develop** branch status
-[![Build status](https://ci.appveyor.com/api/projects/status/7kceqcal6m29lwx5/branch/develop)](https://ci.appveyor.com/project/dittodhole/dotnet-caliburn-micro-contrib-controller/branch/develop)
+[![](https://img.shields.io/appveyor/ci/dittodhole/dotnet-caliburn-micro-contrib-controller.svg)](https://ci.appveyor.com/project/dittodhole/dotnet-caliburn-micro-contrib-controller)
 
 ## Installing
 
-### Releases
+### myget.org
 
-[![NuGet Status](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller)
-https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller
+[![](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller)
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller -pre --source https://www.myget.org/F/dittodhole/api/v2
+```
 
-[![NuGet Status](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.DynamicProxy.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.DynamicProxy)
-https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.DynamicProxy
+[![](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.DynamicProxy.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.DynamicProxy)
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.DynamicProxy
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.DynamicProxy -pre --source https://www.myget.org/F/dittodhole/api/v2
+```
 
-[![NuGet Status](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Extras.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras)
-https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras
+[![](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Extras.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras)
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.Extras
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Extras -pre --source https://www.myget.org/F/dittodhole/api/v2
+```
 
-[![NuGet Status](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Autofac.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Autofac)
-https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Autofac
+[![](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Autofac.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac)
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.Autofac
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Autofac -pre --source https://www.myget.org/F/dittodhole/api/v2
+```
 
-### Pre Releases
+### nuget.org
 
-    PM> nuget sources Add "dittodhole" https://www.myget.org/F/dittodhole/api/v3/index.json
+[![](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller)
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller)
-https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller
+```
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller -pre
+[![](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.DynamicProxy.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.DynamicProxy)
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.DynamicProxy.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.DynamicProxy)
-https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.DynamicProxy
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.DynamicProxy
+```
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.DynamicProxy -pre
+[![](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Extras.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras)
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Extras.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras)
-https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Extras
+```
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.Extras -pre
+[![](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Autofac.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Autofac)
 
-[![MyGet Pre Release](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Autofac.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac)
-https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Autofac
+```powershell
+PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Autofac
+```
 
-    PM> Install-Package Caliburn.Micro.Contrib.Controller.Autofac -pre
+## Developing & Building
 
-## Documentation
+```cmd
+> git clone https://github.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller.git
+> cd dotnet-Caliburn.Micro.Contrib.Controller
+dotnet-Caliburn.Micro.Contrib.Controller> cd build
+dotnet-Caliburn.Micro.Contrib.Controller/build> build.bat
+```
 
-Providing you with documentation and examples, which can be found in the [Wiki](https://github.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller/wiki).
+This will create the following artifacts:
+
+- `artifacts/Caliburn.Micro.Contrib.Controller.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.DynamicProxy.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.Extras.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.Autofac.{version}.nupkg`
 
 ## License
 
 dotnet-Caliburn.Micro.Contrib.Controller is published under [WTFNMFPLv3](https://github.com/dittodhole/WTFNMFPLv3).
+
+## Icon
+
+[aztec geometry](https://thenounproject.com/icon/710304/) by [Alice Noir](https://thenounproject.com/AliceNoir) from the Noun Project.
