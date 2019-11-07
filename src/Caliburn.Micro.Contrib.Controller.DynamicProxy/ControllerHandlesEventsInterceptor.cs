@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Anotar.LibLog;
+using Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging;
 using Castle.DynamicProxy;
 using JetBrains.Annotations;
 
@@ -8,6 +8,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   public sealed class ControllerHandlesEventsInterceptor : IInterceptor
   {
+    [NotNull]
+    private static Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging.ILog Logger { get; } = LogProvider.GetCurrentClassLogger();
+
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
     public ControllerHandlesEventsInterceptor([NotNull] IController controller)
     {
@@ -66,8 +69,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
             }
             catch (Exception exception)
             {
-              LogTo.FatalException($"Could not invoke {targetMethod.MethodInfo.Name}.",
-                                   exception);
+              ControllerHandlesEventsInterceptor.Logger.FatalException($"Could not invoke {targetMethod.MethodInfo.Name}.",
+                                                                       exception);
               continue;
             }
 

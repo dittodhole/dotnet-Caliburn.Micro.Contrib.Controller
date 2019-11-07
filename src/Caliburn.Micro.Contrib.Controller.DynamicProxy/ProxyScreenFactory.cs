@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Anotar.LibLog;
+using Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.Core.Logging;
 using Castle.DynamicProxy;
@@ -12,6 +12,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   public class ProxyScreenFactory : ScreenFactoryBase
   {
+    [NotNull]
+    private static Caliburn.Micro.Contrib.Controller.DynamicProxy.Logging.ILog Logger { get; } = LogProvider.GetCurrentClassLogger();
+
     static ProxyScreenFactory()
     {
       var locateTypeForModelType = ViewLocator.LocateTypeForModelType;
@@ -159,8 +162,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                              }
                                                              catch (TargetInvocationException targetInvocationException)
                                                              {
-                                                               LogTo.FatalException($"Could not get interfaces for {type}.",
-                                                                                    targetInvocationException);
+                                                               ProxyScreenFactory.Logger.FatalException($"Could not get interfaces for {type}.",
+                                                                                                        targetInvocationException);
                                                                return Enumerable.Empty<GenericDefinition>();
                                                              }
 
@@ -210,8 +213,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                        }
                                                        catch (TargetInvocationException targetInvocationException)
                                                        {
-                                                         LogTo.FatalException($"Could not get interfaces for {type}.",
-                                                                              targetInvocationException);
+                                                         ProxyScreenFactory.Logger.FatalException($"Could not get interfaces for {type}.",
+                                                                                                  targetInvocationException);
                                                          return Enumerable.Empty<MixinDefinition>();
                                                        }
 
@@ -250,8 +253,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                    }
                                                    catch (TargetException targetException)
                                                    {
-                                                     LogTo.FatalException($"Could not call {nameof(IMixinInstance<object>.CreateMixinInstance)}",
-                                                                          targetException);
+                                                     ProxyScreenFactory.Logger.FatalException($"Could not call {nameof(IMixinInstance<object>.CreateMixinInstance)}",
+                                                                                              targetException);
                                                      mixinInstance = null;
                                                    }
 
