@@ -1,6 +1,8 @@
-bin/
-obj/
-packages/
+artifacts/
+build/build.ps1
+build/tools/
 src/.vs/
-*.user
-*.suo
+src/**/*.user
+src/**/*.suo
+src/*/bin/
+src/*/obj/
