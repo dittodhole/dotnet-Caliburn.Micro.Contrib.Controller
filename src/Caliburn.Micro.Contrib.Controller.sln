@@ -1,22 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caliburn.Micro.Contrib.Controller", "Caliburn.Micro.Contrib.Controller\Caliburn.Micro.Contrib.Controller.csproj", "{F81ECED7-DD29-4FF2-8ACA-8DEE7370CE3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D5743C5-F998-4957-A1FD-0453F5C9D844}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		..\.editorconfig = ..\.editorconfig
 		..\appveyor.yml = ..\appveyor.yml
-		..\GitVersion.yml = ..\GitVersion.yml
 		..\README.md = ..\README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{D0138C7A-92E2-452B-B4DE-6BA8B8E2ABC4}"
-	ProjectSection(SolutionItems) = preProject
-		..\assets\noun_710304_cc.png = ..\assets\noun_710304_cc.png
-		..\assets\noun_710304_cc.svg = ..\assets\noun_710304_cc.svg
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caliburn.Micro.Contrib.Controller.Extras", "Caliburn.Micro.Contrib.Controller.Extras\Caliburn.Micro.Contrib.Controller.Extras.csproj", "{2F4A6CAF-52A9-452B-9079-3A1B605C6D3A}"
@@ -50,9 +43,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{D0138C7A-92E2-452B-B4DE-6BA8B8E2ABC4} = {6D5743C5-F998-4957-A1FD-0453F5C9D844}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C0D05AAE-8828-4BEE-BF2F-F92478F716C1}

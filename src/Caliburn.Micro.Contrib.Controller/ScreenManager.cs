@@ -50,7 +50,11 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                settings));
       }
 
+#if NET40
       return TaskEx.FromResult(screenFactoryAdapter);
+#else
+      return Task.FromResult(screenFactoryAdapter);
+#endif
     }
 
     /// <exception cref="ArgumentException" />
@@ -71,7 +75,11 @@ namespace Caliburn.Micro.Contrib.Controller
                                                                settings));
       }
 
+#if NET40
       return TaskEx.FromResult(screenFactoryAdapter);
+#else
+      return Task.FromResult(screenFactoryAdapter);
+#endif
     }
 
     /// <exception cref="ArgumentException" />

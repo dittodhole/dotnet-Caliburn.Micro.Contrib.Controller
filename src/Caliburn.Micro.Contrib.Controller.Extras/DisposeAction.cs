@@ -1,11 +1,13 @@
 ﻿using System;
-using Anotar.LibLog;
 using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras
 {
   public class DisposeAction : IDisposable
   {
+    [NotNull]
+    private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(DisposeAction));
+
     /// <exception cref="ArgumentNullException"><paramref name="action" /> is <see langword="null" /></exception>
     public DisposeAction([NotNull] Action<DisposeAction> action)
     {
@@ -24,8 +26,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras
       }
       catch (Exception exception)
       {
-        LogTo.ErrorException($"Calling {nameof(this.Action)} raised an exception.",
-                             exception);
+        DisposeAction.Logger.Error(exception);
       }
     }
   }
