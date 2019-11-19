@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40;net46</TargetFrameworks>
+    <TargetFrameworks>net46</TargetFrameworks>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
