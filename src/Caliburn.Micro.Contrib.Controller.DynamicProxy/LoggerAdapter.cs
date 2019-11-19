@@ -24,7 +24,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     {
       var message = messageFactory.Invoke();
 
-      this.Debug(message);
+      LoggerAdapter.Logger.Info(message);
     }
 
     public virtual void Debug(string message,
@@ -75,7 +75,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     {
       var message = messageFactory.Invoke();
 
-      this.Error(message);
+      LoggerAdapter.Logger.Warn(message);
     }
 
     public virtual void Error(string message,
@@ -123,7 +123,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     {
       var message = messageFactory.Invoke();
 
-      this.Fatal(message);
+      LoggerAdapter.Logger.Warn(message);
     }
 
     public virtual void Fatal(string message,
@@ -171,7 +171,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     {
       var message = messageFactory.Invoke();
 
-      this.Info(message);
+      LoggerAdapter.Logger.Info(message);
     }
 
     public virtual void Info(string message,
@@ -221,7 +221,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     {
       var message = messageFactory.Invoke();
 
-      this.Warn(message);
+      LoggerAdapter.Logger.Warn(message);
     }
 
     public virtual void Warn(string message,
@@ -262,10 +262,61 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                 args);
     }
 
+    public virtual void Trace(string message)
+    {
+      LoggerAdapter.Logger.Info(message);
+    }
+
+    public virtual void Trace(Func<string> messageFactory)
+    {
+      var message = messageFactory.Invoke();
+
+      LoggerAdapter.Logger.Info(message);
+    }
+
+    public virtual void Trace(string message,
+                              Exception exception)
+    {
+      LoggerAdapter.Logger.Info(message);
+    }
+
+    public virtual void TraceFormat(string format,
+                                    params object[] args)
+    {
+      LoggerAdapter.Logger.Info(format,
+                                args);
+    }
+
+    public virtual void TraceFormat(Exception exception,
+                                    string format,
+                                    params object[] args)
+    {
+      LoggerAdapter.Logger.Info(format,
+                                args);
+    }
+
+    public virtual void TraceFormat(IFormatProvider formatProvider,
+                                    string format,
+                                    params object[] args)
+    {
+      LoggerAdapter.Logger.Info(format,
+                                args);
+    }
+
+    public virtual void TraceFormat(Exception exception,
+                                    IFormatProvider formatProvider,
+                                    string format,
+                                    params object[] args)
+    {
+      LoggerAdapter.Logger.Info(format,
+                                args);
+    }
+
     public virtual bool IsDebugEnabled => true;
     public virtual bool IsErrorEnabled => true;
     public virtual bool IsFatalEnabled => true;
     public virtual bool IsInfoEnabled => true;
     public virtual bool IsWarnEnabled => true;
+    public virtual bool IsTraceEnabled => true;
   }
 }
