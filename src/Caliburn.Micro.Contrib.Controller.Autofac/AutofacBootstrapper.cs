@@ -68,14 +68,5 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
 
       return screenFactoryAdapter;
     }
-
-    protected override void OnExit(object sender,
-                                   EventArgs e)
-    {
-      base.OnExit(sender,
-                  e);
-
-      this.Container.Dispose();
-    }
   }
 }
