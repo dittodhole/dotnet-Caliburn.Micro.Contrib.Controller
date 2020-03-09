@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.Core.Logging;
 using Castle.DynamicProxy;
@@ -571,20 +572,25 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       /// <inheritdoc/>
       public void Intercept(IInvocation invocation)
-      { // TODO work with tasks!
+      {
         if (invocation == null)
         {
           throw new ArgumentNullException(nameof(invocation));
         }
 
-        // TODO check if task - skip invocation
-
-        invocation.Proceed();
-
         var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
-        var interceptingMethodInfo = Caliburn.Micro.Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
-                                                                                                            BindingFlags.Default,
-                                                                                                            screenMethodInfo.Name);
+        if (screenMethodInfo != null)
+        {
+          if (screenMethodInfo.ReturnType != typeof(Task))
+          { // tasks are not executed here, no intention on awaiting here!
+            screenMethodInfo.Invoke(invocation.InvocationTarget,
+                                    invocation.Arguments);
+          }
+        }
+
+        var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
+                                                                                             BindingFlags.Default,
+                                                                                             invocation.Method.Name);
         if (interceptingMethodInfo != null)
         {
           var parameters = new List<object>(invocation.Arguments.Length + 1)
