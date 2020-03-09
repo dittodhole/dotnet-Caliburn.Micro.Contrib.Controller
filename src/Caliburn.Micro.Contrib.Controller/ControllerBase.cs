@@ -24,7 +24,7 @@ namespace Caliburn.Micro.Contrib.Controller
     private ICollection<IControllerRoutine> ControllerRoutines { get; }
 
     /// <inheritdoc/>
-    [HandlesViewModelMethod(MethodName = nameof(IClose.TryClose), CallBase = true)]
+    [HandlesViewModelMethod(MethodName = nameof(IClose.TryClose))]
     public virtual void OnClose(TScreen screen,
                                 bool? dialogResult = null)
     {
@@ -41,7 +41,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    [HandlesViewModelMethod(MethodName = "OnInitialize", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnInitialize")]
     public virtual void OnInitialize(TScreen screen)
     {
       if (screen == null)
@@ -56,7 +56,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    [HandlesViewModelMethod(MethodName = "OnViewReady", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnViewReady")]
     public virtual void OnViewReady(TScreen screen,
                                     object view)
     {
@@ -77,7 +77,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    [HandlesViewModelMethod(MethodName = "OnActivate", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnActivate")]
     public virtual void OnActivate(TScreen screen)
     {
       if (screen == null)
@@ -92,7 +92,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    [HandlesViewModelMethod(MethodName = "OnDeactivate", CallBase = true)]
+    [HandlesViewModelMethod(MethodName = "OnDeactivate")]
     public virtual void OnDeactivate(TScreen screen,
                                      bool close)
     {

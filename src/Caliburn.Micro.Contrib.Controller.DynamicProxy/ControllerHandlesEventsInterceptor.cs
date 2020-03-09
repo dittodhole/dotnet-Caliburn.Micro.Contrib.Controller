@@ -20,18 +20,16 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
     /// <inheritdoc/>
     public void Intercept(IInvocation invocation)
-    {
+    { // TODO work with tasks!
       if (invocation == null)
       {
         return;
       }
 
+      invocation.Proceed();
+
       var proxyMethodInfo = invocation.Method;
-      if (proxyMethodInfo == null)
-      {
-        invocation.Proceed();
-      }
-      else
+      if (proxyMethodInfo != null)
       {
         var proxy = invocation.Proxy;
         var proxyType = proxy.GetType();
@@ -39,12 +37,6 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                                            proxyMethodInfo);
         if (targetMethods.Any())
         {
-          var callBase = targetMethods.Any(targetMethod => targetMethod.HandlesViewModelMethodAttribute.CallBase);
-          if (callBase)
-          {
-            invocation.Proceed();
-          }
-
           var proxyMethodParameters = invocation.Arguments;
           var targetMethodParameters = new object[proxyMethodParameters.Length + 1];
           targetMethodParameters[0] = proxy;
@@ -68,10 +60,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
               continue;
             }
 
-            if (!callBase)
-            {
-              invocation.ReturnValue = returnValue;
-            }
+            invocation.ReturnValue = returnValue;
           }
         }
         else
