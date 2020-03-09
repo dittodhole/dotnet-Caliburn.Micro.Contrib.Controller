@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Castle.DynamicProxy;
 
@@ -62,10 +62,6 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
             invocation.ReturnValue = returnValue;
           }
-        }
-        else
-        {
-          invocation.Proceed();
         }
       }
     }
