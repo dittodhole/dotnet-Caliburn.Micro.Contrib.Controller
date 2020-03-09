@@ -1,16 +1,14 @@
 ﻿using System;
 using Castle.Core.Logging;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   public class LoggerAdapter : ILogger
   {
-    [NotNull]
     private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(LoggerAdapter));
 
     /// <exception cref="ArgumentNullException"><paramref name="loggerName" /> is <see langword="null" /></exception>
-    public virtual ILogger CreateChildLogger([NotNull] string loggerName)
+    public virtual ILogger CreateChildLogger(string loggerName)
     {
       return this;
     }

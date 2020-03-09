@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Extras.Converters;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
@@ -12,7 +11,6 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                                  IMixinInterface<BlockingRoutine.ICanBeBlocked>,
                                  IDisposable
   {
-    [NotNull]
     private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
 
     public void Dispose()
@@ -53,15 +51,14 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    [CanBeNull]
-    public virtual IDisposable Block([NotNull] IScreen screen)
+    public virtual IDisposable? Block(IScreen screen)
     {
       if (screen == null)
       {
         throw new ArgumentNullException(nameof(screen));
       }
 
-      DisposeAction result = null;
+      DisposeAction? result = null;
 
       var canBeBlocked = screen as ICanBeBlocked;
       if (canBeBlocked != null)

@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -8,29 +7,29 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    void OnClose([NotNull] TScreen screen,
+    void OnClose(TScreen screen,
                  bool? dialogResult = null);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     /// <remarks>Should be used to prepare <paramref name="screen" /></remarks>
-    void OnInitialize([NotNull] TScreen screen);
+    void OnInitialize(TScreen screen);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    void OnViewReady([NotNull] TScreen screen,
-                     [NotNull] object view);
+    void OnViewReady(TScreen screen,
+                     object view);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     /// <remarks>Should be used to attach events</remarks>
-    void OnActivate([NotNull] TScreen screen);
+    void OnActivate(TScreen screen);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
     /// <remarks>Should be used to detach events</remarks>
-    void OnDeactivate([NotNull] TScreen screen,
+    void OnDeactivate(TScreen screen,
                       bool close);
   }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -8,10 +7,10 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IWeakCollection<T> : IDisposable
     where T : class
   {
-    void Add([NotNull] T instance);
+    void Add(T instance);
 
     /// <exception cref="ArgumentNullException"><paramref name="instance" /> is <see langword="null" /></exception>
-    void Remove([NotNull] T instance);
+    void Remove(T instance);
   }
 
   /// <remarks>
@@ -26,7 +25,6 @@ namespace Caliburn.Micro.Contrib.Controller
   public class WeakCollection<T> : IWeakCollection<T>
     where T : class
   {
-    [NotNull]
     private LinkedList<WeakInstance> WeakInstances { get; } = new LinkedList<WeakInstance>();
 
     public virtual void Dispose()
@@ -73,7 +71,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                         IEquatable<WeakInstance>
     {
       /// <exception cref="ArgumentNullException"><paramref name="instance" /> is <see langword="null" /></exception>
-      public WeakInstance([NotNull] T instance)
+      public WeakInstance(T instance)
       {
         if (instance == null)
         {
@@ -82,7 +80,6 @@ namespace Caliburn.Micro.Contrib.Controller
         this.Instance = new WeakReference(instance);
       }
 
-      [NotNull]
       private WeakReference Instance { get; }
 
       public void Dispose()

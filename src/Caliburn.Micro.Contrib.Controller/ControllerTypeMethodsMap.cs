@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -11,8 +10,8 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="controllerType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="targetMethods" /> is <see langword="null" /></exception>
-    private ControllerTypeMethodsMap([NotNull] Type controllerType,
-                                     [NotNull] IDictionary<string, TargetMethod[]> targetMethods)
+    private ControllerTypeMethodsMap(Type controllerType,
+                                     IDictionary<string, TargetMethod[]> targetMethods)
     {
       if (controllerType == null)
       {
@@ -22,19 +21,13 @@ namespace Caliburn.Micro.Contrib.Controller
       this.TargetMethods = targetMethods ?? throw new ArgumentNullException(nameof(targetMethods));
     }
 
-    [NotNull]
     private Type ControllerType { get; }
-
-    [NotNull]
     private IDictionary<string, TargetMethod[]> TargetMethods { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="screenMethodInfo" /> is <see langword="null" /></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    public TargetMethod[] GetTargetMethods([NotNull] Type screenType,
-                                           [NotNull] MethodInfo screenMethodInfo)
+    public TargetMethod[] GetTargetMethods(Type screenType,
+                                           MethodInfo screenMethodInfo)
     {
       if (screenType == null)
       {
@@ -88,8 +81,7 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="controllerType" /> is <see langword="null" /></exception>
-    [NotNull]
-    public static ControllerTypeMethodsMap Create([NotNull] Type controllerType)
+    public static ControllerTypeMethodsMap Create(Type controllerType)
     {
       if (controllerType == null)
       {
@@ -125,8 +117,8 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="methodInfo" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="handlesViewModelMethodAttribute" /> is <see langword="null" /></exception>
-      public TargetMethod([NotNull] MethodInfo methodInfo,
-                          [NotNull] HandlesViewModelMethodAttribute handlesViewModelMethodAttribute)
+      public TargetMethod(MethodInfo methodInfo,
+                          HandlesViewModelMethodAttribute handlesViewModelMethodAttribute)
       {
         if (methodInfo == null)
         {
@@ -136,10 +128,7 @@ namespace Caliburn.Micro.Contrib.Controller
         this.HandlesViewModelMethodAttribute = handlesViewModelMethodAttribute ?? throw new ArgumentNullException(nameof(handlesViewModelMethodAttribute));
       }
 
-      [NotNull]
       public MethodInfo MethodInfo { get; }
-
-      [NotNull]
       public HandlesViewModelMethodAttribute HandlesViewModelMethodAttribute { get; }
     }
   }

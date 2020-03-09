@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [PublicAPI]
   public static class Intercept<TScreen>
     where TScreen : IScreen
   {
@@ -16,9 +14,8 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
-      [UsedImplicitly]
-      void Handle([NotNull] TScreen screen,
-                  [NotNull] TMessage message);
+      void Handle(TScreen screen,
+                  TMessage message);
     }
 
     public interface IHandleWithCoroutine<TMessage> : IHandle,
@@ -26,11 +23,8 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
-      [UsedImplicitly]
-      [NotNull]
-      [ItemNotNull]
-      IEnumerable<IResult> Handle([NotNull] TScreen screen,
-                                  [NotNull] TMessage message);
+      IEnumerable<IResult> Handle(TScreen screen,
+                                  TMessage message);
     }
 
     public interface IHandleWithTask<TMessage> : IHandle,
@@ -38,10 +32,8 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
       /// <exception cref="ArgumentNullException"><paramref name="message" /> is <see langword="null" /></exception>
-      [UsedImplicitly]
-      [NotNull]
-      Task Handle([NotNull] TScreen screen,
-                  [NotNull] TMessage message);
+      Task Handle(TScreen screen,
+                  TMessage message);
     }
   }
 }

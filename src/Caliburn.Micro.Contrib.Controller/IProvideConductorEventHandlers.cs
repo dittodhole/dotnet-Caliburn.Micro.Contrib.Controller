@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -9,14 +8,14 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    void OnActivateItem([NotNull] TScreen screen,
-                        [CanBeNull] TItem item);
+    void OnActivateItem(TScreen screen,
+                        TItem item);
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    void OnDeactivateItem([NotNull] TScreen screen,
-                          [NotNull] TItem item,
+    void OnDeactivateItem(TScreen screen,
+                          TItem item,
                           bool close);
   }
 }

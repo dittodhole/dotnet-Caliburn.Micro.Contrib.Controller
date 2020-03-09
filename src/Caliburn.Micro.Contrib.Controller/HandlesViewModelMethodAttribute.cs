@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -8,7 +7,6 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     public bool CallBase { get; set; } = true;
 
-    [CanBeNull]
-    public string MethodName { get; set; }
+    public string? MethodName { get; set; }
   }
 }

@@ -1,21 +1,18 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras
 {
   public class DisposeAction : IDisposable
   {
-    [NotNull]
     private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(DisposeAction));
 
     /// <exception cref="ArgumentNullException"><paramref name="action" /> is <see langword="null" /></exception>
-    public DisposeAction([NotNull] Action<DisposeAction> action)
+    public DisposeAction(Action<DisposeAction> action)
     {
       this.Action = action ?? throw new ArgumentNullException(nameof(action));
     }
 
-    [CanBeNull]
-    private Action<DisposeAction> Action { get; set; }
+    private Action<DisposeAction>? Action { get; set; }
 
     public void Dispose()
     {

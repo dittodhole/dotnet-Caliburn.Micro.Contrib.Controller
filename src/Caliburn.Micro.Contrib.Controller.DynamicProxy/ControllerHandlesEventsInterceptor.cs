@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Linq;
 using Castle.DynamicProxy;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   public sealed class ControllerHandlesEventsInterceptor : IInterceptor
   {
-    [NotNull]
     private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(ControllerHandlesEventsInterceptor));
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    public ControllerHandlesEventsInterceptor([NotNull] IController controller)
+    public ControllerHandlesEventsInterceptor(IController controller)
     {
       this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
       this.ControllerTypeMethodsMap = ControllerTypeMethodsMap.Create(controller.GetType());
     }
 
-    [NotNull]
     private ControllerTypeMethodsMap ControllerTypeMethodsMap { get; }
-
-    [NotNull]
     private IController Controller { get; }
 
     public void Intercept(IInvocation invocation)

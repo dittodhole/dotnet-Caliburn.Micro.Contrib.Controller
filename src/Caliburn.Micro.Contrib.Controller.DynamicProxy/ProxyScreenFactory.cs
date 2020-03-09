@@ -5,13 +5,11 @@ using System.Reflection;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.Core.Logging;
 using Castle.DynamicProxy;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   public class ProxyScreenFactory : ScreenFactoryBase
   {
-    [NotNull]
     private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(ProxyScreenFactory));
 
     static ProxyScreenFactory()
@@ -35,13 +33,13 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="proxyGenerator" /> is <see langword="null" /></exception>
-    public ProxyScreenFactory([NotNull] ProxyGenerator proxyGenerator)
+    public ProxyScreenFactory(ProxyGenerator proxyGenerator)
     {
       this.ProxyGenerator = proxyGenerator ?? throw new ArgumentNullException(nameof(proxyGenerator));
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="logger" /> is <see langword="null" /></exception>
-    public ProxyScreenFactory([NotNull] ILogger logger)
+    public ProxyScreenFactory(ILogger logger)
     {
       if (logger == null)
       {
@@ -61,14 +59,10 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                             };
     }
 
-    [NotNull]
     private ProxyGenerator ProxyGenerator { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    [Pure]
-    [ItemNotNull]
-    [NotNull]
-    public virtual IMixinProvider[] GetMixinProviders([NotNull] IController controller)
+    public virtual IMixinProvider[] GetMixinProviders(IController controller)
     {
       if (controller == null)
       {
@@ -138,10 +132,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    public virtual Type[] GetAdditionalInterfaces([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
+    public virtual Type[] GetAdditionalInterfaces(IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)
       {
@@ -187,10 +178,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
     /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
     /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    public virtual object[] GetMixinInstances([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
+    public virtual object[] GetMixinInstances(IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)
       {
@@ -261,10 +249,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
-    [Pure]
-    [NotNull]
-    [ItemNotNull]
-    public virtual CustomAttributeInfo[] GetCustomAttributeInfos([NotNull] [ItemNotNull] IEnumerable<IMixinProvider> mixinProviders)
+    public virtual CustomAttributeInfo[] GetCustomAttributeInfos(IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)
       {
@@ -280,12 +265,12 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
     private sealed class MixinDefinition
     {
-      public MixinDefinition([NotNull] Type type,
-                             [NotNull] MethodInfo[] methodInfos,
-                             [NotNull] Type @interface,
-                             [NotNull] Type genericTypeDefinition,
-                             [NotNull] Type[] genericArguments,
-                             [NotNull] IMixinProvider mixinProvider)
+      public MixinDefinition(Type type,
+                             MethodInfo[] methodInfos,
+                             Type @interface,
+                             Type genericTypeDefinition,
+                             Type[] genericArguments,
+                             IMixinProvider mixinProvider)
       {
         this.Type = type;
         this.MethodInfos = methodInfos;
@@ -295,38 +280,24 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         this.MixinProvider = mixinProvider;
       }
 
-      [NotNull]
       public Type Type { get; }
-
-      [NotNull]
       public MethodInfo[] MethodInfos { get; }
-
-      [NotNull]
       public Type Interface { get; }
-
-      [NotNull]
       public Type GenericTypeDefinition { get; }
-
-      [NotNull]
       public Type[] GenericArguments { get; }
-
-      [NotNull]
       public IMixinProvider MixinProvider { get; }
     }
 
     private sealed class GenericDefinition
     {
-      public GenericDefinition([NotNull] Type genericTypeDefinition,
-                               [NotNull] Type[] genericArguments)
+      public GenericDefinition(Type genericTypeDefinition,
+                               Type[] genericArguments)
       {
         this.GenericTypeDefinition = genericTypeDefinition;
         this.GenericArguments = genericArguments;
       }
 
-      [NotNull]
       public Type GenericTypeDefinition { get; }
-
-      [NotNull]
       public Type[] GenericArguments { get; }
     }
   }

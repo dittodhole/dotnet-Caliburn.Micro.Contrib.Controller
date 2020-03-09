@@ -5,7 +5,6 @@ using Autofac;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.DynamicProxy;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
@@ -54,10 +53,9 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <param name="context">The optional view model context.</param>
     /// <param name="settings">The optional window settings.</param>
     /// <exception cref="Exception" />
-    [PublicAPI]
-    public virtual async Task<TScreenFactoryAdapter> DisplayViewForAsync<TScreenFactoryAdapter>([CanBeNull] object options = null,
-                                                                                                [CanBeNull] object context = null,
-                                                                                                [CanBeNull] IDictionary<string, object> settings = null)
+    public virtual async Task<TScreenFactoryAdapter> DisplayViewForAsync<TScreenFactoryAdapter>(object? options = null,
+                                                                                                object? context = null,
+                                                                                                IDictionary<string, object>? settings = null)
       where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       var screenManager = IoC.Get<IScreenManager>();

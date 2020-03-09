@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -11,8 +10,8 @@ namespace Caliburn.Micro.Contrib.Controller
     where TScreen : IScreen
   {
     /// <inheritdoc />
-    protected ControllerWithResultBase([NotNull] IScreenFactory screenFactory,
-                                       [NotNull] ICollection<IRoutine> routines)
+    protected ControllerWithResultBase(IScreenFactory screenFactory,
+                                       ICollection<IRoutine> routines)
       : base(screenFactory,
              routines) {}
 

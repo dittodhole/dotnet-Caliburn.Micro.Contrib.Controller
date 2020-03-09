@@ -1,22 +1,16 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  [PublicAPI]
   public interface IScreenFactoryAdapter
   {
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    IScreen CreateScreen([CanBeNull] object options = null);
+    IScreen CreateScreen(object? options = null);
 
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    Type GetScreenType([CanBeNull] object options = null);
+    Type GetScreenType(object? options = null);
   }
 
   public interface IScreenFactoryAdapter<TScreen> : IScreenFactoryAdapter
@@ -24,8 +18,6 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    [Pure]
-    [NotNull]
-    new TScreen CreateScreen([CanBeNull] object options = null);
+    new TScreen CreateScreen(object? options = null);
   }
 }

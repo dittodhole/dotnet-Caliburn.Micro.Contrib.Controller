@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -15,16 +14,14 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
-    protected ConductorControllerBase([NotNull] IScreenFactory screenFactory,
-                                      [NotNull] [ItemNotNull] ICollection<IRoutine> routines)
+    protected ConductorControllerBase(IScreenFactory screenFactory,
+                                      ICollection<IRoutine> routines)
     {
       this.ScreenFactory = screenFactory ?? throw new ArgumentNullException(nameof(screenFactory));
       this.Routines = routines ?? throw new ArgumentNullException(nameof(routines));
     }
 
-    [NotNull]
     private IScreenFactory ScreenFactory { get; }
-
     public virtual IEnumerable<IRoutine> Routines { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
@@ -177,10 +174,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    [PublicAPI]
-    [NotNull]
-    public virtual TScreen BuildUp([NotNull] TScreen screen,
-                                   [CanBeNull] object options = null)
+    public virtual TScreen BuildUp(TScreen screen,
+                                   object? options = null)
     {
       if (screen == null)
       {
@@ -190,7 +185,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
-    public virtual Type GetScreenType(object options = null)
+    public virtual Type GetScreenType(object? options = null)
     {
       return typeof(TScreen);
     }
@@ -198,10 +193,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentException" />
     /// <exception cref="Exception" />
-    [PublicAPI]
-    [NotNull]
-    public virtual object[] GetConstructorArguments([NotNull] Type screenType,
-                                                    [CanBeNull] object options = null)
+    public virtual object[] GetConstructorArguments(Type screenType,
+                                                    object? options = null)
     {
       if (screenType == null)
       {

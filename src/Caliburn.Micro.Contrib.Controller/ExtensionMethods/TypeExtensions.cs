@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 {
@@ -9,8 +8,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
     public const BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    [Pure]
-    public static bool IsDescendantOrMatches<T>([NotNull] this Type type)
+    public static bool IsDescendantOrMatches<T>(this Type type)
     {
       if (type == null)
       {
@@ -21,8 +19,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
     }
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    [Pure]
-    public static bool IsDescendant<T>([NotNull] this Type type)
+    public static bool IsDescendant<T>(this Type type)
     {
       if (type == null)
       {
@@ -34,9 +31,8 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 
     /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
     /// <exception cref="ArgumentNullException"><paramref name="parentType" /> is <see langword="null" /></exception>
-    [Pure]
-    public static bool IsDescendant([NotNull] this Type type,
-                                    [NotNull] Type parentType)
+    public static bool IsDescendant(this Type type,
+                                    Type parentType)
     {
       if (type == null)
       {
@@ -57,9 +53,8 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 
     /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
     /// <exception cref="ArgumentNullException"><paramref name="parentType"/> is <see langword="null"/></exception>
-    [Pure]
-    public static bool IsDescendantOrMatches([NotNull] this Type type,
-                                             [NotNull] Type parentType)
+    public static bool IsDescendantOrMatches(this Type type,
+                                             Type parentType)
     {
       if (type == null)
       {
