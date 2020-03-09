@@ -56,9 +56,7 @@
     <ProjectReference Include="..\Caliburn.Micro.Contrib.Controller\Caliburn.Micro.Contrib.Controller.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControllerHandlesEventsInterceptor.cs" />
-    <Compile Include="IMixinAttributes.cs" />
-    <Compile Include="LoggerAdapter.cs" />
+    <Compile Include="Intercept.cs" />
     <Compile Include="ProxyScreenFactory.cs" />
   </ItemGroup>
   <ItemGroup>

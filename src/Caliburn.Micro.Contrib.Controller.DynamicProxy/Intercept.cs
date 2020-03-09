@@ -4,6 +4,12 @@ using System.Threading.Tasks;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
+  public interface IMixinProvider { }
+
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
+  public interface IMixinInterface<TInterface> : IMixinProvider { }
+
   public static class Intercept<TScreen>
     where TScreen : IScreen
   {

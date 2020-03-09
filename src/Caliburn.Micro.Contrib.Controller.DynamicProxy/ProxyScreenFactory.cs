@@ -8,10 +8,8 @@ using Castle.DynamicProxy;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
-  public class ProxyScreenFactory : ScreenFactoryBase
+  public sealed class ProxyScreenFactory : ScreenFactoryBase
   {
-    private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(ProxyScreenFactory));
-
     static ProxyScreenFactory()
     {
       var locateTypeForModelType = ViewLocator.LocateTypeForModelType;
@@ -24,109 +22,62 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                modelType = modelType.BaseType;
                                              }
 
-                                             var viewType = locateTypeForModelType.Invoke(modelType,
-                                                                                          displayLocation,
-                                                                                          context);
+                                             var result = locateTypeForModelType.Invoke(modelType,
+                                                                                        displayLocation,
+                                                                                        context);
 
-                                             return viewType;
+                                             return result;
                                            };
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    public ProxyScreenFactory(ProxyGenerator proxyGenerator)
-    {
-      this.ProxyGenerator = proxyGenerator ?? throw new ArgumentNullException(nameof(proxyGenerator));
-    }
-
-    /// <exception cref="ArgumentNullException"/>
-    public ProxyScreenFactory(ILogger logger)
-    {
-      if (logger == null)
-      {
-        throw new ArgumentNullException(nameof(logger));
-      }
-      this.ProxyGenerator = new ProxyGenerator
-                            {
-                              Logger = logger
-                            };
-    }
-
-    public ProxyScreenFactory()
-    {
-      this.ProxyGenerator = new ProxyGenerator
-                            {
-                              Logger = new LoggerAdapter()
-                            };
-    }
-
-    private ProxyGenerator ProxyGenerator { get; }
-
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception"/>
-    public virtual IMixinProvider[] GetMixinProviders(IController controller)
-    {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-
-      var mixinProviders = new object[]
-                           {
-                             controller
-                           }.Concat(controller.Routines)
-                            .OfType<IMixinProvider>()
-                            .ToArray();
-
-      return mixinProviders;
-    }
+    private ProxyGenerator ProxyGenerator { get; } = new ProxyGenerator()
+                                                     {
+                                                       Logger = new LoggerAdapter()
+                                                     };
 
     /// <inheritdoc/>
     protected override IScreen CreateImpl(Type screenType,
                                           object?[] constructorArguments,
                                           IController controller)
     {
-      if (screenType == null)
+      var interceptor = new Interceptor(controller);
+
+      Type[] additionalInterfacesToProxy;
+      if (controller is IMixinProvider mixinProvider)
       {
-        throw new ArgumentNullException(nameof(screenType));
+        additionalInterfacesToProxy = null; // TODO
       }
-      if (constructorArguments == null)
+      else
       {
-        throw new ArgumentNullException(nameof(constructorArguments));
-      }
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
+        additionalInterfacesToProxy = new Type[0];
       }
 
-      var interceptor = new ControllerHandlesEventsInterceptor(controller);
-
-      var mixinProviders = this.GetMixinProviders(controller);
-
-      var additionalInterfaces = this.GetAdditionalInterfaces(mixinProviders);
-      var mixinInstances = this.GetMixinInstances(mixinProviders);
-      var customAttributeInfos = this.GetCustomAttributeInfos(mixinProviders);
+      //var additionalInterfaces = this.GetAdditionalInterfaces(mixinProvider);
+      //var mixinInstances = this.GetMixinInstances(mixinProvider);
+      //var customAttributeInfos = this.GetCustomAttributeInfos(mixinProvider);
 
       var proxyGenerationOptions = new ProxyGenerationOptions();
-      foreach (var mixinInstance in mixinInstances)
-      {
-        proxyGenerationOptions.AddMixinInstance(mixinInstance);
-      }
-      foreach (var customAttributeInfo in customAttributeInfos)
-      {
-        proxyGenerationOptions.AdditionalAttributes.Add(customAttributeInfo);
-      }
+      //foreach (var mixinInstance in mixinInstances)
+      //{
+      //  proxyGenerationOptions.AddMixinInstance(mixinInstance);
+      //}
+      //foreach (var customAttributeInfo in customAttributeInfos)
+      //{
+      //  proxyGenerationOptions.AdditionalAttributes.Add(customAttributeInfo);
+      //}
 
       var proxy = this.ProxyGenerator.CreateClassProxy(screenType,
-                                                       additionalInterfaces,
+                                                       additionalInterfacesToProxy,
                                                        proxyGenerationOptions,
                                                        constructorArguments,
                                                        interceptor);
 
-      var screen = (IScreen) proxy;
+      var result = (IScreen) proxy;
 
-      return screen;
+      return result;
     }
 
+    /*
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
     public virtual Type[] GetAdditionalInterfaces(IEnumerable<IMixinProvider> mixinProviders)
@@ -171,78 +122,6 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                .ToArray();
 
       return additionalInterfaces;
-    }
-
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
-    public virtual object[] GetMixinInstances(IEnumerable<IMixinProvider> mixinProviders)
-    {
-      if (mixinProviders == null)
-      {
-        throw new ArgumentNullException(nameof(mixinProviders));
-      }
-
-      var mixinInstances = mixinProviders.SelectMany(arg =>
-                                                     {
-                                                       var type = arg.GetType();
-
-                                                       Type[] interfaces;
-                                                       var methodInfos = type.GetMethods(TypeExtensions.DefaultBindingFlags);
-                                                       try
-                                                       {
-                                                         interfaces = type.GetInterfaces();
-                                                       }
-                                                       catch (TargetInvocationException targetInvocationException)
-                                                       {
-                                                         ProxyScreenFactory.Logger.Error(targetInvocationException);
-                                                         return Enumerable.Empty<MixinDefinition>();
-                                                       }
-
-                                                       var result = interfaces.Where(@interface => @interface.IsGenericType)
-                                                                              .Where(@interface => @interface.IsDescendant<IMixinProvider>())
-                                                                              .Select(@interface =>
-                                                                                      {
-                                                                                        var genericTypeDefinition = @interface.GetGenericTypeDefinition();
-                                                                                        var genericArguments = @interface.GetGenericArguments();
-
-                                                                                        var mixinDefinition = new MixinDefinition(type,
-                                                                                                                                  methodInfos,
-                                                                                                                                  @interface,
-                                                                                                                                  genericTypeDefinition,
-                                                                                                                                  genericArguments,
-                                                                                                                                  arg);
-
-                                                                                        return mixinDefinition;
-                                                                                      })
-                                                                              .Where(@interface => @interface.GenericTypeDefinition == typeof(IMixinInstance<>));
-
-                                                       return result;
-                                                     })
-                                         .Select(arg =>
-                                                 {
-                                                   var mixinType = arg.GenericArguments.Single();
-
-                                                   object mixinInstance;
-                                                   try
-                                                   {
-                                                     mixinInstance = arg.MethodInfos.SingleOrDefault(methodInfo => methodInfo.DoesSignatureMatch(mixinType,
-                                                                                                                                                 new Type[0],
-                                                                                                                                                 nameof(IMixinInstance<object>.CreateMixinInstance)))
-                                                                        ?.Invoke(arg.MixinProvider,
-                                                                                 null);
-                                                   }
-                                                   catch (TargetException targetException)
-                                                   {
-                                                     ProxyScreenFactory.Logger.Error(targetException);
-                                                     mixinInstance = null;
-                                                   }
-
-                                                   return mixinInstance;
-                                                 })
-                                         .Where(arg => arg != null)
-                                         .ToArray();
-
-      return mixinInstances;
     }
 
     /// <exception cref="ArgumentNullException"/>
@@ -297,6 +176,418 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       public Type GenericTypeDefinition { get; }
       public Type[] GenericArguments { get; }
+    }
+
+    */
+
+    private sealed class LoggerAdapter : ILogger
+    {
+      private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(LoggerAdapter));
+
+      /// <inheritdoc/>
+      public ILogger CreateChildLogger(string loggerName)
+      {
+        return this;
+      }
+
+      /// <inheritdoc/>
+      public void Debug(string message)
+      {
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void Debug(Func<string> messageFactory)
+      {
+        var message = messageFactory.Invoke();
+
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void Debug(string message,
+                        Exception exception)
+      {
+        LoggerAdapter.Logger.Info(message,
+                                  exception);
+      }
+
+      /// <inheritdoc/>
+      public void DebugFormat(string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void DebugFormat(Exception exception,
+                              string format,
+                                      params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void DebugFormat(IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void DebugFormat(Exception exception,
+                              IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void Error(string message)
+      {
+        LoggerAdapter.Logger.Warn(message);
+      }
+
+      /// <inheritdoc/>
+      public void Error(Func<string> messageFactory)
+      {
+        var message = messageFactory.Invoke();
+
+        LoggerAdapter.Logger.Warn(message);
+      }
+
+      /// <inheritdoc/>
+      public void Error(string message,
+                        Exception exception)
+      {
+        LoggerAdapter.Logger.Error(exception);
+      }
+
+      /// <inheritdoc/>
+      public void ErrorFormat(string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void ErrorFormat(Exception exception,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Error(exception);
+      }
+
+      /// <inheritdoc/>
+      public void ErrorFormat(IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void ErrorFormat(Exception exception,
+                              IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Error(exception);
+      }
+
+      /// <inheritdoc/>
+      public void Fatal(string message)
+      {
+        LoggerAdapter.Logger.Warn(message);
+      }
+
+      /// <inheritdoc/>
+      public void Fatal(Func<string> messageFactory)
+      {
+        var message = messageFactory.Invoke();
+
+        LoggerAdapter.Logger.Warn(message);
+      }
+
+      /// <inheritdoc/>
+      public void Fatal(string message,
+                        Exception exception)
+      {
+        LoggerAdapter.Logger.Error(exception);
+      }
+
+      /// <inheritdoc/>
+      public void FatalFormat(string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void FatalFormat(Exception exception,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Error(exception);
+      }
+
+      /// <inheritdoc/>
+      public void FatalFormat(IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void FatalFormat(Exception exception,
+                              IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Error(exception);
+      }
+
+      /// <inheritdoc/>
+      public void Info(string message)
+      {
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void Info(Func<string> messageFactory)
+      {
+        var message = messageFactory.Invoke();
+
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void Info(string message,
+                       Exception exception)
+      {
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void InfoFormat(string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void InfoFormat(Exception exception,
+                             string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void InfoFormat(IFormatProvider formatProvider,
+                             string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void InfoFormat(Exception exception,
+                             IFormatProvider formatProvider,
+                             string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void Warn(string message)
+      {
+        LoggerAdapter.Logger.Warn(message);
+      }
+
+      /// <inheritdoc/>
+      public void Warn(Func<string> messageFactory)
+      {
+        var message = messageFactory.Invoke();
+
+        LoggerAdapter.Logger.Warn(message);
+      }
+
+      /// <inheritdoc/>
+      public void Warn(string message,
+                       Exception exception)
+      {
+        LoggerAdapter.Logger.Warn(message);
+      }
+
+      /// <inheritdoc/>
+      public void WarnFormat(string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void WarnFormat(Exception exception,
+                             string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void WarnFormat(IFormatProvider formatProvider,
+                             string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void WarnFormat(Exception exception,
+                             IFormatProvider formatProvider,
+                             string format,
+                             params object[] args)
+      {
+        LoggerAdapter.Logger.Warn(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void Trace(string message)
+      {
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void Trace(Func<string> messageFactory)
+      {
+        var message = messageFactory.Invoke();
+
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void Trace(string message,
+                        Exception exception)
+      {
+        LoggerAdapter.Logger.Info(message);
+      }
+
+      /// <inheritdoc/>
+      public void TraceFormat(string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void TraceFormat(Exception exception,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void TraceFormat(IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public void TraceFormat(Exception exception,
+                              IFormatProvider formatProvider,
+                              string format,
+                              params object[] args)
+      {
+        LoggerAdapter.Logger.Info(format,
+                                  args);
+      }
+
+      /// <inheritdoc/>
+      public bool IsDebugEnabled => true;
+
+      /// <inheritdoc/>
+      public bool IsErrorEnabled => true;
+
+      /// <inheritdoc/>
+      public bool IsFatalEnabled => true;
+
+      /// <inheritdoc/>
+      public bool IsInfoEnabled => true;
+
+      /// <inheritdoc/>
+      public bool IsWarnEnabled => true;
+
+      /// <inheritdoc/>
+      public bool IsTraceEnabled => true;
+    }
+
+    private sealed class Interceptor : IInterceptor
+    {
+      /// <exception cref="ArgumentNullException"/>
+      public Interceptor(IController controller)
+      {
+        this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
+      }
+
+      private IController Controller { get; }
+
+      /// <inheritdoc/>
+      public void Intercept(IInvocation invocation)
+      { // TODO work with tasks!
+        if (invocation == null)
+        {
+          throw new ArgumentNullException(nameof(invocation));
+        }
+
+        // TODO check if task - skip invocation
+
+        invocation.Proceed();
+
+        var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
+        var interceptingMethodInfo = Caliburn.Micro.Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
+                                                                                                            BindingFlags.Default,
+                                                                                                            screenMethodInfo.Name);
+        if (interceptingMethodInfo != null)
+        {
+          var parameters = new List<object>(invocation.Arguments.Length + 1)
+                         {
+                           invocation.InvocationTarget
+                         };
+          parameters.AddRange(invocation.Arguments);
+
+          var returnValue = interceptingMethodInfo.Invoke(this.Controller,
+                                                          parameters.ToArray());
+
+          invocation.ReturnValue = returnValue;
+        }
+      }
     }
   }
 }
