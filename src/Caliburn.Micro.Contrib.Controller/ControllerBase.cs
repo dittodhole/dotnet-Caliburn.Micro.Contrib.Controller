@@ -9,7 +9,7 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IController { }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
-  public interface IControllerRoutine : IProvideScreenEventHandlers<IScreen> { }
+  public interface IController<TScreen> : IController where TScreen : IScreen { }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0049:Type name should not match namespace", Justification = "<Pending>")]
@@ -53,7 +53,10 @@ namespace Caliburn.Micro.Contrib.Controller
     }
   }
 
-  public abstract class ControllerBase<TScreen> : IController,
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
+  public interface IControllerRoutine : IProvideScreenEventHandlers<IScreen> { }
+
+  public abstract class ControllerBase<TScreen> : IController<TScreen>,
                                                   IScreenFactoryAdapter<TScreen>,
                                                   IProvideScreenEventHandlers<TScreen>
     where TScreen : IScreen

@@ -31,33 +31,35 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                            };
     }
 
+    /// <exception cref="ArgumentNullException"/>
+    public DynamicProxyScreenFactory(IController controller)
+    {
+      this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
+    }
+
+    private IController Controller { get; }
     private ProxyGenerator ProxyGenerator { get; } = new ProxyGenerator
                                                      {
                                                        Logger = new Logger(typeof(ProxyGenerator))
                                                      };
 
     /// <inheritdoc/>
-    public IScreen Create(Type screenType,
-                          object?[] constructorArguments,
-                          IController controller)
+    public IScreen Create(Type type,
+                          object?[] args)
     {
-      if (screenType == null)
+      if (type == null)
       {
-        throw new ArgumentNullException(nameof(screenType));
+        throw new ArgumentNullException(nameof(type));
       }
-      if (constructorArguments == null)
+      if (args == null)
       {
-        throw new ArgumentNullException(nameof(constructorArguments));
-      }
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
+        throw new ArgumentNullException(nameof(args));
       }
 
-      var interceptor = new Interceptor(controller);
+      var interceptor = new Interceptor(this.Controller);
 
       Type[] additionalInterfacesToProxy;
-      if (controller is IMixinProvider mixinProvider)
+      if (this.Controller is IMixinProvider mixinProvider)
       {
         additionalInterfacesToProxy = null; // TODO
       }
@@ -66,10 +68,10 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         additionalInterfacesToProxy = new Type[0];
       }
 
-      var proxy = this.ProxyGenerator.CreateClassProxy(screenType,
+      var proxy = this.ProxyGenerator.CreateClassProxy(type,
                                                        additionalInterfacesToProxy,
                                                        ProxyGenerationOptions.Default,
-                                                       constructorArguments,
+                                                       args,
                                                        interceptor);
 
       var result = (IScreen) proxy;
@@ -593,9 +595,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         if (interceptingMethodInfo != null)
         {
           var parameters = new List<object>(invocation.Arguments.Length + 1)
-                         {
-                           invocation.InvocationTarget
-                         };
+                           {
+                             invocation.InvocationTarget
+                           };
           parameters.AddRange(invocation.Arguments);
 
           var returnValue = interceptingMethodInfo.Invoke(this.Controller,

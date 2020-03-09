@@ -8,7 +8,7 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IConductorControllerRoutine : IControllerRoutine,
                                                  IProvideConductorEventHandlers<IScreen, IScreen> { }
 
-  public abstract class ConductorControllerBase<TScreen, TItem> : IController,
+  public abstract class ConductorControllerBase<TScreen, TItem> : IController<TScreen>,
                                                                   IScreenFactoryAdapter<TScreen>,
                                                                   IProvideScreenEventHandlers<TScreen>,
                                                                   IProvideConductorEventHandlers<TScreen, TItem>
