@@ -183,8 +183,13 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     private sealed class Logger : ILogger
     {
       /// <exception cref="ArgumentNullException"/>
+      /// <exception cref="Exception"/>
       public Logger(Type type)
       {
+        if (type == null)
+        {
+          throw new ArgumentNullException(nameof(type));
+        }
         this.Log = LogManager.GetLog.Invoke(type);
       }
 
