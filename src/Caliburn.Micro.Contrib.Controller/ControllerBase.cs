@@ -1,11 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public interface IController { }
 
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public interface IControllerRoutine : IProvideScreenEventHandlers<IScreen> { }
+
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0049:Type name should not match namespace", Justification = "<Pending>")]
+  public static class Controller
+  {
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="InvalidOperationException"/>
+    /// <exception cref="Exception"/>
+    public static MethodInfo? GetInterceptingMethodInfo(IController controller,
+                                                        string methodName)
+    {
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+      if (methodName == null)
+      {
+        throw new ArgumentNullException(nameof(methodName));
+      }
+
+      var result = controller.GetType()
+                             .FindMembers(MemberTypes.Method,
+                                          BindingFlags.Default,
+                                          (memberInfo,
+                                           _) =>
+                                          {
+                                            if (memberInfo is MethodInfo methodInfo)
+                                            {
+                                              return methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true)
+                                                               .Any(arg => StringComparer.Ordinal.Equals(arg.MethodName ?? methodInfo.Name,
+                                                                                                         methodName));
+                                            }
+                                            return false;
+                                          },
+                                          null)
+                             .Cast<MethodInfo>()
+                             .SingleOrDefault();
+
+      return result;
+    }
+  }
 
   public abstract class ControllerBase<TScreen> : IController,
                                                   IScreenFactoryAdapter<TScreen>,

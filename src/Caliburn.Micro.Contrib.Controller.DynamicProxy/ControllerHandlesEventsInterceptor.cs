@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.DynamicProxy;
@@ -25,60 +26,31 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         throw new ArgumentNullException(nameof(invocation));
       }
 
+      // TODO check if task - skip invocation
+
       invocation.Proceed();
 
-      var proxyMethodInfo = invocation.Method;
-      if (proxyMethodInfo != null)
+      var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
+      var interceptinMethodInfo = Caliburn.Micro.Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
+                                                                                                         screenMethodInfo.Name);
+      if (interceptinMethodInfo != null)
       {
-        var proxy = invocation.Proxy;
-        var proxyType = proxy.GetType();
-        var targetMethods = this.ControllerTypeMethodsMap.GetTargetMethods(proxyType,
-                                                                           proxyMethodInfo);
-        if (targetMethods.Any())
-        {
-          var proxyMethodParameters = invocation.Arguments;
-          var targetMethodParameters = new object[proxyMethodParameters.Length + 1];
-          targetMethodParameters[0] = proxy;
-          Array.Copy(proxyMethodParameters,
-                     0,
-                     targetMethodParameters,
-                     1,
-                     proxyMethodParameters.Length);
+        var parameters = invocation.Arguments;
 
-          foreach (var targetMethod in targetMethods)
-          {
-            var returnValue = targetMethod.MethodInfo.Invoke(this.Controller,
-                                                             targetMethodParameters);
+        var controllerMethodParameters = new object[parameters.Length + 1];
+        controllerMethodParameters[0] = invocation.InvocationTarget;
+        Array.Copy(parameters,
+                   0,
+                   controllerMethodParameters,
+                   1,
+                   parameters.Length);
 
-            invocation.ReturnValue = returnValue;
-          }
-        }
+        var returnValue = interceptinMethodInfo.Invoke(this.Controller,
+                                                      controllerMethodParameters);
+
+        invocation.ReturnValue = returnValue;
       }
     }
 
-    private MethodInfo[] GetControllerMethodInfos(MethodInfo screenMethodInfo)
-    {
-      var result = this.Controller.GetType()
-                                  .FindMembers(MemberTypes.Method,
-                                               BindingFlags.Default,
-                                               (memberInfo,
-                                                _) =>
-                                               {
-                                                 if (memberInfo is MethodInfo methodInfo)
-                                                 {
-                                                   var attributes = methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true);
-                                                   // TODO
-                                                 }
-                                                 return false;
-                                               },
-                                               null);
-
-      //.Where(arg =>
-      //{
-      //  var attributes = arg.GetAttributes<HandlesViewModelMethodAttribute>(true);
-      //})
-
-      return result;
-    }
   }
 }
