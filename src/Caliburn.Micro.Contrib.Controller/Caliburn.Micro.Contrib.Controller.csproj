@@ -55,10 +55,8 @@
     <Compile Include="ControllerWithResultBase.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="HandlesViewModelMethodAttribute.cs" />
-    <Compile Include="IMixinProvider.cs" />
     <Compile Include="IProvideConductorEventHandlers.cs" />
     <Compile Include="IProvideScreenEventHandlers.cs" />
-    <Compile Include="ReflectionBasedScreenFactory.cs" />
     <Compile Include="ScreenFactory.cs" />
   </ItemGroup>
   <ItemGroup>
