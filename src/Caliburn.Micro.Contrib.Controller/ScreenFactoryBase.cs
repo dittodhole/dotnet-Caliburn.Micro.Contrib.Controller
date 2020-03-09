@@ -48,7 +48,6 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
-    /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
     protected abstract IScreen CreateImpl(Type screenType,
                                           object?[] constructorArguments,
