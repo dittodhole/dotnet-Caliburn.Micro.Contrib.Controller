@@ -9,7 +9,7 @@ using Castle.DynamicProxy;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
-  public sealed class DynamicProxyScreenFactory : ScreenFactoryBase
+  public sealed class DynamicProxyScreenFactory : IScreenFactory
   {
     static DynamicProxyScreenFactory()
     {
@@ -37,10 +37,23 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                      };
 
     /// <inheritdoc/>
-    protected override IScreen CreateImpl(Type screenType,
-                                          object?[] constructorArguments,
-                                          IController controller)
+    public IScreen Create(Type screenType,
+                          object?[] constructorArguments,
+                          IController controller)
     {
+      if (screenType == null)
+      {
+        throw new ArgumentNullException(nameof(screenType));
+      }
+      if (constructorArguments == null)
+      {
+        throw new ArgumentNullException(nameof(constructorArguments));
+      }
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+
       var interceptor = new Interceptor(controller);
 
       Type[] additionalInterfacesToProxy;

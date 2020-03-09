@@ -62,7 +62,7 @@
     <Compile Include="IProvideScreenEventHandlers.cs" />
     <Compile Include="IScreenFactoryAdapter.cs" />
     <Compile Include="ReflectionBasedScreenFactory.cs" />
-    <Compile Include="ScreenFactoryBase.cs" />
+    <Compile Include="IScreenFactory.cs" />
     <Compile Include="ScreenManager.cs" />
     <Compile Include="WeakCollection.cs" />
   </ItemGroup>

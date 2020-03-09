@@ -2,7 +2,7 @@
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public class ReflectionBasedScreenFactory : ScreenFactoryBase
+  public class ReflectionBasedScreenFactory : IScreenFactory
   {
     /// <inheritdoc/>
     protected override IScreen CreateImpl(Type screenType,
