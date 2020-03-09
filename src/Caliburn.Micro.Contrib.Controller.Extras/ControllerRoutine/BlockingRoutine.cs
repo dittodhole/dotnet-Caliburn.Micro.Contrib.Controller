@@ -6,23 +6,24 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
   public sealed class BlockingRoutine : IControllerRoutine
   {
     /// <inheritdoc/>
-    public void OnInitialize(IScreen screen) { }
+    void IHandleScreenEvents<IScreen>.OnInitialize(IScreen screen) { }
 
     /// <inheritdoc/>
-    public void OnActivate(IScreen screen) { }
+    void IHandleScreenEvents<IScreen>.OnActivate(IScreen screen) { }
 
-    public void OnViewReady(IScreen screen,
-                            object view) { }
-
-    /// <inheritdoc/>
-    public void OnClose(IScreen screen,
-                        bool? dialogResult = null) { }
+    void IHandleScreenEvents<IScreen>.OnViewReady(IScreen screen,
+                                                  object view) { }
 
     /// <inheritdoc/>
-    public void OnDeactivate(IScreen screen,
-                             bool close) { }
+    void IHandleScreenEvents<IScreen>.OnClose(IScreen screen,
+                                              bool? dialogResult = null) { }
+
+    /// <inheritdoc/>
+    void IHandleScreenEvents<IScreen>.OnDeactivate(IScreen screen,
+                                                   bool close) { }
 
     /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public IDisposable Block(IViewAware viewAware)
     {
       if (viewAware == null)
@@ -35,28 +36,8 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       Execute.OnUIThread(() => uiElement.SetValue(UIElement.IsEnabledProperty,
                                                   false));
 
-      DisposeAction? result = null;
-
-      var canBeBlocked = viewAware as ICanBeBlocked;
-      if (canBeBlocked != null)
-      {
-        canBeBlocked.IsBlocked = true;
-        viewAware.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
-
-        result = new DisposeAction(instance =>
-                                   {
-                                     canBeBlocked.IsBlocked = false;
-                                     viewAware.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
-
-                                     this.DisposeActions.Remove(result);
-                                   });
-
-        this.DisposeActions.Add(result);
-      }
-      else
-      {
-        result = null;
-      }
+      var result = new DisposeAction(() => Execute.OnUIThread(() => uiElement.SetValue(UIElement.IsEnabledProperty,
+                                                                                       true)));
 
       return result;
     }
