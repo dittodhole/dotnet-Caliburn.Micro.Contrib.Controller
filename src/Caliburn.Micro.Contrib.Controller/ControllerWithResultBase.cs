@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
@@ -12,7 +11,7 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <inheritdoc/>
     protected ControllerWithResultBase(IScreenFactory screenFactory,
-                                       ICollection<IRoutine> routines)
+                                       ICollection<IControllerRoutine> routines)
       : base(screenFactory,
              routines) { }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
-using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.DynamicProxy;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
 
@@ -43,7 +42,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       if (this.AutoSubscribeEventAggegatorHandlers)
       {
         builder.RegisterType<AutomaticRegistrationHandlingForHandlersRoutine>()
-               .As<IRoutine>()
+               .As<IControllerRoutine>()
                .InstancePerDependency();
       }
     }

@@ -1,23 +1,14 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Data;
-using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 using Caliburn.Micro.Contrib.Controller.Extras.Converters;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
-  public class BlockingRoutine : ControllerRoutineBase,
+  public class BlockingRoutine : IControllerRoutine,
                                  IMixinInstance<BlockingRoutine.ICanBeBlocked>,
-                                 IMixinInterface<BlockingRoutine.ICanBeBlocked>,
-                                 IDisposable
+                                 IMixinInterface<BlockingRoutine.ICanBeBlocked>
   {
-    private IWeakCollection<DisposeAction> DisposeActions { get; } = new WeakCollection<DisposeAction>();
-
-    public void Dispose()
-    {
-      this.DisposeActions.Dispose();
-    }
-
     public virtual ICanBeBlocked CreateMixinInstance()
     {
       var instance = new CanBeBlocked();
@@ -26,11 +17,17 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
     }
 
     /// <inheritdoc/>
-    public override void OnViewReady(IScreen screen,
-                                     object view)
+    public void OnViewReady(IScreen screen,
+                            object view)
     {
-      base.OnViewReady(screen,
-                       view);
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+      if (view == null)
+      {
+        throw new ArgumentNullException(nameof(view));
+      }
 
       var binding = new Binding
                     {
@@ -40,7 +37,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                     };
 
       Execute.OnUIThread(() =>
-                         {
+                         { // TODO verify, if execution on UI thread is needed
                            var dependencyObject = (DependencyObject) view;
 
                            BindingOperations.SetBinding(dependencyObject,

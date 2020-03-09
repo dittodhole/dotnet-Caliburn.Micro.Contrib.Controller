@@ -1,30 +1,49 @@
 ﻿using System;
-using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
-  public class AutomaticRegistrationHandlingForHandlersRoutine : ControllerRoutineBase
+  public sealed class AutomaticRegistrationHandlingForHandlersRoutine : IControllerRoutine
   {
-    /// <inheritdoc/>
-    public override void OnInitialize(IScreen screen)
+    /// <exception cref="ArgumentNullException"/>
+    public AutomaticRegistrationHandlingForHandlersRoutine(IEventAggregator eventAggregator)
     {
-      base.OnInitialize(screen);
+      this.EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+    }
 
-      var eventAggregator = IoC.Get<IEventAggregator>();
+    private IEventAggregator EventAggregator { get; }
 
-      eventAggregator.Subscribe(screen);
+    /// <inheritdoc/>
+    public void OnInitialize(IScreen screen) { }
+
+    /// <inheritdoc/>
+    public void OnActivate(IScreen screen)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      this.EventAggregator.Subscribe(screen);
     }
 
     /// <inheritdoc/>
-    public override void OnDeactivate(IScreen screen,
-                                      bool close)
+    public void OnViewReady(IScreen screen,
+                            object view) { }
+
+    /// <inheritdoc/>
+    public void OnDeactivate(IScreen screen,
+                             bool close)
     {
-      base.OnDeactivate(screen,
-                        close);
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
 
-      var eventAggregator = IoC.Get<IEventAggregator>();
-
-      eventAggregator.Unsubscribe(screen);
+      this.EventAggregator.Unsubscribe(screen);
     }
+
+    /// <inheritdoc/>
+    public void OnClose(IScreen screen,
+                        bool? dialogResult = null) { }
   }
 }

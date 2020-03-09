@@ -2,7 +2,7 @@
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public interface IProvideScreenEventHandlers<TScreen>
+  public interface IProvideScreenEventHandlers<in TScreen>
     where TScreen : IScreen
   {
     /// <exception cref="ArgumentNullException"/>

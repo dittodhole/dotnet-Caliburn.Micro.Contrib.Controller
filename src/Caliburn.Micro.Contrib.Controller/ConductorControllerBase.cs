@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Caliburn.Micro.Contrib.Controller.ControllerRoutine;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  public interface IConductorControllerRoutine : IControllerRoutine,
+                                                 IProvideConductorEventHandlers<IScreen, IScreen> { }
+
   public abstract class ConductorControllerBase<TScreen, TItem> : IController,
                                                                   IScreenFactoryAdapter<TScreen>,
                                                                   IProvideScreenEventHandlers<TScreen>,
@@ -14,14 +16,14 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"/>
     protected ConductorControllerBase(IScreenFactory screenFactory,
-                                      ICollection<IRoutine> routines)
+                                      ICollection<IControllerRoutine> controllerRoutines)
     {
       this.ScreenFactory = screenFactory ?? throw new ArgumentNullException(nameof(screenFactory));
-      this.Routines = routines ?? throw new ArgumentNullException(nameof(routines));
+      this.ControllerRoutines = controllerRoutines ?? throw new ArgumentNullException(nameof(controllerRoutines));
     }
 
     private IScreenFactory ScreenFactory { get; }
-    private ICollection<IRoutine> Routines { get; }
+    private ICollection<IControllerRoutine> ControllerRoutines { get; }
 
     /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
@@ -32,11 +34,15 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
-
-      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
+      if (item == null)
       {
-        routine.OnActivateItem(screen,
-                               item);
+        throw new ArgumentNullException(nameof(item));
+      }
+
+      foreach (var conductorControllerRoutine in this.ControllerRoutines.OfType<IConductorControllerRoutine>())
+      {
+        conductorControllerRoutine.OnActivateItem(screen,
+                                                  item);
       }
     }
 
@@ -50,12 +56,16 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
-
-      foreach (var routine in this.Routines.OfType<IConductorRoutine>())
+      if (item == null)
       {
-        routine.OnDeactivateItem(screen,
-                                 item,
-                                 close);
+        throw new ArgumentNullException(nameof(item));
+      }
+
+      foreach (var conductorControllerRoutine in this.ControllerRoutines.OfType<IConductorControllerRoutine>())
+      {
+        conductorControllerRoutine.OnDeactivateItem(screen,
+                                                    item,
+                                                    close);
       }
     }
 
@@ -69,10 +79,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var routine in this.Routines)
+      foreach (var controllerRoutine in this.ControllerRoutines)
       {
-        routine.OnClose(screen,
-                        dialogResult);
+        controllerRoutine.OnClose(screen,
+                                  dialogResult);
       }
     }
 
@@ -85,9 +95,9 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var routine in this.Routines)
+      foreach (var controllerRoutine in this.ControllerRoutines)
       {
-        routine.OnInitialize(screen);
+        controllerRoutine.OnInitialize(screen);
       }
     }
 
@@ -105,10 +115,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(view));
       }
 
-      foreach (var routine in this.Routines)
+      foreach (var controllerRoutine in this.ControllerRoutines)
       {
-        routine.OnViewReady(screen,
-                            view);
+        controllerRoutine.OnViewReady(screen,
+                                      view);
       }
     }
 
@@ -121,9 +131,9 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var routine in this.Routines)
+      foreach (var controllerRoutine in this.ControllerRoutines)
       {
-        routine.OnActivate(screen);
+        controllerRoutine.OnActivate(screen);
       }
     }
 
@@ -137,10 +147,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(screen));
       }
 
-      foreach (var routine in this.Routines)
+      foreach (var controllerRoutine in this.ControllerRoutines)
       {
-        routine.OnDeactivate(screen,
-                             close);
+        controllerRoutine.OnDeactivate(screen,
+                                       close);
       }
     }
 
