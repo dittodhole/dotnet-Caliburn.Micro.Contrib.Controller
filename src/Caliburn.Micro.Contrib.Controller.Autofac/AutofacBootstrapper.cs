@@ -55,8 +55,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     /// <exception cref="Exception" />
     public virtual async Task<TScreenFactoryAdapter> DisplayViewForAsync<TScreenFactoryAdapter>(object? options = null,
                                                                                                 object? context = null,
-                                                                                                IDictionary<string, object>? settings = null)
-      where TScreenFactoryAdapter : IScreenFactoryAdapter
+                                                                                                IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       var screenManager = IoC.Get<IScreenManager>();
       var screenFactoryAdapter = await screenManager.ShowWindowAsync<TScreenFactoryAdapter>(options,

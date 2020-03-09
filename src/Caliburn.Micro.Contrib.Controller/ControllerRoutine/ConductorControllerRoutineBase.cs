@@ -2,11 +2,14 @@
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
+  public interface IConductorRoutine : IRoutine,
+                                       IProvideConductorEventHandlers<IScreen, IScreen> { }
+
   public abstract class ConductorControllerRoutineBase : ControllerRoutineBase,
                                                          IConductorRoutine
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual void OnActivateItem(IScreen screen,
                                        IScreen item)
     {
@@ -20,8 +23,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual void OnDeactivateItem(IScreen screen,
                                          IScreen item,
                                          bool close)

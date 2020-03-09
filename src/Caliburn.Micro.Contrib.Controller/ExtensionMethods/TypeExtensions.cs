@@ -5,9 +5,9 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 {
   public static class TypeExtensions
   {
-    public const BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+    public static BindingFlags DefaultBindingFlags { get; } = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
-    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public static bool IsDescendantOrMatches<T>(this Type type)
     {
       if (type == null)
@@ -18,7 +18,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       return type.IsDescendantOrMatches(typeof(T));
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public static bool IsDescendant<T>(this Type type)
     {
       if (type == null)
@@ -29,8 +29,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       return type.IsDescendant(typeof(T));
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="type" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="parentType" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public static bool IsDescendant(this Type type,
                                     Type parentType)
     {
@@ -51,8 +50,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
       return type.IsDescendantOrMatches(parentType);
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="parentType"/> is <see langword="null"/></exception>
+    /// <exception cref="ArgumentNullException"/>
     public static bool IsDescendantOrMatches(this Type type,
                                              Type parentType)
     {

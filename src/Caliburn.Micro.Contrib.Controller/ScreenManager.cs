@@ -8,31 +8,27 @@ namespace Caliburn.Micro.Contrib.Controller
 {
   public interface IScreenManager
   {
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentException"/>
+    /// <exception cref="Exception"/>
     Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object? options = null,
                                                                        object? context = null,
-                                                                       IDictionary<string, object>? settings = null)
-      where TScreenFactoryAdapter : IScreenFactoryAdapter;
+                                                                       IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter;
 
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentException"/>
+    /// <exception cref="Exception"/>
     Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>(object? options = null,
                                                                        object? context = null,
-                                                                       IDictionary<string, object>? settings = null)
-      where TScreenFactoryAdapter : IScreenFactoryAdapter;
+                                                                       IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter;
   }
 
   public class ScreenManager : IScreenManager
   {
     private ConcurrentDictionary<Type, IScreenFactoryAdapter> SingletonScreenFactoryAdapters { get; } = new ConcurrentDictionary<Type, IScreenFactoryAdapter>();
 
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
+    /// <inheritdoc/>
     public virtual Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object? options = null,
                                                                                       object? context = null,
-                                                                                      IDictionary<string, object>? settings = null)
-      where TScreenFactoryAdapter : IScreenFactoryAdapter
+                                                                                      IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       if (this.TryCreateScreen(options,
                                out TScreenFactoryAdapter screenFactoryAdapter,
@@ -52,12 +48,10 @@ namespace Caliburn.Micro.Contrib.Controller
 #endif
     }
 
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
+    /// <inheritdoc/>
     public virtual Task<TScreenFactoryAdapter> ShowDialogAsync<TScreenFactoryAdapter>(object? options = null,
                                                                                       object? context = null,
-                                                                                      IDictionary<string, object>? settings = null)
-      where TScreenFactoryAdapter : IScreenFactoryAdapter
+                                                                                      IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       if (this.TryCreateScreen(options,
                                out TScreenFactoryAdapter screenFactoryAdapter,
@@ -77,12 +71,11 @@ namespace Caliburn.Micro.Contrib.Controller
 #endif
     }
 
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentException"/>
+    /// <exception cref="Exception"/>
     public virtual bool TryCreateScreen<TScreenFactoryAdapter>(object? options,
                                                                out TScreenFactoryAdapter screenFactoryAdapter,
-                                                               out IScreen? screen)
-      where TScreenFactoryAdapter : IScreenFactoryAdapter
+                                                               out IScreen? screen) where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       bool result;
 
@@ -124,8 +117,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return result;
     }
 
-    public virtual bool AllowMultipleScreenCreation<TScreenFactoryAdapter>()
-      where TScreenFactoryAdapter : IScreenFactoryAdapter
+    public virtual bool AllowMultipleScreenCreation<TScreenFactoryAdapter>() where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       var disallowConcurrentScreenCreation = typeof(TScreenFactoryAdapter).GetAttributes<DisallowConcurrentScreenCreation>(true)
                                                                           .FirstOrDefault();
@@ -135,8 +127,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return result;
     }
 
-    public virtual bool CreateOrGet<TScreenFactoryAdapter>(out TScreenFactoryAdapter screenFactoryAdapter)
-      where TScreenFactoryAdapter : IScreenFactoryAdapter
+    public virtual bool CreateOrGet<TScreenFactoryAdapter>(out TScreenFactoryAdapter screenFactoryAdapter) where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       var created = false;
       var instance = this.SingletonScreenFactoryAdapters.GetOrAdd(typeof(TScreenFactoryAdapter),
@@ -152,8 +143,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return created;
     }
 
-    public virtual bool Release<TScreenFactoryAdapter>()
-      where TScreenFactoryAdapter : IScreenFactoryAdapter
+    public virtual bool Release<TScreenFactoryAdapter>() where TScreenFactoryAdapter : IScreenFactoryAdapter
     {
       var result = this.SingletonScreenFactoryAdapters.TryRemove(typeof(TScreenFactoryAdapter),
                                                                  out var instance);

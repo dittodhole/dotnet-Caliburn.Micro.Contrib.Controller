@@ -5,7 +5,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
   public class AutomaticRegistrationHandlingForHandlersRoutine : ControllerRoutineBase
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <inheritdoc/>
     public override void OnInitialize(IScreen screen)
     {
       base.OnInitialize(screen);
@@ -15,7 +15,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       eventAggregator.Subscribe(screen);
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <inheritdoc/>
     public override void OnDeactivate(IScreen screen,
                                       bool close)
     {

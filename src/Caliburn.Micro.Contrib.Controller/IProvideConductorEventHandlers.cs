@@ -6,14 +6,13 @@ namespace Caliburn.Micro.Contrib.Controller
     where TScreen : IScreen
     where TItem : IScreen
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     void OnActivateItem(TScreen screen,
                         TItem item);
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     void OnDeactivateItem(TScreen screen,
                           TItem item,
                           bool close);

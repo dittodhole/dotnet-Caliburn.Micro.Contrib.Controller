@@ -6,7 +6,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras
   {
     private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(DisposeAction));
 
-    /// <exception cref="ArgumentNullException"><paramref name="action" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public DisposeAction(Action<DisposeAction> action)
     {
       this.Action = action ?? throw new ArgumentNullException(nameof(action));
@@ -14,6 +14,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras
 
     private Action<DisposeAction>? Action { get; set; }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       try

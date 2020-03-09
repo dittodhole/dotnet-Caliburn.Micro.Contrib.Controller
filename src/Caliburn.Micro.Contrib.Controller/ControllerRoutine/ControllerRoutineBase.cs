@@ -2,9 +2,12 @@
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 {
+  public interface IRoutine : IProvideScreenEventHandlers<IScreen> { }
+
   public abstract class ControllerRoutineBase : IRoutine
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual void OnInitialize(IScreen screen)
     {
       if (screen == null)
@@ -13,7 +16,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual void OnActivate(IScreen screen)
     {
       if (screen == null)
@@ -22,7 +26,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual void OnDeactivate(IScreen screen,
                                      bool close)
     {
@@ -32,8 +37,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual void OnViewReady(IScreen screen,
                                     object view)
     {
@@ -47,7 +52,8 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual void OnClose(IScreen screen,
                                 bool? dialogResult = null)
     {

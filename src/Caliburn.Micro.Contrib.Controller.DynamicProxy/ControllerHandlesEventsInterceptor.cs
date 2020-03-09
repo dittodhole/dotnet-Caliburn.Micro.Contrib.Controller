@@ -8,7 +8,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
   {
     private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(ControllerHandlesEventsInterceptor));
 
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public ControllerHandlesEventsInterceptor(IController controller)
     {
       this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
@@ -18,6 +18,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     private ControllerTypeMethodsMap ControllerTypeMethodsMap { get; }
     private IController Controller { get; }
 
+    /// <inheritdoc/>
     public void Intercept(IInvocation invocation)
     {
       if (invocation == null)

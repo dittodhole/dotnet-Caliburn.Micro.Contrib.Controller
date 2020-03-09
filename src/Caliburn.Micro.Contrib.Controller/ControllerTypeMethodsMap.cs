@@ -8,24 +8,18 @@ namespace Caliburn.Micro.Contrib.Controller
 {
   public sealed class ControllerTypeMethodsMap
   {
-    /// <exception cref="ArgumentNullException"><paramref name="controllerType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="targetMethods" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException">
     private ControllerTypeMethodsMap(Type controllerType,
                                      IDictionary<string, TargetMethod[]> targetMethods)
     {
-      if (controllerType == null)
-      {
-        throw new ArgumentNullException(nameof(controllerType));
-      }
-      this.ControllerType = controllerType;
+      this.ControllerType = controllerType ?? throw new ArgumentNullException(nameof(controllerType));
       this.TargetMethods = targetMethods ?? throw new ArgumentNullException(nameof(targetMethods));
     }
 
     private Type ControllerType { get; }
     private IDictionary<string, TargetMethod[]> TargetMethods { get; }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="screenMethodInfo" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public TargetMethod[] GetTargetMethods(Type screenType,
                                            MethodInfo screenMethodInfo)
     {
@@ -80,7 +74,7 @@ namespace Caliburn.Micro.Contrib.Controller
       return targetMethods;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="controllerType" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public static ControllerTypeMethodsMap Create(Type controllerType)
     {
       if (controllerType == null)
@@ -120,11 +114,7 @@ namespace Caliburn.Micro.Contrib.Controller
       public TargetMethod(MethodInfo methodInfo,
                           HandlesViewModelMethodAttribute handlesViewModelMethodAttribute)
       {
-        if (methodInfo == null)
-        {
-          throw new ArgumentNullException(nameof(methodInfo));
-        }
-        this.MethodInfo = methodInfo;
+        this.MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
         this.HandlesViewModelMethodAttribute = handlesViewModelMethodAttribute ?? throw new ArgumentNullException(nameof(handlesViewModelMethodAttribute));
       }
 

@@ -6,9 +6,7 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 {
   public static class MethodInfoExtensions
   {
-    /// <exception cref="ArgumentNullException"><paramref name="methodInfo" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="returnType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="parameterTypes" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public static bool DoesSignatureMatch(this MethodInfo methodInfo,
                                           Type returnType,
                                           Type[] parameterTypes,

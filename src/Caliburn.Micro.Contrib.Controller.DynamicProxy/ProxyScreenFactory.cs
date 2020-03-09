@@ -32,13 +32,13 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                            };
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="proxyGenerator" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public ProxyScreenFactory(ProxyGenerator proxyGenerator)
     {
       this.ProxyGenerator = proxyGenerator ?? throw new ArgumentNullException(nameof(proxyGenerator));
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="logger" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public ProxyScreenFactory(ILogger logger)
     {
       if (logger == null)
@@ -62,6 +62,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     private ProxyGenerator ProxyGenerator { get; }
 
     /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
+    /// <exception cref="Exception"/>
     public virtual IMixinProvider[] GetMixinProviders(IController controller)
     {
       if (controller == null)
@@ -79,12 +80,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       return mixinProviders;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="constructorArguments" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="TargetInvocationException">Thrown when constructor of type <paramref name="screenType" /> throws an exception.</exception>
-    /// <exception cref="ArgumentException">Thrown when no constructor exists on type <paramref name="screenType" /> with matching parameters.</exception>
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     protected override IScreen CreateImpl(Type screenType,
                                           object[] constructorArguments,
                                           IController controller)
@@ -131,7 +128,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       return screen;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual Type[] GetAdditionalInterfaces(IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)
@@ -176,8 +174,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       return additionalInterfaces;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual object[] GetMixinInstances(IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)
@@ -248,7 +246,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       return mixinInstances;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="mixinProviders" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual CustomAttributeInfo[] GetCustomAttributeInfos(IEnumerable<IMixinProvider> mixinProviders)
     {
       if (mixinProviders == null)

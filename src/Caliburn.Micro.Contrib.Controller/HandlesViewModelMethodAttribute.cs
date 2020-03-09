@@ -6,7 +6,6 @@ namespace Caliburn.Micro.Contrib.Controller
   public sealed class HandlesViewModelMethodAttribute : Attribute
   {
     public bool CallBase { get; set; } = true;
-
     public string? MethodName { get; set; }
   }
 }

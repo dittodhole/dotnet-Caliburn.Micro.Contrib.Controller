@@ -25,8 +25,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       return instance;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
+    /// <inheritdoc/>
     public override void OnViewReady(IScreen screen,
                                      object view)
     {
@@ -50,7 +49,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                          });
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     public virtual IDisposable? Block(IScreen screen)
     {
       if (screen == null)

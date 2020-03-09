@@ -12,8 +12,7 @@ namespace Caliburn.Micro.Contrib.Controller
     where TScreen : IScreen
     where TItem : IScreen
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenFactory" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="routines" /> is <see langword="null" /></exception>
+    /// <exception cref="ArgumentNullException"/>
     protected ConductorControllerBase(IScreenFactory screenFactory,
                                       ICollection<IRoutine> routines)
     {
@@ -22,9 +21,9 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     private IScreenFactory ScreenFactory { get; }
-    public virtual IEnumerable<IRoutine> Routines { get; }
+    private ICollection<IRoutine> Routines { get; }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem), CallBase = true)]
     public virtual void OnActivateItem(TScreen screen,
                                        TItem item)
@@ -41,8 +40,7 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" /></exception>
+    /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.DeactivateItem), CallBase = true)]
     public virtual void OnDeactivateItem(TScreen screen,
                                          TItem item,
@@ -61,7 +59,7 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
+    /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = nameof(IClose.TryClose), CallBase = true)]
     public virtual void OnClose(TScreen screen,
                                 bool? dialogResult = null)
@@ -78,8 +76,7 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <remarks>Should be used to prepare <paramref name="screen" /></remarks>
+    /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = "OnInitialize", CallBase = true)]
     public virtual void OnInitialize(TScreen screen)
     {
@@ -94,8 +91,7 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="view" /> is <see langword="null" /></exception>
+    /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = "OnViewReady", CallBase = true)]
     public virtual void OnViewReady(TScreen screen,
                                     object view)
@@ -116,8 +112,7 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <remarks>Should be used to attach events</remarks>
+    /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = "OnActivate", CallBase = true)]
     public virtual void OnActivate(TScreen screen)
     {
@@ -132,8 +127,7 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <remarks>Should be used to detach events</remarks>
+    /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = "OnDeactivate", CallBase = true)]
     public virtual void OnDeactivate(TScreen screen,
                                      bool close)
@@ -150,9 +144,8 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
-    public virtual TScreen CreateScreen(object options = null)
+    /// <inheritdoc/>
+    public virtual TScreen CreateScreen(object? options = null)
     {
       var screenType = this.GetScreenType(options);
       var constructorArguments = this.GetConstructorArguments(screenType,
@@ -166,33 +159,20 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
-    IScreen IScreenFactoryAdapter.CreateScreen(object options)
+    /// <inheritdoc/>
+    IScreen IScreenFactoryAdapter.CreateScreen(object? options = null)
     {
       return this.CreateScreen(options);
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screen" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
-    public virtual TScreen BuildUp(TScreen screen,
-                                   object? options = null)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-
-      return screen;
-    }
-
+    /// <inheritdoc/>
     public virtual Type GetScreenType(object? options = null)
     {
       return typeof(TScreen);
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentException" />
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     public virtual object[] GetConstructorArguments(Type screenType,
                                                     object? options = null)
     {
@@ -202,6 +182,19 @@ namespace Caliburn.Micro.Contrib.Controller
       }
 
       return new object[0];
+    }
+
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    public virtual TScreen BuildUp(TScreen screen,
+                                   object? options = null)
+    {
+      if (screen == null)
+      {
+        throw new ArgumentNullException(nameof(screen));
+      }
+
+      return screen;
     }
   }
 }

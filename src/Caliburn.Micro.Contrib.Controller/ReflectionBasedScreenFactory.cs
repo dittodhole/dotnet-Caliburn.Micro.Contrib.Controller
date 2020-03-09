@@ -4,10 +4,7 @@ namespace Caliburn.Micro.Contrib.Controller
 {
   public class ReflectionBasedScreenFactory : ScreenFactoryBase
   {
-    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="constructorArguments" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <inheritdoc/>
     protected override IScreen CreateImpl(Type screenType,
                                           object[] constructorArguments,
                                           IController controller)

@@ -2,6 +2,15 @@
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  public interface IScreenFactory
+  {
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    IScreen Create(Type screenType,
+                   object?[] constructorArguments,
+                   IController controller);
+  }
+
   public abstract class ScreenFactoryBase : IScreenFactory,
                                             IDisposable
   {
@@ -12,10 +21,7 @@ namespace Caliburn.Micro.Contrib.Controller
       this.Screens.Dispose();
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="constructorArguments" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <inheritdoc/>
     public virtual IScreen Create(Type screenType,
                                   object[] constructorArguments,
                                   IController controller)
@@ -41,10 +47,8 @@ namespace Caliburn.Micro.Contrib.Controller
       return screen;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="screenType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="constructorArguments" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="controller" /> is <see langword="null" /></exception>
-    /// <exception cref="Exception" />
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
     protected abstract IScreen CreateImpl(Type screenType,
                                           object?[] constructorArguments,
                                           IController controller);

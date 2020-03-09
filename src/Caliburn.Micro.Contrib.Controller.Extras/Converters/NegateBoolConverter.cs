@@ -6,9 +6,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.Converters
 {
   public class NegateBoolConverter : IValueConverter
   {
-    /// <exception cref="ArgumentNullException"><paramref name="value" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="targetType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="targetType" /> is no <see langword="bool" />.</exception>
+    /// <inheritdoc/>
     public object Convert(object value,
                           Type targetType,
                           object parameter,
@@ -31,9 +29,7 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.Converters
       return !(bool) value;
     }
 
-    /// <exception cref="ArgumentNullException"><paramref name="value" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentNullException"><paramref name="targetType" /> is <see langword="null" /></exception>
-    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="targetType" /> is no <see langword="bool" />.</exception>
+    /// <inheritdoc/>
     public object ConvertBack(object value,
                               Type targetType,
                               object parameter,
