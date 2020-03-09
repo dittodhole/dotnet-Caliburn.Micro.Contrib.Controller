@@ -23,8 +23,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
   public class ScreenManager : IScreenManager
   {
-    private ConcurrentDictionary<Type, IScreenFactoryAdapter> SingletonScreenFactoryAdapters { get; } = new ConcurrentDictionary<Type, IScreenFactoryAdapter>();
-
     /// <inheritdoc/>
     public virtual Task<TScreenFactoryAdapter> ShowWindowAsync<TScreenFactoryAdapter>(object? options = null,
                                                                                       object? context = null,
@@ -79,74 +77,9 @@ namespace Caliburn.Micro.Contrib.Controller
     {
       bool result;
 
-      if (this.AllowMultipleScreenCreation<TScreenFactoryAdapter>())
-      {
-        screenFactoryAdapter = IoC.Get<TScreenFactoryAdapter>();
-        screen = screenFactoryAdapter.CreateScreen(options);
-        result = true;
-      }
-      else
-      {
-        if (this.CreateOrGet(out screenFactoryAdapter))
-        {
-          var screenInstance = screenFactoryAdapter.CreateScreen(options);
-
-          EventHandler<DeactivationEventArgs> onDeactived = null;
-          onDeactived = (sender,
-                         args) =>
-                        {
-                          if (args.WasClosed)
-                          {
-                            screenInstance.Deactivated -= onDeactived;
-
-                            this.Release<TScreenFactoryAdapter>();
-                          }
-                        };
-          screenInstance.Deactivated += onDeactived;
-
-          screen = screenInstance;
-          result = true;
-        }
-        else
-        {
-          screen = null;
-          result = false;
-        }
-      }
-
-      return result;
-    }
-
-    public virtual bool AllowMultipleScreenCreation<TScreenFactoryAdapter>() where TScreenFactoryAdapter : IScreenFactoryAdapter
-    {
-      var disallowConcurrentScreenCreation = typeof(TScreenFactoryAdapter).GetAttributes<DisallowConcurrentScreenCreation>(true)
-                                                                          .FirstOrDefault();
-
-      var result = disallowConcurrentScreenCreation == null;
-
-      return result;
-    }
-
-    public virtual bool CreateOrGet<TScreenFactoryAdapter>(out TScreenFactoryAdapter screenFactoryAdapter) where TScreenFactoryAdapter : IScreenFactoryAdapter
-    {
-      var created = false;
-      var instance = this.SingletonScreenFactoryAdapters.GetOrAdd(typeof(TScreenFactoryAdapter),
-                                                                  arg =>
-                                                                  {
-                                                                    created = true;
-
-                                                                    return IoC.Get<TScreenFactoryAdapter>();
-                                                                  });
-
-      screenFactoryAdapter = (TScreenFactoryAdapter) instance;
-
-      return created;
-    }
-
-    public virtual bool Release<TScreenFactoryAdapter>() where TScreenFactoryAdapter : IScreenFactoryAdapter
-    {
-      var result = this.SingletonScreenFactoryAdapters.TryRemove(typeof(TScreenFactoryAdapter),
-                                                                 out var instance);
+      screenFactoryAdapter = IoC.Get<TScreenFactoryAdapter>();
+      screen = screenFactoryAdapter.CreateScreen(options);
+      result = true;
 
       return result;
     }

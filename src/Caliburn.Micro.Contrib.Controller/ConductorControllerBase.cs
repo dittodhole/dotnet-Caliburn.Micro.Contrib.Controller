@@ -9,7 +9,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                  IProvideConductorEventHandlers<IScreen, IScreen> { }
 
   public abstract class ConductorControllerBase<TScreen, TItem> : IController<TScreen>,
-                                                                  IScreenFactoryAdapter<TScreen>,
+                                                                  //IScreenFactoryAdapter<TScreen>,
                                                                   IProvideScreenEventHandlers<TScreen>,
                                                                   IProvideConductorEventHandlers<TScreen, TItem>
     where TScreen : IScreen
@@ -155,57 +155,57 @@ namespace Caliburn.Micro.Contrib.Controller
       }
     }
 
-    /// <inheritdoc/>
-    public virtual TScreen CreateScreen(object? options = null)
-    {
-      var screenType = this.GetScreenType(options);
-      var constructorArguments = this.GetConstructorArguments(screenType,
-                                                              options);
-      var screen = (TScreen) this.ScreenFactory.Create(screenType,
-                                                       constructorArguments,
-                                                       this);
-      screen = this.BuildUp(screen,
-                            options);
+    ///// <inheritdoc/>
+    //public virtual TScreen CreateScreen(object? options = null)
+    //{
+    //  var screenType = this.GetScreenType(options);
+    //  var constructorArguments = this.GetConstructorArguments(screenType,
+    //                                                          options);
+    //  var screen = (TScreen) this.ScreenFactory.Create(screenType,
+    //                                                   constructorArguments,
+    //                                                   this);
+    //  screen = this.BuildUp(screen,
+    //                        options);
 
-      return screen;
-    }
+    //  return screen;
+    //}
 
-    /// <inheritdoc/>
-    IScreen IScreenFactoryAdapter.CreateScreen(object? options = null)
-    {
-      return this.CreateScreen(options);
-    }
+    ///// <inheritdoc/>
+    //IScreen IScreenFactoryAdapter.CreateScreen(object? options = null)
+    //{
+    //  return this.CreateScreen(options);
+    //}
 
-    /// <inheritdoc/>
-    public virtual Type GetScreenType(object? options = null)
-    {
-      return typeof(TScreen);
-    }
+    ///// <inheritdoc/>
+    //public virtual Type GetScreenType(object? options = null)
+    //{
+    //  return typeof(TScreen);
+    //}
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
-    public virtual object[] GetConstructorArguments(Type screenType,
-                                                    object? options = null)
-    {
-      if (screenType == null)
-      {
-        throw new ArgumentNullException(nameof(screenType));
-      }
+    ///// <exception cref="ArgumentNullException"/>
+    ///// <exception cref="Exception"/>
+    //public virtual object[] GetConstructorArguments(Type screenType,
+    //                                                object? options = null)
+    //{
+    //  if (screenType == null)
+    //  {
+    //    throw new ArgumentNullException(nameof(screenType));
+    //  }
 
-      return new object[0];
-    }
+    //  return new object[0];
+    //}
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
-    public virtual TScreen BuildUp(TScreen screen,
-                                   object? options = null)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
+    ///// <exception cref="ArgumentNullException"/>
+    ///// <exception cref="Exception"/>
+    //public virtual TScreen BuildUp(TScreen screen,
+    //                               object? options = null)
+    //{
+    //  if (screen == null)
+    //  {
+    //    throw new ArgumentNullException(nameof(screen));
+    //  }
 
-      return screen;
-    }
+    //  return screen;
+    //}
   }
 }

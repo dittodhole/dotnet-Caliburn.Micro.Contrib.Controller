@@ -53,17 +53,13 @@
     <Compile Include="ConductorControllerBase.cs" />
     <Compile Include="ControllerBase.cs" />
     <Compile Include="ControllerWithResultBase.cs" />
-    <Compile Include="DisallowConcurrentScreenCreation.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="HandlesViewModelMethodAttribute.cs" />
     <Compile Include="IMixinProvider.cs" />
     <Compile Include="IProvideConductorEventHandlers.cs" />
     <Compile Include="IProvideScreenEventHandlers.cs" />
-    <Compile Include="IScreenFactoryAdapter.cs" />
     <Compile Include="ReflectionBasedScreenFactory.cs" />
     <Compile Include="ScreenFactory.cs" />
-    <Compile Include="ScreenManager.cs" />
-    <Compile Include="WeakCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LICENSE.txt">
