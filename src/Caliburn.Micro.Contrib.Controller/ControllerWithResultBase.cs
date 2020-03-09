@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public abstract class ControllerWithResultBase<TScreen, TResult> : ControllerBase<TScreen>,
-                                                                     IProvideResultAsync<TResult>
+  public abstract class ControllerWithResultBase<TScreen, TResult> : ControllerBase<TScreen>
     where TScreen : IScreen
   {
     /// <inheritdoc/>

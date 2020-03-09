@@ -58,7 +58,6 @@
     <Compile Include="HandlesViewModelMethodAttribute.cs" />
     <Compile Include="IMixinProvider.cs" />
     <Compile Include="IProvideConductorEventHandlers.cs" />
-    <Compile Include="IProvideResultAsync.cs" />
     <Compile Include="IProvideScreenEventHandlers.cs" />
     <Compile Include="IScreenFactoryAdapter.cs" />
     <Compile Include="ReflectionBasedScreenFactory.cs" />
