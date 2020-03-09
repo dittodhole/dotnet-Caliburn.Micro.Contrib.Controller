@@ -55,7 +55,6 @@
     <Compile Include="ControllerTypeMethodsMap.cs" />
     <Compile Include="ControllerWithResultBase.cs" />
     <Compile Include="DisallowConcurrentScreenCreation.cs" />
-    <Compile Include="ExtensionMethods\MethodInfoExtensions.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="HandlesViewModelMethodAttribute.cs" />
     <Compile Include="IMixinProvider.cs" />

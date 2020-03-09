@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq;
+using System.Reflection;
+using Caliburn.Micro.Contrib.Controller.ExtensionMethods;
 using Castle.DynamicProxy;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
@@ -12,10 +13,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     public ControllerHandlesEventsInterceptor(IController controller)
     {
       this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
-      this.ControllerTypeMethodsMap = ControllerTypeMethodsMap.Create(controller.GetType());
     }
 
-    private ControllerTypeMethodsMap ControllerTypeMethodsMap { get; }
     private IController Controller { get; }
 
     /// <inheritdoc/>
@@ -23,7 +22,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
     { // TODO work with tasks!
       if (invocation == null)
       {
-        return;
+        throw new ArgumentNullException(nameof(invocation));
       }
 
       invocation.Proceed();
@@ -55,6 +54,31 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
           }
         }
       }
+    }
+
+    private MethodInfo[] GetControllerMethodInfos(MethodInfo screenMethodInfo)
+    {
+      var result = this.Controller.GetType()
+                                  .FindMembers(MemberTypes.Method,
+                                               BindingFlags.Default,
+                                               (memberInfo,
+                                                _) =>
+                                               {
+                                                 if (memberInfo is MethodInfo methodInfo)
+                                                 {
+                                                   var attributes = methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true);
+                                                   // TODO
+                                                 }
+                                                 return false;
+                                               },
+                                               null);
+
+      //.Where(arg =>
+      //{
+      //  var attributes = arg.GetAttributes<HandlesViewModelMethodAttribute>(true);
+      //})
+
+      return result;
     }
   }
 }
