@@ -30,7 +30,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                            };
     }
 
-    private ProxyGenerator ProxyGenerator { get; } = new ProxyGenerator()
+    private ProxyGenerator ProxyGenerator { get; } = new ProxyGenerator
                                                      {
                                                        Logger = new Logger(typeof(ProxyGenerator))
                                                      };
