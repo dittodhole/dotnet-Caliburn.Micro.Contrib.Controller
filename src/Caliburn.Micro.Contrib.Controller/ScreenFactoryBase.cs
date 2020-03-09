@@ -2,6 +2,7 @@
 
 namespace Caliburn.Micro.Contrib.Controller
 {
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public interface IScreenFactory
   {
     /// <exception cref="ArgumentNullException"/>
