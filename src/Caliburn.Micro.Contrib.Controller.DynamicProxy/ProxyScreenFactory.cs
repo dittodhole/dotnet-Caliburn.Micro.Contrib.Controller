@@ -32,7 +32,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
     private ProxyGenerator ProxyGenerator { get; } = new ProxyGenerator()
                                                      {
-                                                       Logger = new LoggerAdapter()
+                                                       Logger = new Logger(typeof(ProxyGenerator))
                                                      };
 
     /// <inheritdoc/>
@@ -180,9 +180,15 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
     */
 
-    private sealed class LoggerAdapter : ILogger
+    private sealed class Logger : ILogger
     {
-      private static ILog Logger { get; } = LogManager.GetLog.Invoke(typeof(LoggerAdapter));
+      /// <exception cref="ArgumentNullException"/>
+      public Logger(Type type)
+      {
+        this.Log = LogManager.GetLog.Invoke(type);
+      }
+
+      private ILog Log { get; }
 
       /// <inheritdoc/>
       public ILogger CreateChildLogger(string loggerName)
@@ -193,7 +199,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       /// <inheritdoc/>
       public void Debug(string message)
       {
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
@@ -201,23 +207,23 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       {
         var message = messageFactory.Invoke();
 
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
       public void Debug(string message,
                         Exception exception)
       {
-        LoggerAdapter.Logger.Info(message,
-                                  exception);
+        this.Log.Info(message,
+                      exception);
       }
 
       /// <inheritdoc/>
       public void DebugFormat(string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -225,8 +231,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                                       params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -234,8 +240,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -244,14 +250,14 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
       public void Error(string message)
       {
-        LoggerAdapter.Logger.Warn(message);
+        this.Log.Warn(message);
       }
 
       /// <inheritdoc/>
@@ -259,22 +265,22 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       {
         var message = messageFactory.Invoke();
 
-        LoggerAdapter.Logger.Warn(message);
+        this.Log.Warn(message);
       }
 
       /// <inheritdoc/>
       public void Error(string message,
                         Exception exception)
       {
-        LoggerAdapter.Logger.Error(exception);
+        this.Log.Error(exception);
       }
 
       /// <inheritdoc/>
       public void ErrorFormat(string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -282,7 +288,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Error(exception);
+        this.Log.Error(exception);
       }
 
       /// <inheritdoc/>
@@ -290,8 +296,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -300,13 +306,13 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Error(exception);
+        this.Log.Error(exception);
       }
 
       /// <inheritdoc/>
       public void Fatal(string message)
       {
-        LoggerAdapter.Logger.Warn(message);
+        this.Log.Warn(message);
       }
 
       /// <inheritdoc/>
@@ -314,22 +320,22 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       {
         var message = messageFactory.Invoke();
 
-        LoggerAdapter.Logger.Warn(message);
+        this.Log.Warn(message);
       }
 
       /// <inheritdoc/>
       public void Fatal(string message,
                         Exception exception)
       {
-        LoggerAdapter.Logger.Error(exception);
+        this.Log.Error(exception);
       }
 
       /// <inheritdoc/>
       public void FatalFormat(string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -337,7 +343,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Error(exception);
+        this.Log.Error(exception);
       }
 
       /// <inheritdoc/>
@@ -345,8 +351,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -355,13 +361,13 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Error(exception);
+        this.Log.Error(exception);
       }
 
       /// <inheritdoc/>
       public void Info(string message)
       {
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
@@ -369,22 +375,22 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       {
         var message = messageFactory.Invoke();
 
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
       public void Info(string message,
                        Exception exception)
       {
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
       public void InfoFormat(string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -392,8 +398,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -401,8 +407,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -411,14 +417,14 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
       public void Warn(string message)
       {
-        LoggerAdapter.Logger.Warn(message);
+        this.Log.Warn(message);
       }
 
       /// <inheritdoc/>
@@ -426,22 +432,22 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       {
         var message = messageFactory.Invoke();
 
-        LoggerAdapter.Logger.Warn(message);
+        this.Log.Warn(message);
       }
 
       /// <inheritdoc/>
       public void Warn(string message,
                        Exception exception)
       {
-        LoggerAdapter.Logger.Warn(message);
+        this.Log.Warn(message);
       }
 
       /// <inheritdoc/>
       public void WarnFormat(string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -449,8 +455,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -458,8 +464,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -468,14 +474,14 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        LoggerAdapter.Logger.Warn(format,
-                                  args);
+        this.Log.Warn(format,
+                      args);
       }
 
       /// <inheritdoc/>
       public void Trace(string message)
       {
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
@@ -483,22 +489,22 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       {
         var message = messageFactory.Invoke();
 
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
       public void Trace(string message,
                         Exception exception)
       {
-        LoggerAdapter.Logger.Info(message);
+        this.Log.Info(message);
       }
 
       /// <inheritdoc/>
       public void TraceFormat(string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -506,8 +512,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -515,8 +521,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
@@ -525,8 +531,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        LoggerAdapter.Logger.Info(format,
-                                  args);
+        this.Log.Info(format,
+                      args);
       }
 
       /// <inheritdoc/>
