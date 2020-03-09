@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Castle.DynamicProxy;
 
@@ -48,17 +48,8 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
           foreach (var targetMethod in targetMethods)
           {
-            object returnValue;
-            try
-            {
-              returnValue = targetMethod.MethodInfo.Invoke(this.Controller,
-                                                           targetMethodParameters);
-            }
-            catch (Exception exception)
-            {
-              ControllerHandlesEventsInterceptor.Logger.Error(exception);
-              continue;
-            }
+            var returnValue = targetMethod.MethodInfo.Invoke(this.Controller,
+                                                             targetMethodParameters);
 
             invocation.ReturnValue = returnValue;
           }
