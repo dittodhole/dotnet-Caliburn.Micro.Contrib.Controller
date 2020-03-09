@@ -8,8 +8,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
   public abstract class ConductorControllerRoutineBase : ControllerRoutineBase,
                                                          IConductorRoutine
   {
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     public virtual void OnActivateItem(IScreen screen,
                                        IScreen item)
     {
@@ -23,8 +22,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     public virtual void OnDeactivateItem(IScreen screen,
                                          IScreen item,
                                          bool close)

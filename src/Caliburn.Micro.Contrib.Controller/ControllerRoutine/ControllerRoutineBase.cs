@@ -6,8 +6,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
 
   public abstract class ControllerRoutineBase : IRoutine
   {
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     public virtual void OnInitialize(IScreen screen)
     {
       if (screen == null)
@@ -16,8 +15,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     public virtual void OnActivate(IScreen screen)
     {
       if (screen == null)
@@ -26,8 +24,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     public virtual void OnDeactivate(IScreen screen,
                                      bool close)
     {
@@ -37,8 +34,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     public virtual void OnViewReady(IScreen screen,
                                     object view)
     {
@@ -52,8 +48,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutine
       }
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     public virtual void OnClose(IScreen screen,
                                 bool? dialogResult = null)
     {

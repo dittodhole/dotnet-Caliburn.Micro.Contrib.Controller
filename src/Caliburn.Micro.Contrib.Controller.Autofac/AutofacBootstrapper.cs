@@ -13,6 +13,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
   {
     public new bool AutoSubscribeEventAggegatorHandlers { get; set; }
 
+    /// <inheritdoc/>
     protected override void ConfigureBootstrapper()
     {
       base.ConfigureBootstrapper();
@@ -20,6 +21,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       this.AutoSubscribeEventAggegatorHandlers = false;
     }
 
+    /// <inheritdoc/>
     protected override void ConfigureContainer(ContainerBuilder builder)
     {
       base.ConfigureContainer(builder);
