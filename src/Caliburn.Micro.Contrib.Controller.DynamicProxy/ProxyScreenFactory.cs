@@ -53,23 +53,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         additionalInterfacesToProxy = new Type[0];
       }
 
-      //var additionalInterfaces = this.GetAdditionalInterfaces(mixinProvider);
-      //var mixinInstances = this.GetMixinInstances(mixinProvider);
-      //var customAttributeInfos = this.GetCustomAttributeInfos(mixinProvider);
-
-      var proxyGenerationOptions = new ProxyGenerationOptions();
-      //foreach (var mixinInstance in mixinInstances)
-      //{
-      //  proxyGenerationOptions.AddMixinInstance(mixinInstance);
-      //}
-      //foreach (var customAttributeInfo in customAttributeInfos)
-      //{
-      //  proxyGenerationOptions.AdditionalAttributes.Add(customAttributeInfo);
-      //}
-
       var proxy = this.ProxyGenerator.CreateClassProxy(screenType,
                                                        additionalInterfacesToProxy,
-                                                       proxyGenerationOptions,
+                                                       ProxyGenerationOptions.Default,
                                                        constructorArguments,
                                                        interceptor);
 
@@ -590,7 +576,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
         var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
                                                                                              BindingFlags.Default,
-                                                                                             invocation.Method.Name);
+                                                                                             invocation.GetConcreteMethod().Name);
         if (interceptingMethodInfo != null)
         {
           var parameters = new List<object>(invocation.Arguments.Length + 1)
