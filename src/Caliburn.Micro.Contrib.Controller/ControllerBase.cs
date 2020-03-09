@@ -19,6 +19,7 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="InvalidOperationException"/>
     /// <exception cref="Exception"/>
     public static MethodInfo? GetInterceptingMethodInfo(IController controller,
+                                                        BindingFlags bindingFlags,
                                                         string methodName)
     {
       if (controller == null)
@@ -32,7 +33,7 @@ namespace Caliburn.Micro.Contrib.Controller
 
       var result = controller.GetType()
                              .FindMembers(MemberTypes.Method,
-                                          BindingFlags.Default,
+                                          bindingFlags,
                                           (memberInfo,
                                            _) =>
                                           {

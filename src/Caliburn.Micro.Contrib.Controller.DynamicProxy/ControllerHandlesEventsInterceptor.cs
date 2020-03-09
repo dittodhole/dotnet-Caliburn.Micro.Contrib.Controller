@@ -32,6 +32,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
       var interceptinMethodInfo = Caliburn.Micro.Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
+                                                                                                         BindingFlags.Default,
                                                                                                          screenMethodInfo.Name);
       if (interceptinMethodInfo != null)
       {
@@ -51,6 +52,5 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         invocation.ReturnValue = returnValue;
       }
     }
-
   }
 }
