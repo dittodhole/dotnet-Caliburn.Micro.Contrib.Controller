@@ -80,10 +80,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       return mixinProviders;
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
+    /// <inheritdoc/>
     protected override IScreen CreateImpl(Type screenType,
-                                          object[] constructorArguments,
+                                          object?[] constructorArguments,
                                           IController controller)
     {
       if (screenType == null)
