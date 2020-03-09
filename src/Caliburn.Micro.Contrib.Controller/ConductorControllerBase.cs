@@ -6,12 +6,12 @@ namespace Caliburn.Micro.Contrib.Controller
 {
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public interface IConductorControllerRoutine : IControllerRoutine,
-                                                 IProvideConductorEventHandlers<IScreen, IScreen> { }
+                                                 IHandleConductorEvents<IScreen, IScreen> { }
 
   public abstract class ConductorControllerBase<TScreen, TItem> : IController<TScreen>,
                                                                   //IScreenFactoryAdapter<TScreen>,
-                                                                  IProvideScreenEventHandlers<TScreen>,
-                                                                  IProvideConductorEventHandlers<TScreen, TItem>
+                                                                  IHandleScreenEvents<TScreen>,
+                                                                  IHandleConductorEvents<TScreen, TItem>
     where TScreen : IScreen
     where TItem : IScreen
   {

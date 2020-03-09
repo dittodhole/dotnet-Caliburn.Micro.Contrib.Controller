@@ -1,71 +1,52 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Data;
-using Caliburn.Micro.Contrib.Controller.Extras.Converters;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 {
-  public class BlockingRoutine : IControllerRoutine,
-                                 IMixinInstance<BlockingRoutine.ICanBeBlocked>,
-                                 IMixinInterface<BlockingRoutine.ICanBeBlocked>
+  public sealed class BlockingRoutine : IControllerRoutine
   {
-    public virtual ICanBeBlocked CreateMixinInstance()
-    {
-      var instance = new CanBeBlocked();
-
-      return instance;
-    }
+    /// <inheritdoc/>
+    public void OnInitialize(IScreen screen) { }
 
     /// <inheritdoc/>
+    public void OnActivate(IScreen screen) { }
+
     public void OnViewReady(IScreen screen,
-                            object view)
-    {
-      if (screen == null)
-      {
-        throw new ArgumentNullException(nameof(screen));
-      }
-      if (view == null)
-      {
-        throw new ArgumentNullException(nameof(view));
-      }
+                            object view) { }
 
-      var binding = new Binding
-                    {
-                      Path = new PropertyPath(nameof(ICanBeBlocked.IsBlocked)),
-                      Mode = BindingMode.OneWay,
-                      Converter = new NegateBoolConverter()
-                    };
+    /// <inheritdoc/>
+    public void OnClose(IScreen screen,
+                        bool? dialogResult = null) { }
 
-      Execute.OnUIThread(() =>
-                         { // TODO verify, if execution on UI thread is needed
-                           var dependencyObject = (DependencyObject) view;
-
-                           BindingOperations.SetBinding(dependencyObject,
-                                                        UIElement.IsEnabledProperty,
-                                                        binding);
-                         });
-    }
+    /// <inheritdoc/>
+    public void OnDeactivate(IScreen screen,
+                             bool close) { }
 
     /// <exception cref="ArgumentNullException"/>
-    public virtual IDisposable? Block(IScreen screen)
+    public IDisposable Block(IViewAware viewAware)
     {
-      if (screen == null)
+      if (viewAware == null)
       {
-        throw new ArgumentNullException(nameof(screen));
+        throw new ArgumentNullException(nameof(viewAware));
       }
+
+      var uiElement = (UIElement) viewAware.GetView();
+
+      Execute.OnUIThread(() => uiElement.SetValue(UIElement.IsEnabledProperty,
+                                                  false));
 
       DisposeAction? result = null;
 
-      var canBeBlocked = screen as ICanBeBlocked;
+      var canBeBlocked = viewAware as ICanBeBlocked;
       if (canBeBlocked != null)
       {
         canBeBlocked.IsBlocked = true;
-        screen.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
+        viewAware.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
 
         result = new DisposeAction(instance =>
                                    {
                                      canBeBlocked.IsBlocked = false;
-                                     screen.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
+                                     viewAware.NotifyOfPropertyChange(nameof(ICanBeBlocked.IsBlocked));
 
                                      this.DisposeActions.Remove(result);
                                    });
@@ -78,16 +59,6 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
       }
 
       return result;
-    }
-
-    public interface ICanBeBlocked
-    {
-      bool IsBlocked { get; set; }
-    }
-
-    public class CanBeBlocked : ICanBeBlocked
-    {
-      public bool IsBlocked { get; set; }
     }
   }
 }

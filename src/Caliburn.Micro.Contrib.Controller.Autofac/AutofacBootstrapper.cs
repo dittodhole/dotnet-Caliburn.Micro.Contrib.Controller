@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Caliburn.Micro.Contrib.Controller.DynamicProxy;
 using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
 
@@ -25,11 +22,11 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     {
       base.ConfigureContainer(builder);
 
-      builder.RegisterType<ScreenManager>()
-             .As<IScreenManager>()
-             .SingleInstance();
+      //builder.RegisterType<ScreenManager>()
+      //       .As<IScreenManager>()
+      //       .SingleInstance();
 
-      builder.RegisterType<ProxyScreenFactory>()
+      builder.RegisterType<DynamicProxyScreenFactory>()
              .As<IScreenFactory>()
              .SingleInstance();
 
@@ -47,24 +44,24 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
       }
     }
 
-    /// <summary>
-    ///   Locates the controller, locates view model, locates the associate view, binds them and shows it as the root view.
-    /// </summary>
-    /// <param name="options">The optional view model options.</param>
-    /// <param name="context">The optional view model context.</param>
-    /// <param name="settings">The optional window settings.</param>
-    /// <exception cref="Exception" />
-    public virtual async Task<TScreenFactoryAdapter> DisplayViewForAsync<TScreenFactoryAdapter>(object? options = null,
-                                                                                                object? context = null,
-                                                                                                IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter
-    {
-      var screenManager = IoC.Get<IScreenManager>();
-      var screenFactoryAdapter = await screenManager.ShowWindowAsync<TScreenFactoryAdapter>(options,
-                                                                                            context,
-                                                                                            settings)
-                                                    .ConfigureAwait(false);
+    ///// <summary>
+    /////   Locates the controller, locates view model, locates the associate view, binds them and shows it as the root view.
+    ///// </summary>
+    ///// <param name="options">The optional view model options.</param>
+    ///// <param name="context">The optional view model context.</param>
+    ///// <param name="settings">The optional window settings.</param>
+    ///// <exception cref="Exception" />
+    //public virtual async Task<TScreenFactoryAdapter> DisplayViewForAsync<TScreenFactoryAdapter>(object? options = null,
+    //                                                                                            object? context = null,
+    //                                                                                            IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter
+    //{
+    //  var screenManager = IoC.Get<IScreenManager>();
+    //  var screenFactoryAdapter = await screenManager.ShowWindowAsync<TScreenFactoryAdapter>(options,
+    //                                                                                        context,
+    //                                                                                        settings)
+    //                                                .ConfigureAwait(false);
 
-      return screenFactoryAdapter;
-    }
+    //  return screenFactoryAdapter;
+    //}
   }
 }

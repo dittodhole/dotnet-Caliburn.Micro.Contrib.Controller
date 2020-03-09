@@ -2,7 +2,7 @@
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public interface IProvideConductorEventHandlers<TScreen, TItem>
+  public interface IHandleConductorEvents<TScreen, TItem>
     where TScreen : IScreen
     where TItem : IScreen
   {

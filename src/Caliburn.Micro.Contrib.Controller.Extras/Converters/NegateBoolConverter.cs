@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace Caliburn.Micro.Contrib.Controller.Extras.Converters
 {
-  public class NegateBoolConverter : IValueConverter
+  public sealed class NegateBoolConverter : IValueConverter
   {
     /// <inheritdoc/>
     public object Convert(object value,

@@ -31,6 +31,10 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
                             object view) { }
 
     /// <inheritdoc/>
+    public void OnClose(IScreen screen,
+                        bool? dialogResult = null) { }
+
+    /// <inheritdoc/>
     public void OnDeactivate(IScreen screen,
                              bool close)
     {
@@ -41,9 +45,5 @@ namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
 
       this.EventAggregator.Unsubscribe(screen);
     }
-
-    /// <inheritdoc/>
-    public void OnClose(IScreen screen,
-                        bool? dialogResult = null) { }
   }
 }

@@ -54,11 +54,11 @@ namespace Caliburn.Micro.Contrib.Controller
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
-  public interface IControllerRoutine : IProvideScreenEventHandlers<IScreen> { }
+  public interface IControllerRoutine : IHandleScreenEvents<IScreen> { }
 
   public abstract class ControllerBase<TScreen> : IController<TScreen>,
                                                   //IScreenFactoryAdapter<TScreen>,
-                                                  IProvideScreenEventHandlers<TScreen>
+                                                  IHandleScreenEvents<TScreen>
     where TScreen : IScreen
   {
     /// <exception cref="ArgumentNullException"/>

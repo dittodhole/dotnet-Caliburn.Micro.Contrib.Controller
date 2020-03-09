@@ -2,14 +2,9 @@
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public interface IProvideScreenEventHandlers<TScreen>
+  public interface IHandleScreenEvents<TScreen>
     where TScreen : IScreen
   {
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
-    void OnClose(TScreen screen,
-                 bool? dialogResult = null);
-
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
     /// <remarks>Should be used to prepare <paramref name="screen" /></remarks>
@@ -24,6 +19,11 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception"/>
     /// <remarks>Should be used to attach events</remarks>
     void OnActivate(TScreen screen);
+
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    void OnClose(TScreen screen,
+                 bool? dialogResult = null);
 
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
