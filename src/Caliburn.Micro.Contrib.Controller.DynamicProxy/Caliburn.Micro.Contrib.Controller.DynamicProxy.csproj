@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Intercept.cs" />
-    <Compile Include="ProxyScreenFactory.cs" />
+    <Compile Include="DynamicProxyScreenFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LICENSE.txt">

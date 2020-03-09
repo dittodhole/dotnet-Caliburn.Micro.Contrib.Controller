@@ -9,9 +9,9 @@ using Castle.DynamicProxy;
 
 namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
-  public sealed class ProxyScreenFactory : ScreenFactoryBase
+  public sealed class DynamicProxyScreenFactory : ScreenFactoryBase
   {
-    static ProxyScreenFactory()
+    static DynamicProxyScreenFactory()
     {
       var locateTypeForModelType = ViewLocator.LocateTypeForModelType;
       ViewLocator.LocateTypeForModelType = (modelType,
