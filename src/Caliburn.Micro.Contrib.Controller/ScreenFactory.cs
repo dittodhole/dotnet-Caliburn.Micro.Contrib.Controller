@@ -7,39 +7,50 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
-    IScreenFactory With(IController controller);
+    IScreenFactory<TScreen> With<TScreen>(IController<TScreen> controller) where TScreen : IScreen;
+  }
 
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
+  public interface IScreenFactory<TScreen> where TScreen : IScreen
+  {
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
-    IScreen CreateScreen(Type type,
+    TScreen CreateScreen(Type type,
                          object?[] args);
   }
 
   public sealed class ScreenFactory : IScreenFactory
   {
     /// <inheritdoc/>
-    public IScreenFactory With(IController controller)
+    public IScreenFactory<TScreen> With<TScreen>(IController<TScreen> controller) where TScreen : IScreen
     {
-      return this;
+      return ScreenFactoryImpl<TScreen>.Instance;
     }
 
-    /// <inheritdoc/>
-    public IScreen CreateScreen(Type type,
-                                object?[] args)
+    private sealed class ScreenFactoryImpl<TScreen> : IScreenFactory<TScreen> where TScreen : IScreen
     {
-      if (type == null)
-      {
-        throw new ArgumentNullException(nameof(type));
-      }
-      if (args == null)
-      {
-        throw new ArgumentNullException(nameof(args));
-      }
+      public static ScreenFactoryImpl<TScreen> Instance { get; } = new ScreenFactoryImpl<TScreen>();
 
-      var screen = Activator.CreateInstance(type,
-                                            args);
+      private ScreenFactoryImpl() { }
 
-      return (IScreen) screen;
+      /// <inheritdoc/>
+      public TScreen CreateScreen(Type type,
+                                  object?[] args)
+      {
+        if (type == null)
+        {
+          throw new ArgumentNullException(nameof(type));
+        }
+        if (args == null)
+        {
+          throw new ArgumentNullException(nameof(args));
+        }
+
+        var screen = Activator.CreateInstance(type,
+                                              args);
+
+        return (TScreen) screen;
+      }
     }
   }
 }

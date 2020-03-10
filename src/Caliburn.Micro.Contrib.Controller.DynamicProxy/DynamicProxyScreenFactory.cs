@@ -35,47 +35,34 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                      };
 
     /// <inheritdoc/>
-    public IScreenFactory With(IController controller)
+    public IScreenFactory<TScreen> With<TScreen>(IController<TScreen> controller) where TScreen : IScreen
     {
       if (controller == null)
       {
         throw new ArgumentNullException(nameof(controller));
       }
 
-      var result = new ScreenFactory(this.ProxyGenerator,
-                                     controller);
+      var result = new ScreenFactory<TScreen>(this.ProxyGenerator,
+                                              controller);
 
       return result;
     }
 
-    /// <inheritdoc/>
-    IScreen IScreenFactory.CreateScreen(Type type,
-                                        object?[] args)
-    {
-      throw new InvalidOperationException($"Call {nameof(this.With)} first");
-    }
-
-    private sealed class ScreenFactory : IScreenFactory
+    private sealed class ScreenFactory<TScreen> : IScreenFactory<TScreen> where TScreen : IScreen
     {
       /// <exception cref="ArgumentNullException"/>
       public ScreenFactory(ProxyGenerator proxyGenerator,
-                           IController controller)
+                           IController<TScreen> controller)
       {
         this.ProxyGenerator = proxyGenerator ?? throw new ArgumentNullException(nameof(proxyGenerator));
         this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
       }
 
       private ProxyGenerator ProxyGenerator { get; }
-      private IController Controller { get; }
+      private IController<TScreen> Controller { get; }
 
       /// <inheritdoc/>
-      IScreenFactory IScreenFactory.With(IController controller)
-      {
-        throw new InvalidOperationException($"{this.GetType()} is already bound to {this.Controller.GetType()}");
-      }
-
-      /// <inheritdoc/>
-      public IScreen CreateScreen(Type type,
+      public TScreen CreateScreen(Type type,
                                   object?[] args)
       {
         if (type == null)
@@ -102,7 +89,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                                          args,
                                                          interceptor);
 
-        var result = (IScreen) proxy;
+        var result = (TScreen) proxy;
 
         return result;
       }
@@ -110,12 +97,12 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       private sealed class Interceptor : IInterceptor
       {
         /// <exception cref="ArgumentNullException"/>
-        public Interceptor(IController controller)
+        public Interceptor(IController<TScreen> controller)
         {
           this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
         }
 
-        private IController Controller { get; }
+        private IController<TScreen> Controller { get; }
 
         /// <inheritdoc/>
         public void Intercept(IInvocation invocation)

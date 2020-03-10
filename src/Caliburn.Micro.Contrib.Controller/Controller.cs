@@ -457,7 +457,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                 .CreateScreen(type,
                                               args);
 
-      var result = controller.InitializeScreen((TScreen) screen,
+      var result = controller.InitializeScreen(screen,
                                                options);
 
       return result;
