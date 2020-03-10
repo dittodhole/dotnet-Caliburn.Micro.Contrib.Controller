@@ -5,8 +5,6 @@ namespace Caliburn.Micro.Contrib.Controller.ExtensionMethods
 {
   public static class TypeExtensions
   {
-    public static BindingFlags DefaultBindingFlags { get; } = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
-
     /// <exception cref="ArgumentNullException"/>
     public static bool IsDescendantOrMatches<T>(this Type type)
     {
