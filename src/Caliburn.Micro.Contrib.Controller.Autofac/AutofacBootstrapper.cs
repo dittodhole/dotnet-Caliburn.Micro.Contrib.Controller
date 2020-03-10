@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Caliburn.Micro.Contrib.Controller.DynamicProxy;
-using Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine;
+using Caliburn.Micro.Contrib.Controller.ControllerRoutines;
 
 namespace Caliburn.Micro.Contrib.Controller.Autofac
 {
