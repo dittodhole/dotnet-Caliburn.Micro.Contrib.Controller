@@ -117,8 +117,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
           {
             if (screenMethodInfo.ReturnType != typeof(Task))
             { // tasks are not executed here, no intention on awaiting here!
-              screenMethodInfo.Invoke(invocation.InvocationTarget,
-                                      invocation.Arguments);
+              invocation.Proceed();
             }
           }
 
