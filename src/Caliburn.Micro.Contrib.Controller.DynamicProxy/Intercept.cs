@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Caliburn.Micro.Contrib.Controller
+namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 {
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public interface IMixinProvider { }
