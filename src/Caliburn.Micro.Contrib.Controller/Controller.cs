@@ -142,7 +142,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public abstract class ControllerBase<TScreen> : IController<TScreen>,
-                                                  //IScreenFactoryAdapter<TScreen>,
                                                   IHandleScreenEvents<TScreen>
     where TScreen : IScreen
   {
@@ -263,27 +262,6 @@ namespace Caliburn.Micro.Contrib.Controller
                                        close);
       }
     }
-
-    ///// <inheritdoc/>
-    //public virtual TScreen CreateScreen(object? options = null)
-    //{
-    //  var screenType = this.GetScreenType(options);
-    //  var constructorArguments = this.GetConstructorArguments(screenType,
-    //                                                          options);
-    //  var screen = (TScreen) this.ScreenFactory.Create(screenType,
-    //                                                   constructorArguments,
-    //                                                   this);
-    //  screen = this.BuildUp(screen,
-    //                        options);
-
-    //  return screen;
-    //}
-
-    ///// <inheritdoc/>
-    //IScreen IScreenFactoryAdapter.CreateScreen(object? options = null)
-    //{
-    //  return this.CreateScreen(options);
-    //}
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
@@ -301,7 +279,6 @@ namespace Caliburn.Micro.Contrib.Controller
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public abstract class ConductorControllerBase<TScreen, TItem> : IController<TScreen>,
-                                                                  //IScreenFactoryAdapter<TScreen>,
                                                                   IHandleScreenEvents<TScreen>,
                                                                   IHandleConductorEvents<TScreen, TItem>
     where TScreen : IScreen
@@ -468,26 +445,35 @@ namespace Caliburn.Micro.Contrib.Controller
                                        close);
       }
     }
+  }
 
-    ///// <inheritdoc/>
-    //public virtual TScreen CreateScreen(object? options = null)
-    //{
-    //  var screenType = this.GetScreenType(options);
-    //  var constructorArguments = this.GetConstructorArguments(screenType,
-    //                                                          options);
-    //  var screen = (TScreen) this.ScreenFactory.Create(screenType,
-    //                                                   constructorArguments,
-    //                                                   this);
-    //  screen = this.BuildUp(screen,
-    //                        options);
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
+  public static class ControllerExtension
+  {
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    public static TScreen CreateScreen<TScreen>(this IController<TScreen> controller,
+                                                object? options = null) where TScreen : IScreen
+    {
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
 
-    //  return screen;
-    //}
+      var type = controller.GetScreenType(options);
+      var args = controller.GetScreenConstructorArguments(type,
+                                                          options);
 
-    ///// <inheritdoc/>
-    //IScreen IScreenFactoryAdapter.CreateScreen(object? options = null)
-    //{
-    //  return this.CreateScreen(options);
-    //}
+      var screenFactory = IoC.Get<IScreenFactory>();
+
+      var screen = screenFactory.With(controller)
+                                .CreateScreen(type,
+                                              args);
+
+      var result = controller.Initialize((TScreen) screen,
+                                         options);
+
+      return result;
+    }
   }
 }
