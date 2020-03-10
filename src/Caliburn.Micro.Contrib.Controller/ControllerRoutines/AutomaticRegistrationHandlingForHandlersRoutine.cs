@@ -13,10 +13,10 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutines
     private IEventAggregator EventAggregator { get; }
 
     /// <inheritdoc/>
-    public void OnInitialize(IScreen screen) { }
+    void IHandleScreenEvents<IScreen>.OnInitialize(IScreen screen) { }
 
     /// <inheritdoc/>
-    public void OnActivate(IScreen screen)
+    void IHandleScreenEvents<IScreen>.OnActivate(IScreen screen)
     {
       if (screen == null)
       {
@@ -27,16 +27,16 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutines
     }
 
     /// <inheritdoc/>
-    public void OnViewReady(IScreen screen,
-                            object view) { }
+    void IHandleScreenEvents<IScreen>.OnViewReady(IScreen screen,
+                                                  object view) { }
 
     /// <inheritdoc/>
-    public void OnClose(IScreen screen,
-                        bool? dialogResult = null) { }
+    void IHandleScreenEvents<IScreen>.OnClose(IScreen screen,
+                                              bool? dialogResult) { }
 
     /// <inheritdoc/>
-    public void OnDeactivate(IScreen screen,
-                             bool close)
+    void IHandleScreenEvents<IScreen>.OnDeactivate(IScreen screen,
+                                                   bool close)
     {
       if (screen == null)
       {
