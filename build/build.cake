@@ -1,24 +1,28 @@
-var configuration = "Release";
-var artifactsDirectory = Directory("../artifacts");
-var sourceDirectory = Directory("../src");
-var solutionFile = sourceDirectory + File("Caliburn.Micro.Contrib.Controller.sln");
+var artifactsDirectory = MakeAbsolute(Directory("../artifacts"));
 
 Task("Build")
   .IsDependentOn("Clean")
   .Does(() =>
 {
-  Information($"Building {MakeAbsolute(solutionFile)}");
+  var filePath = MakeAbsolute(File(Argument("file", "../src/Caliburn.Micro.Contrib.Controller.sln")));
+  var configurations = Argument("configurations", "Release");
 
-  MSBuild(solutionFile,
-          settings => settings.SetConfiguration(configuration)
-                              .WithRestore()
-                              .WithProperty("PackageOutputPath", MakeAbsolute(artifactsDirectory).FullPath));
+  foreach (var configuration in configurations.Split(';'))
+  {
+    Information($"Building {filePath} with {configuration}");
+
+    MSBuild(filePath,
+            settings => settings.SetConfiguration(configuration)
+                                .SetVerbosity(Verbosity.Minimal)
+                                .WithRestore()
+                                .WithProperty("PackageOutputPath", artifactsDirectory.FullPath));
+  }
 });
 
 Task("Clean")
   .Does(() =>
 {
-  Information($"Cleaning {MakeAbsolute(artifactsDirectory)}");
+  Information($"Cleaning {artifactsDirectory}");
 
   if (DirectoryExists(artifactsDirectory))
   {
