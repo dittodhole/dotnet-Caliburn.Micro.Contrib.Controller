@@ -62,7 +62,7 @@
     <Compile Include="ControllerRoutines\AutomaticRegistrationHandlingForHandlersRoutine.cs" />
     <Compile Include="ControllerRoutines\BlockingRoutine.cs" />
     <Compile Include="Converters\NegateBoolConverter.cs" />
-    <Compile Include="DisposeAction.cs" />
+    <Compile Include="DisposableAction.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="HandlesViewModelMethodAttribute.cs" />
     <Compile Include="ScreenFactory.cs" />

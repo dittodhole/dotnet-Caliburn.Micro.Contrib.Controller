@@ -2,21 +2,20 @@
 
 namespace Caliburn.Micro.Contrib.Controller
 {
-  public class DisposeAction : IDisposable
+  public sealed class DisposableAction : IDisposable
   {
     /// <exception cref="ArgumentNullException"/>
-    public DisposeAction(Action action)
+    public DisposableAction(System.Action action)
     {
       this.Action = action ?? throw new ArgumentNullException(nameof(action));
     }
 
-    private Action? Action { get; set; }
+    private System.Action Action { get; }
 
     /// <inheritdoc/>
     public void Dispose()
     {
-      this.Action?.Invoke();
-      this.Action = null;
+      this.Action.Invoke();
     }
   }
 }

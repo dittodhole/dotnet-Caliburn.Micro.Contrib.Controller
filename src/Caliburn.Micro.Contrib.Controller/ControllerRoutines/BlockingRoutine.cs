@@ -64,7 +64,7 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutines
 
       canBeBlocked.IsBlocked = true;
 
-      var result = new DisposeAction(() => canBeBlocked.IsBlocked = false);
+      var result = new DisposableAction(() => canBeBlocked.IsBlocked = false);
 
       return result;
     }
