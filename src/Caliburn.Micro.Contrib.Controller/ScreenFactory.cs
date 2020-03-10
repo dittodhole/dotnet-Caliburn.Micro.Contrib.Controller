@@ -42,34 +42,4 @@ namespace Caliburn.Micro.Contrib.Controller
       return (IScreen) screen;
     }
   }
-
-  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
-  public static class ScreenFactoryExtensions
-  {
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
-    public static TScreen Create<TScreen>(this IScreenFactory screenFactory,
-                                          object? options = null) where TScreen : IScreen
-    {
-      if (screenFactory == null)
-      {
-        throw new ArgumentNullException(nameof(screenFactory));
-      }
-
-      var controller = IoC.Get<IController<TScreen>>();
-
-      var type = controller.GetScreenType(options);
-      var args = controller.GetScreenConstructorArguments(type,
-                                                          options);
-
-      var screen = screenFactory.With(controller)
-                                .CreateScreen(type,
-                                              args);
-
-      var result = controller.Initialize((TScreen) screen,
-                                         options);
-
-      return result;
-    }
-  }
 }
