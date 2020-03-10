@@ -62,8 +62,11 @@ dotnet-Caliburn.Micro.Contrib.Controller/build> build.bat
 This will create the following artifacts:
 
 - `artifacts/Caliburn.Micro.Contrib.Controller.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.{version}.symbols.nupkg`
 - `artifacts/Caliburn.Micro.Contrib.Controller.Autofac.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.Autofac.{version}.symbols.nupkg`
 - `artifacts/Caliburn.Micro.Contrib.Controller.DynamicProxy.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.DynamicProxy.{version}.symbols.nupkg`
 
 ## License
 
