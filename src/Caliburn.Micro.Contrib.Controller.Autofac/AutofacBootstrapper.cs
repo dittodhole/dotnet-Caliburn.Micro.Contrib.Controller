@@ -37,25 +37,5 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
                .InstancePerDependency();
       }
     }
-
-    ///// <summary>
-    /////   Locates the controller, locates view model, locates the associate view, binds them and shows it as the root view.
-    ///// </summary>
-    ///// <param name="options">The optional view model options.</param>
-    ///// <param name="context">The optional view model context.</param>
-    ///// <param name="settings">The optional window settings.</param>
-    ///// <exception cref="Exception" />
-    //public virtual async Task<TScreenFactoryAdapter> DisplayViewForAsync<TScreenFactoryAdapter>(object? options = null,
-    //                                                                                            object? context = null,
-    //                                                                                            IDictionary<string, object>? settings = null) where TScreenFactoryAdapter : IScreenFactoryAdapter
-    //{
-    //  var screenManager = IoC.Get<IScreenManager>();
-    //  var screenFactoryAdapter = await screenManager.ShowWindowAsync<TScreenFactoryAdapter>(options,
-    //                                                                                        context,
-    //                                                                                        settings)
-    //                                                .ConfigureAwait(false);
-
-    //  return screenFactoryAdapter;
-    //}
   }
 }
