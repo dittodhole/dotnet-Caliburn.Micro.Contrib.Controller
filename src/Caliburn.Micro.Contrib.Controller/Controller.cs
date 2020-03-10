@@ -24,8 +24,8 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
-    TScreen Initialize(TScreen screen,
-                       object? options = null);
+    TScreen InitializeScreen(TScreen screen,
+                             object? options = null);
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
@@ -172,8 +172,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    public virtual TScreen Initialize(TScreen screen,
-                                      object? options = null)
+    public virtual TScreen InitializeScreen(TScreen screen,
+                                            object? options = null)
     {
       return screen ?? throw new ArgumentNullException(nameof(screen));
     }
@@ -311,8 +311,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    public virtual TScreen Initialize(TScreen screen,
-                                      object? options = null)
+    public virtual TScreen InitializeScreen(TScreen screen,
+                                            object? options = null)
     {
       return screen ?? throw new ArgumentNullException(nameof(screen));
     }
@@ -470,8 +470,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                 .CreateScreen(type,
                                               args);
 
-      var result = controller.Initialize((TScreen) screen,
-                                         options);
+      var result = controller.InitializeScreen((TScreen) screen,
+                                               options);
 
       return result;
     }
