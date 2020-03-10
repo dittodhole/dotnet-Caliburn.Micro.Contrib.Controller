@@ -475,5 +475,51 @@ namespace Caliburn.Micro.Contrib.Controller
 
       return result;
     }
+
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    public static TScreen ShowWindow<TScreen>(this IController<TScreen> controller,
+                                              object? options = null,
+                                              object? context = null,
+                                              IDictionary<string, object>? settings = null) where TScreen : IScreen
+    {
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+
+      var result = controller.CreateScreen(options);
+
+      var windowManager = IoC.Get<IWindowManager>();
+
+      Execute.BeginOnUIThread(() => windowManager.ShowWindow(result,
+                                                             context,
+                                                             settings));
+
+      return result;
+    }
+
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    public static TScreen ShowDialog<TScreen>(this IController<TScreen> controller,
+                                              object? options = null,
+                                              object? context = null,
+                                              IDictionary<string, object>? settings = null) where TScreen : IScreen
+    {
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+
+      var result = controller.CreateScreen(options);
+
+      var windowManager = IoC.Get<IWindowManager>();
+
+      Execute.BeginOnUIThread(() => windowManager.ShowDialog(result,
+                                                             context,
+                                                             settings));
+
+      return result;
+    }
   }
 }
