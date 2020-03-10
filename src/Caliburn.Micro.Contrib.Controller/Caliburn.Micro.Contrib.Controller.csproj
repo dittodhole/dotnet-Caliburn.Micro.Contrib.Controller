@@ -24,11 +24,17 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
     <PackageReference Include="Microsoft.Bcl.Async" Version="1.0.168" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="3.2.0" />
@@ -52,7 +58,11 @@
   <ItemGroup>
     <Compile Include="ConductorControllerBase.cs" />
     <Compile Include="ControllerBase.cs" />
+    <Compile Include="ControllerRoutines\AutomaticRegistrationHandlingForHandlersRoutine.cs" />
+    <Compile Include="ControllerRoutines\BlockingRoutine.cs" />
     <Compile Include="ControllerWithResultBase.cs" />
+    <Compile Include="Converters\NegateBoolConverter.cs" />
+    <Compile Include="DisposeAction.cs" />
     <Compile Include="ExtensionMethods\TypeExtensions.cs" />
     <Compile Include="HandlesViewModelMethodAttribute.cs" />
     <Compile Include="IHandleConductorEvents.cs" />

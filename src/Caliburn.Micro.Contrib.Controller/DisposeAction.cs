@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Caliburn.Micro.Contrib.Controller.Extras
+namespace Caliburn.Micro.Contrib.Controller
 {
   public class DisposeAction : IDisposable
   {

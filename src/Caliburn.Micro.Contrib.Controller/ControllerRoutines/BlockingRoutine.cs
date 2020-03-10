@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Caliburn.Micro.Contrib.Controller.Extras.ControllerRoutine
+namespace Caliburn.Micro.Contrib.Controller.ControllerRoutines
 {
   public sealed class BlockingRoutine : IControllerRoutine
   {
