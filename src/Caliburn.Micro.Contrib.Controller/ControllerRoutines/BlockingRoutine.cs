@@ -1,7 +1,7 @@
-﻿using Caliburn.Micro.Contrib.Controller.Converters;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Data;
+using Caliburn.Micro.Contrib.Controller.Converters;
 
 namespace Caliburn.Micro.Contrib.Controller.ControllerRoutines
 {
