@@ -22,10 +22,6 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
     {
       base.ConfigureContainer(builder);
 
-      //builder.RegisterType<ScreenManager>()
-      //       .As<IScreenManager>()
-      //       .SingleInstance();
-
       builder.RegisterType<DynamicProxyScreenFactory>()
              .As<IScreenFactory>()
              .SingleInstance();
