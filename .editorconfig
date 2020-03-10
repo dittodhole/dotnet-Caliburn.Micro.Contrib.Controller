@@ -18,6 +18,8 @@ insert_final_newline = true
 
 #### .NET Coding Conventions ####
 
+dotnet_sort_system_directives_first = true
+
 # this. and Me. preferences
 dotnet_style_qualification_for_event = true:silent
 dotnet_style_qualification_for_field = true:silent

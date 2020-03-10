@@ -30,12 +30,6 @@ PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Autofac -pre --source 
 PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.DynamicProxy -pre --source https://www.myget.org/F/dittodhole/api/v2
 ```
 
-[![](https://img.shields.io/myget/dittodhole/vpre/Caliburn.Micro.Contrib.Controller.Extras.svg)](https://www.myget.org/feed/dittodhole/package/nuget/Caliburn.Micro.Contrib.Controller.Extras)
-
-```powershell
-PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Extras -pre --source https://www.myget.org/F/dittodhole/api/v2
-```
-
 ### nuget.org
 
 [![](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller)
@@ -56,12 +50,6 @@ PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Autofac
 PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.DynamicProxy
 ```
 
-[![](https://img.shields.io/nuget/v/Caliburn.Micro.Contrib.Controller.Extras.svg)](https://www.nuget.org/packages/Caliburn.Micro.Contrib.Controller.Extras)
-
-```powershell
-PM> Install-Package -Id Caliburn.Micro.Contrib.Controller.Extras
-```
-
 ## Developing & Building
 
 ```cmd
@@ -74,9 +62,11 @@ dotnet-Caliburn.Micro.Contrib.Controller/build> build.bat
 This will create the following artifacts:
 
 - `artifacts/Caliburn.Micro.Contrib.Controller.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.{version}.symbols.nupkg`
 - `artifacts/Caliburn.Micro.Contrib.Controller.Autofac.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.Autofac.{version}.symbols.nupkg`
 - `artifacts/Caliburn.Micro.Contrib.Controller.DynamicProxy.{version}.nupkg`
-- `artifacts/Caliburn.Micro.Contrib.Controller.Extras.{version}.nupkg`
+- `artifacts/Caliburn.Micro.Contrib.Controller.DynamicProxy.{version}.symbols.nupkg`
 
 ## License
 

@@ -1,10 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net40;net46</TargetFrameworks>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <EnableDefaultItems>false</EnableDefaultItems>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -16,6 +19,7 @@
     <PackageIcon>noun_710304_cc.png</PackageIcon>
     <PackageTags>Caliburn Micro MVVM Controller WPF</PackageTags>
     <PackageType>Dependency</PackageType>
+    <IncludeSource>true</IncludeSource>
     <RepositoryUrl>https://github.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
@@ -23,7 +27,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="WindowsBase" />
-    <PackageReference Include="Microsoft.Bcl.Async" Version="1.0.168" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <Reference Include="System" />
@@ -33,11 +36,19 @@
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="3.2.0" />
     <PackageReference Include="Castle.Core" Version="4.4.0" />
+    <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="4.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="GitVersionTask" Version="5.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Source.JetBrains.Annotations" Version="2019.1.6">
+    <PackageReference Include="Meziantou.Analyzer" Version="1.0.324">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -46,10 +57,8 @@
     <ProjectReference Include="..\Caliburn.Micro.Contrib.Controller\Caliburn.Micro.Contrib.Controller.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControllerHandlesEventsInterceptor.cs" />
-    <Compile Include="IMixinAttributes.cs" />
-    <Compile Include="LoggerAdapter.cs" />
-    <Compile Include="ProxyScreenFactory.cs" />
+    <Compile Include="Intercept.cs" />
+    <Compile Include="DynamicProxyScreenFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LICENSE.txt">
@@ -61,14 +70,4 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-  <Target Name="UpdateRepositoryBranch" BeforeTargets="GenerateNuspec">
-    <PropertyGroup>
-      <RepositoryBranch>$(GitVersion_BranchName)</RepositoryBranch>
-    </PropertyGroup>
-  </Target>
-  <Target Name="UpdateRepositoryCommit" BeforeTargets="GenerateNuspec">
-    <PropertyGroup>
-      <RepositoryCommit>$(GitVersion_Sha)</RepositoryCommit>
-    </PropertyGroup>
-  </Target>
 </Project>
