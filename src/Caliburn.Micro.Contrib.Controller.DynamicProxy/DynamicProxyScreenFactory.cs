@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Logging;
@@ -55,15 +56,12 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       var interceptor = new Interceptor(this.Controller);
 
-      Type[] additionalInterfacesToProxy;
-      if (this.Controller is IMixinProvider mixinProvider)
-      {
-        additionalInterfacesToProxy = null; // TODO
-      }
-      else
-      {
-        additionalInterfacesToProxy = new Type[0];
-      }
+      var additionalInterfacesToProxy = this.Controller.GetType()
+                                                       .GetInterfaces()
+                                                       .Where(arg => arg.IsGenericType)
+                                                       .Where(arg => arg.GetGenericTypeDefinition() == typeof(IMixinInterface<>))
+                                                       .Select(arg => arg.GetGenericArguments().Single())
+                                                       .ToArray();
 
       var proxy = this.ProxyGenerator.CreateClassProxy(type,
                                                        additionalInterfacesToProxy,
@@ -75,109 +73,6 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       return result;
     }
-
-    /*
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
-    public virtual Type[] GetAdditionalInterfaces(IEnumerable<IMixinProvider> mixinProviders)
-    {
-      if (mixinProviders == null)
-      {
-        throw new ArgumentNullException(nameof(mixinProviders));
-      }
-
-      var additionalInterfaces = mixinProviders.SelectMany(arg =>
-                                                           {
-                                                             var type = arg.GetType();
-
-                                                             Type[] interfaces;
-                                                             try
-                                                             {
-                                                               interfaces = type.GetInterfaces();
-                                                             }
-                                                             catch (TargetInvocationException targetInvocationException)
-                                                             {
-                                                               ProxyScreenFactory.Logger.Error(targetInvocationException);
-                                                               return Enumerable.Empty<GenericDefinition>();
-                                                             }
-
-                                                             var result = interfaces.Where(@interface => @interface.IsGenericType)
-                                                                                    .Where(@interface => @interface.IsDescendant<IMixinProvider>())
-                                                                                    .Select(@interface =>
-                                                                                            {
-                                                                                              var genericTypeDefinition = @interface.GetGenericTypeDefinition();
-                                                                                              var genericArguments = @interface.GetGenericArguments();
-
-                                                                                              var genericDefinition = new GenericDefinition(genericTypeDefinition,
-                                                                                                                                            genericArguments);
-
-                                                                                              return genericDefinition;
-                                                                                            })
-                                                                                    .Where(@interface => @interface.GenericTypeDefinition == typeof(IMixinInterface<>));
-
-                                                             return result;
-                                                           })
-                                               .Select(arg => arg.GenericArguments.Single())
-                                               .ToArray();
-
-      return additionalInterfaces;
-    }
-
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
-    public virtual CustomAttributeInfo[] GetCustomAttributeInfos(IEnumerable<IMixinProvider> mixinProviders)
-    {
-      if (mixinProviders == null)
-      {
-        throw new ArgumentNullException(nameof(mixinProviders));
-      }
-
-      var customAttributeInfos = mixinProviders.OfType<IMixinAttributes>()
-                                               .SelectMany(arg => arg.GetCustomAttributeInfos())
-                                               .ToArray();
-
-      return customAttributeInfos;
-    }
-
-    private sealed class MixinDefinition
-    {
-      public MixinDefinition(Type type,
-                             MethodInfo[] methodInfos,
-                             Type @interface,
-                             Type genericTypeDefinition,
-                             Type[] genericArguments,
-                             IMixinProvider mixinProvider)
-      {
-        this.Type = type;
-        this.MethodInfos = methodInfos;
-        this.Interface = @interface;
-        this.GenericTypeDefinition = genericTypeDefinition;
-        this.GenericArguments = genericArguments;
-        this.MixinProvider = mixinProvider;
-      }
-
-      public Type Type { get; }
-      public MethodInfo[] MethodInfos { get; }
-      public Type Interface { get; }
-      public Type GenericTypeDefinition { get; }
-      public Type[] GenericArguments { get; }
-      public IMixinProvider MixinProvider { get; }
-    }
-
-    private sealed class GenericDefinition
-    {
-      public GenericDefinition(Type genericTypeDefinition,
-                               Type[] genericArguments)
-      {
-        this.GenericTypeDefinition = genericTypeDefinition;
-        this.GenericArguments = genericArguments;
-      }
-
-      public Type GenericTypeDefinition { get; }
-      public Type[] GenericArguments { get; }
-    }
-
-    */
 
     private sealed class Logger : ILogger
     {
