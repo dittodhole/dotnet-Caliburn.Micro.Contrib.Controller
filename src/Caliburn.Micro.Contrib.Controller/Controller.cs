@@ -24,8 +24,8 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
-    TScreen Initialize(TScreen screen,
-                       object? options = null);
+    TScreen InitializeScreen(TScreen screen,
+                             object? options = null);
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
@@ -172,8 +172,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    public virtual TScreen Initialize(TScreen screen,
-                                      object? options = null)
+    public virtual TScreen InitializeScreen(TScreen screen,
+                                            object? options = null)
     {
       return screen ?? throw new ArgumentNullException(nameof(screen));
     }
@@ -265,19 +265,6 @@ namespace Caliburn.Micro.Contrib.Controller
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
-  public abstract class ControllerWithResultBase<TScreen, TResult> : ControllerBase<TScreen>
-    where TScreen : IScreen
-  {
-    /// <inheritdoc/>
-    protected ControllerWithResultBase(ICollection<IControllerRoutine> routines)
-      : base(routines) { }
-
-    /// <exception cref="OperationCanceledException"/>
-    /// <exception cref="Exception"/>
-    public abstract Task<TResult> GetResultAsync(CancellationToken cancellationToken);
-  }
-
-  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public abstract class ConductorControllerBase<TScreen, TItem> : IController<TScreen>,
                                                                   IHandleScreenEvents<TScreen>,
                                                                   IHandleConductorEvents<TScreen, TItem>
@@ -311,8 +298,8 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     /// <inheritdoc/>
-    public virtual TScreen Initialize(TScreen screen,
-                                      object? options = null)
+    public virtual TScreen InitializeScreen(TScreen screen,
+                                            object? options = null)
     {
       return screen ?? throw new ArgumentNullException(nameof(screen));
     }
@@ -470,8 +457,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                 .CreateScreen(type,
                                               args);
 
-      var result = controller.Initialize((TScreen) screen,
-                                         options);
+      var result = controller.InitializeScreen((TScreen) screen,
+                                               options);
 
       return result;
     }
