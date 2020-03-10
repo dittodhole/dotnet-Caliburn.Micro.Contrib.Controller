@@ -265,19 +265,6 @@ namespace Caliburn.Micro.Contrib.Controller
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
-  public abstract class ControllerWithResultBase<TScreen, TResult> : ControllerBase<TScreen>
-    where TScreen : IScreen
-  {
-    /// <inheritdoc/>
-    protected ControllerWithResultBase(ICollection<IControllerRoutine> routines)
-      : base(routines) { }
-
-    /// <exception cref="OperationCanceledException"/>
-    /// <exception cref="Exception"/>
-    public abstract Task<TResult> GetResultAsync(CancellationToken cancellationToken);
-  }
-
-  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public abstract class ConductorControllerBase<TScreen, TItem> : IController<TScreen>,
                                                                   IHandleScreenEvents<TScreen>,
                                                                   IHandleConductorEvents<TScreen, TItem>
