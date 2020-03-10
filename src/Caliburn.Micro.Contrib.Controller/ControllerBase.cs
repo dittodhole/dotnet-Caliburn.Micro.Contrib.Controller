@@ -20,7 +20,8 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception"/>
     public static MethodInfo? GetInterceptingMethodInfo(IController controller,
                                                         BindingFlags bindingFlags,
-                                                        string methodName)
+                                                        string methodName,
+                                                        ParameterInfo[] parameterInfos)
     {
       if (controller == null)
       {
@@ -29,6 +30,10 @@ namespace Caliburn.Micro.Contrib.Controller
       if (methodName == null)
       {
         throw new ArgumentNullException(nameof(methodName));
+      }
+      if (parameterInfos == null)
+      {
+        throw new ArgumentNullException(nameof(parameterInfos));
       }
 
       var result = controller.GetType()

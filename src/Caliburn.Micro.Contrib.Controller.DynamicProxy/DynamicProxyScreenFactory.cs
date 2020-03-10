@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Logging;
@@ -587,19 +586,25 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
           }
         }
 
+        var proxyMethodInfo = invocation.GetConcreteMethod();
+
         var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
                                                                                              BindingFlags.Default,
-                                                                                             invocation.GetConcreteMethod().Name);
+                                                                                             proxyMethodInfo.Name,
+                                                                                             proxyMethodInfo.GetParameters());
         if (interceptingMethodInfo != null)
         {
-          var parameters = new List<object>(invocation.Arguments.Length + 1)
-                           {
-                             invocation.InvocationTarget
-                           };
-          parameters.AddRange(invocation.Arguments);
+          var parameters = new object[invocation.Arguments.Length + 1];
+          parameters[0] = invocation.InvocationTarget;
+
+          Array.Copy(invocation.Arguments,
+                     0,
+                     parameters,
+                     1,
+                     invocation.Arguments.Length);
 
           var returnValue = interceptingMethodInfo.Invoke(this.Controller,
-                                                          parameters.ToArray());
+                                                          parameters);
 
           invocation.ReturnValue = returnValue;
         }
