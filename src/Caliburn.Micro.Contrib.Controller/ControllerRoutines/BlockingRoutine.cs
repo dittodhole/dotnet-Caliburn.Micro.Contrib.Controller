@@ -55,26 +55,6 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutines
 
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
-    public IDisposable Block(IViewAware viewAware)
-    {
-      if (viewAware == null)
-      {
-        throw new ArgumentNullException(nameof(viewAware));
-      }
-
-      var uiElement = (UIElement) viewAware.GetView();
-
-      Execute.OnUIThread(() => uiElement.SetValue(UIElement.IsEnabledProperty,
-                                                  false));
-
-      var result = new DisposeAction(() => Execute.OnUIThread(() => uiElement.SetValue(UIElement.IsEnabledProperty,
-                                                                                       true)));
-
-      return result;
-    }
-
-    /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="Exception"/>
     public IDisposable Block(ICanBeBlocked canBeBlocked)
     {
       if (canBeBlocked == null)
