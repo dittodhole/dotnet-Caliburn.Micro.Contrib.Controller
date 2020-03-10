@@ -7,15 +7,25 @@ namespace Caliburn.Micro.Contrib.Controller
   {
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
-    IScreen Create(Type type,
-                   object?[] args);
+    IScreenFactory With(IController controller);
+
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    IScreen CreateScreen(Type type,
+                         object?[] args);
   }
 
   public sealed class ScreenFactory : IScreenFactory
   {
     /// <inheritdoc/>
-    public IScreen Create(Type type,
-                          object?[] args)
+    public IScreenFactory With(IController controller)
+    {
+      return this;
+    }
+
+    /// <inheritdoc/>
+    public IScreen CreateScreen(Type type,
+                                object?[] args)
     {
       if (type == null)
       {
@@ -26,10 +36,10 @@ namespace Caliburn.Micro.Contrib.Controller
         throw new ArgumentNullException(nameof(args));
       }
 
-      var result = Activator.CreateInstance(type,
+      var screen = Activator.CreateInstance(type,
                                             args);
 
-      return (IScreen) result;
+      return (IScreen) screen;
     }
   }
 
@@ -39,23 +49,27 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
     public static TScreen Create<TScreen>(this IScreenFactory screenFactory,
-                                          object?[] args) where TScreen : IScreen
+                                          object? options = null) where TScreen : IScreen
     {
       if (screenFactory == null)
       {
         throw new ArgumentNullException(nameof(screenFactory));
       }
-      if (args == null)
-      {
-        throw new ArgumentNullException(nameof(args));
-      }
 
-      var type = typeof(TScreen);
+      var controller = IoC.Get<IController<TScreen>>();
 
-      var result = screenFactory.Create(type,
-                                        args);
+      var type = controller.GetScreenType(options);
+      var args = controller.GetScreenConstructorArguments(type,
+                                                          options);
 
-      return (TScreen) result;
+      var screen = screenFactory.With(controller)
+                                .CreateScreen(type,
+                                              args);
+
+      var result = controller.Initialize((TScreen) screen,
+                                         options);
+
+      return result;
     }
   }
 }

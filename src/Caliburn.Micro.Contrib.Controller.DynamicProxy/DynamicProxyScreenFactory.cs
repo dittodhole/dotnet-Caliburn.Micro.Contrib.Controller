@@ -29,49 +29,137 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                                            };
     }
 
-    /// <exception cref="ArgumentNullException"/>
-    public DynamicProxyScreenFactory(IController controller)
-    {
-      this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
-    }
-
-    private IController Controller { get; }
     private ProxyGenerator ProxyGenerator { get; } = new ProxyGenerator
                                                      {
                                                        Logger = new Logger(typeof(ProxyGenerator))
                                                      };
 
     /// <inheritdoc/>
-    public IScreen Create(Type type,
-                          object?[] args)
+    public IScreenFactory With(IController controller)
     {
-      if (type == null)
+      if (controller == null)
       {
-        throw new ArgumentNullException(nameof(type));
-      }
-      if (args == null)
-      {
-        throw new ArgumentNullException(nameof(args));
+        throw new ArgumentNullException(nameof(controller));
       }
 
-      var interceptor = new Interceptor(this.Controller);
-
-      var additionalInterfacesToProxy = this.Controller.GetType()
-                                                       .GetInterfaces()
-                                                       .Where(arg => arg.IsGenericType)
-                                                       .Where(arg => arg.GetGenericTypeDefinition() == typeof(IMixinInterface<>))
-                                                       .Select(arg => arg.GetGenericArguments().Single())
-                                                       .ToArray();
-
-      var proxy = this.ProxyGenerator.CreateClassProxy(type,
-                                                       additionalInterfacesToProxy,
-                                                       ProxyGenerationOptions.Default,
-                                                       args,
-                                                       interceptor);
-
-      var result = (IScreen) proxy;
+      var result = new ScreenFactory(this.ProxyGenerator,
+                                     controller);
 
       return result;
+    }
+
+    /// <inheritdoc/>
+    IScreen IScreenFactory.CreateScreen(Type type,
+                                        object?[] args)
+    {
+      throw new InvalidOperationException($"Call {nameof(this.With)} first");
+    }
+
+    private sealed class ScreenFactory : IScreenFactory
+    {
+      /// <exception cref="ArgumentNullException"/>
+      public ScreenFactory(ProxyGenerator proxyGenerator,
+                           IController controller)
+      {
+        this.ProxyGenerator = proxyGenerator ?? throw new ArgumentNullException(nameof(proxyGenerator));
+        this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
+      }
+
+      private ProxyGenerator ProxyGenerator { get; }
+      private IController Controller { get; }
+
+      /// <inheritdoc/>
+      IScreenFactory IScreenFactory.With(IController controller)
+      {
+        throw new InvalidOperationException($"{this.GetType()} is already bound to {this.Controller.GetType()}");
+      }
+
+      /// <inheritdoc/>
+      public IScreen CreateScreen(Type type,
+                                  object?[] args)
+      {
+        if (type == null)
+        {
+          throw new ArgumentNullException(nameof(type));
+        }
+        if (args == null)
+        {
+          throw new ArgumentNullException(nameof(args));
+        }
+
+        var interceptor = new Interceptor(this.Controller);
+
+        var additionalInterfacesToProxy = this.Controller.GetType()
+                                                         .GetInterfaces()
+                                                         .Where(arg => arg.IsGenericType)
+                                                         .Where(arg => arg.GetGenericTypeDefinition() == typeof(IMixinInterface<>))
+                                                         .Select(arg => arg.GetGenericArguments().Single())
+                                                         .ToArray();
+
+        var proxy = this.ProxyGenerator.CreateClassProxy(type,
+                                                         additionalInterfacesToProxy,
+                                                         ProxyGenerationOptions.Default,
+                                                         args,
+                                                         interceptor);
+
+        var result = (IScreen) proxy;
+
+        return result;
+      }
+
+      private sealed class Interceptor : IInterceptor
+      {
+        /// <exception cref="ArgumentNullException"/>
+        public Interceptor(IController controller)
+        {
+          this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
+        }
+
+        private IController Controller { get; }
+
+        /// <inheritdoc/>
+        public void Intercept(IInvocation invocation)
+        {
+          if (invocation == null)
+          {
+            throw new ArgumentNullException(nameof(invocation));
+          }
+
+          var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
+          if (screenMethodInfo != null)
+          {
+            if (screenMethodInfo.ReturnType != typeof(Task))
+            { // tasks are not executed here, no intention on awaiting here!
+              screenMethodInfo.Invoke(invocation.InvocationTarget,
+                                      invocation.Arguments);
+            }
+          }
+
+          var proxyMethodInfo = invocation.GetConcreteMethod();
+
+          var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
+                                                                                               BindingFlags.Default,
+                                                                                               proxyMethodInfo.Name,
+                                                                                               proxyMethodInfo.ReturnType,
+                                                                                               proxyMethodInfo.GetParameters());
+          if (interceptingMethodInfo != null)
+          {
+            var parameters = new object[invocation.Arguments.Length + 1];
+            parameters[0] = invocation.InvocationTarget;
+
+            Array.Copy(invocation.Arguments,
+                       0,
+                       parameters,
+                       1,
+                       invocation.Arguments.Length);
+
+            var returnValue = interceptingMethodInfo.Invoke(this.Controller,
+                                                            parameters);
+
+            invocation.ReturnValue = returnValue;
+          }
+        }
+      }
     }
 
     private sealed class Logger : ILogger
@@ -451,60 +539,6 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
       /// <inheritdoc/>
       public bool IsTraceEnabled => true;
-    }
-
-    private sealed class Interceptor : IInterceptor
-    {
-      /// <exception cref="ArgumentNullException"/>
-      public Interceptor(IController controller)
-      {
-        this.Controller = controller ?? throw new ArgumentNullException(nameof(controller));
-      }
-
-      private IController Controller { get; }
-
-      /// <inheritdoc/>
-      public void Intercept(IInvocation invocation)
-      {
-        if (invocation == null)
-        {
-          throw new ArgumentNullException(nameof(invocation));
-        }
-
-        var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
-        if (screenMethodInfo != null)
-        {
-          if (screenMethodInfo.ReturnType != typeof(Task))
-          { // tasks are not executed here, no intention on awaiting here!
-            screenMethodInfo.Invoke(invocation.InvocationTarget,
-                                    invocation.Arguments);
-          }
-        }
-
-        var proxyMethodInfo = invocation.GetConcreteMethod();
-
-        var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
-                                                                                             BindingFlags.Default,
-                                                                                             proxyMethodInfo.Name,
-                                                                                             proxyMethodInfo.ReturnType,
-                                                                                             proxyMethodInfo.GetParameters());
-        if (interceptingMethodInfo != null)
-        {
-          var parameters = new object[invocation.Arguments.Length + 1];
-          parameters[0] = invocation.InvocationTarget;
-
-          Array.Copy(invocation.Arguments,
-                     0,
-                     parameters,
-                     1,
-                     invocation.Arguments.Length);
-
-          var returnValue = interceptingMethodInfo.Invoke(this.Controller,
-                                                          parameters);
-
-          invocation.ReturnValue = returnValue;
-        }
-      }
     }
   }
 }
