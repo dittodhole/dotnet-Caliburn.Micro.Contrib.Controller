@@ -16,14 +16,11 @@ namespace Caliburn.Micro.Contrib.Controller
     where TItem : IScreen
   {
     /// <exception cref="ArgumentNullException"/>
-    protected ConductorControllerBase(IScreenFactory screenFactory,
-                                      ICollection<IControllerRoutine> controllerRoutines)
+    protected ConductorControllerBase(ICollection<IControllerRoutine> controllerRoutines)
     {
-      this.ScreenFactory = screenFactory ?? throw new ArgumentNullException(nameof(screenFactory));
       this.ControllerRoutines = controllerRoutines ?? throw new ArgumentNullException(nameof(controllerRoutines));
     }
 
-    private IScreenFactory ScreenFactory { get; }
     private ICollection<IControllerRoutine> ControllerRoutines { get; }
 
     /// <inheritdoc/>
