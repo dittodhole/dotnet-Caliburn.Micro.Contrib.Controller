@@ -31,9 +31,7 @@ namespace Caliburn.Micro.Contrib.Controller.Autofac
              .SingleInstance();
 
       builder.RegisterType<BlockingRoutine>()
-             .InstancePerDependency();
-      builder.RegisterType<BlockingRoutine.CanBeBlocked>()
-             .As<BlockingRoutine.ICanBeBlocked>()
+             .As<BlockingRoutine>()
              .InstancePerDependency();
 
       if (this.AutoSubscribeEventAggegatorHandlers)
