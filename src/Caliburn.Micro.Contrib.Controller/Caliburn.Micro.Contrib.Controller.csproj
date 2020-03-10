@@ -19,6 +19,7 @@
     <PackageIcon>noun_710304_cc.png</PackageIcon>
     <PackageTags>Caliburn Micro MVVM Controller WPF</PackageTags>
     <PackageType>Dependency</PackageType>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <IncludeSource>true</IncludeSource>
     <RepositoryUrl>https://github.com/dittodhole/dotnet-Caliburn.Micro.Contrib.Controller.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
