@@ -591,6 +591,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
         var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
                                                                                              BindingFlags.Default,
                                                                                              proxyMethodInfo.Name,
+                                                                                             proxyMethodInfo.ReturnType,
                                                                                              proxyMethodInfo.GetParameters());
         if (interceptingMethodInfo != null)
         {

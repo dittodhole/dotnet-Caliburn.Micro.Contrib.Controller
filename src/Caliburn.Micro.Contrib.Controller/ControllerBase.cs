@@ -21,6 +21,7 @@ namespace Caliburn.Micro.Contrib.Controller
     public static MethodInfo? GetInterceptingMethodInfo(IController controller,
                                                         BindingFlags bindingFlags,
                                                         string methodName,
+                                                        Type returnType,
                                                         ParameterInfo[] parameterInfos)
     {
       if (controller == null)
@@ -30,6 +31,10 @@ namespace Caliburn.Micro.Contrib.Controller
       if (methodName == null)
       {
         throw new ArgumentNullException(nameof(methodName));
+      }
+      if (returnType == null)
+      {
+        throw new ArgumentNullException(nameof(returnType));
       }
       if (parameterInfos == null)
       {
@@ -44,9 +49,16 @@ namespace Caliburn.Micro.Contrib.Controller
                                           {
                                             if (memberInfo is MethodInfo methodInfo)
                                             {
-                                              return methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true)
-                                                               .Any(arg => StringComparer.Ordinal.Equals(arg.MethodName ?? methodInfo.Name,
-                                                                                                         methodName));
+                                              var attributes = methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true);
+                                              if (attributes.Any(attribute => StringComparer.Ordinal.Equals(attribute.MethodName ?? methodInfo.Name,
+                                                                                                            methodName)))
+                                              if (methodInfo.ReturnType == returnType)
+                                              if (methodInfo.GetParameters()
+                                                            .Skip(1)
+                                                            .SequenceEqual(parameterInfos))
+                                              { // TODO check parameters according to TypeExtensions.IsDescendantOrMatches
+                                                return true;
+                                              }
                                             }
                                             return false;
                                           },
