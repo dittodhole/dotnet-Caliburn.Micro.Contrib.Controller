@@ -8,67 +8,24 @@ using System.Threading.Tasks;
 namespace Caliburn.Micro.Contrib.Controller
 {
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
-  public interface IController { }
+  public interface IController
+  {
+    /// <exception cref="Exception"/>
+    Type GetScreenType(object? options = null);
+
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    object?[] GetScreenConstructorArguments(Type type,
+                                            object? options = null);
+  }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
-  public interface IController<TScreen> : IController where TScreen : IScreen { }
-
-  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0049:Type name should not match namespace", Justification = "<Pending>")]
-  public static class Controller
+  public interface IController<TScreen> : IController where TScreen : IScreen
   {
     /// <exception cref="ArgumentNullException"/>
-    /// <exception cref="InvalidOperationException"/>
     /// <exception cref="Exception"/>
-    public static MethodInfo? GetInterceptingMethodInfo(IController controller,
-                                                        BindingFlags bindingFlags,
-                                                        string methodName,
-                                                        Type returnType,
-                                                        ParameterInfo[] parameterInfos)
-    {
-      if (controller == null)
-      {
-        throw new ArgumentNullException(nameof(controller));
-      }
-      if (methodName == null)
-      {
-        throw new ArgumentNullException(nameof(methodName));
-      }
-      if (returnType == null)
-      {
-        throw new ArgumentNullException(nameof(returnType));
-      }
-      if (parameterInfos == null)
-      {
-        throw new ArgumentNullException(nameof(parameterInfos));
-      }
-
-      var result = controller.GetType()
-                             .FindMembers(MemberTypes.Method,
-                                          bindingFlags,
-                                          (memberInfo,
-                                           _) =>
-                                          {
-                                            if (memberInfo is MethodInfo methodInfo)
-                                            {
-                                              var attributes = methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true);
-                                              if (attributes.Any(attribute => StringComparer.Ordinal.Equals(attribute.MethodName ?? methodInfo.Name,
-                                                                                                            methodName)))
-                                              if (methodInfo.ReturnType == returnType)
-                                              if (methodInfo.GetParameters()
-                                                            .Skip(1)
-                                                            .SequenceEqual(parameterInfos))
-                                              { // TODO check parameters according to TypeExtensions.IsDescendantOrMatches
-                                                return true;
-                                              }
-                                            }
-                                            return false;
-                                          },
-                                          null)
-                             .Cast<MethodInfo>()
-                             .SingleOrDefault();
-
-      return result;
-    }
+    TScreen Initialize(TScreen screen,
+                       object? options = null);
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
@@ -126,6 +83,63 @@ namespace Caliburn.Micro.Contrib.Controller
   public interface IConductorControllerRoutine : IControllerRoutine,
                                                  IHandleConductorEvents<IScreen, IScreen> { }
 
+  [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0049:Type name should not match namespace", Justification = "<Pending>")]
+  public static class Controller
+  {
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    public static MethodInfo? GetInterceptingMethodInfo(IController controller,
+                                                        BindingFlags bindingFlags,
+                                                        string methodName,
+                                                        Type returnType,
+                                                        ParameterInfo[] parameterInfos)
+    {
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+      if (methodName == null)
+      {
+        throw new ArgumentNullException(nameof(methodName));
+      }
+      if (returnType == null)
+      {
+        throw new ArgumentNullException(nameof(returnType));
+      }
+      if (parameterInfos == null)
+      {
+        throw new ArgumentNullException(nameof(parameterInfos));
+      }
+
+      var result = controller.GetType()
+                             .FindMembers(MemberTypes.Method,
+                                          bindingFlags,
+                                          (memberInfo,
+                                           _) =>
+                                          {
+                                            if (memberInfo is MethodInfo methodInfo)
+                                            {
+                                              var attributes = methodInfo.GetAttributes<HandlesViewModelMethodAttribute>(true);
+                                              if (attributes.Any(attribute => StringComparer.Ordinal.Equals(attribute.MethodName ?? methodInfo.Name,
+                                                                                                            methodName)))
+                                              if (methodInfo.ReturnType == returnType)
+                                              if (methodInfo.GetParameters()
+                                                            .Skip(1)
+                                                            .SequenceEqual(parameterInfos))
+                                              {
+                                                return true;
+                                              }
+                                            }
+                                            return false;
+                                          },
+                                          null)
+                             .Cast<MethodInfo>()
+                             .SingleOrDefault();
+
+      return result;
+    }
+  }
+
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
   public abstract class ControllerBase<TScreen> : IController<TScreen>,
                                                   //IScreenFactoryAdapter<TScreen>,
@@ -139,6 +153,31 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     private ICollection<IControllerRoutine> ControllerRoutines { get; }
+
+    /// <inheritdoc/>
+    public virtual Type GetScreenType(object? options = null)
+    {
+      return typeof(TScreen);
+    }
+
+    /// <inheritdoc/>
+    public virtual object?[] GetScreenConstructorArguments(Type type,
+                                                           object? options = null)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      return new object[0];
+    }
+
+    /// <inheritdoc/>
+    public virtual TScreen Initialize(TScreen screen,
+                                      object? options = null)
+    {
+      return screen ?? throw new ArgumentNullException(nameof(screen));
+    }
 
     /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = nameof(IClose.TryClose))]
@@ -245,38 +284,6 @@ namespace Caliburn.Micro.Contrib.Controller
     //{
     //  return this.CreateScreen(options);
     //}
-
-    ///// <inheritdoc/>
-    //public virtual Type GetScreenType(object? options = null)
-    //{
-    //  return typeof(TScreen);
-    //}
-
-    ///// <exception cref="ArgumentNullException"/>
-    ///// <exception cref="Exception"/>
-    //public virtual object[] GetConstructorArguments(Type screenType,
-    //                                                object? options = null)
-    //{
-    //  if (screenType == null)
-    //  {
-    //    throw new ArgumentNullException(nameof(screenType));
-    //  }
-
-    //  return new object[0];
-    //}
-
-    ///// <exception cref="ArgumentNullException"/>
-    ///// <exception cref="Exception"/>
-    //public virtual TScreen BuildUp(TScreen screen,
-    //                               object? options = null)
-    //{
-    //  if (screen == null)
-    //  {
-    //    throw new ArgumentNullException(nameof(screen));
-    //  }
-
-    //  return screen;
-    //}
   }
 
   [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0048:File name must match type name", Justification = "<Pending>")]
@@ -307,6 +314,31 @@ namespace Caliburn.Micro.Contrib.Controller
     }
 
     private ICollection<IControllerRoutine> ControllerRoutines { get; }
+
+    /// <inheritdoc/>
+    public virtual Type GetScreenType(object? options = null)
+    {
+      return typeof(TScreen);
+    }
+
+    /// <inheritdoc/>
+    public virtual object?[] GetScreenConstructorArguments(Type type,
+                                                           object? options = null)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException(nameof(type));
+      }
+
+      return new object[0];
+    }
+
+    /// <inheritdoc/>
+    public virtual TScreen Initialize(TScreen screen,
+                                      object? options = null)
+    {
+      return screen ?? throw new ArgumentNullException(nameof(screen));
+    }
 
     /// <inheritdoc/>
     [HandlesViewModelMethod(MethodName = nameof(IConductor.ActivateItem))]
@@ -456,38 +488,6 @@ namespace Caliburn.Micro.Contrib.Controller
     //IScreen IScreenFactoryAdapter.CreateScreen(object? options = null)
     //{
     //  return this.CreateScreen(options);
-    //}
-
-    ///// <inheritdoc/>
-    //public virtual Type GetScreenType(object? options = null)
-    //{
-    //  return typeof(TScreen);
-    //}
-
-    ///// <exception cref="ArgumentNullException"/>
-    ///// <exception cref="Exception"/>
-    //public virtual object[] GetConstructorArguments(Type screenType,
-    //                                                object? options = null)
-    //{
-    //  if (screenType == null)
-    //  {
-    //    throw new ArgumentNullException(nameof(screenType));
-    //  }
-
-    //  return new object[0];
-    //}
-
-    ///// <exception cref="ArgumentNullException"/>
-    ///// <exception cref="Exception"/>
-    //public virtual TScreen BuildUp(TScreen screen,
-    //                               object? options = null)
-    //{
-    //  if (screen == null)
-    //  {
-    //    throw new ArgumentNullException(nameof(screen));
-    //  }
-
-    //  return screen;
     //}
   }
 }
