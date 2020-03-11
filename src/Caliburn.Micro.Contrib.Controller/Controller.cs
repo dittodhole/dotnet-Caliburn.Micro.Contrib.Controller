@@ -105,7 +105,9 @@ namespace Caliburn.Micro.Contrib.Controller
                                                         bindingFlags,
                                                         proxyMethodInfo.Name,
                                                         proxyMethodInfo.ReturnType,
-                                                        proxyMethodInfo.GetParameters());
+                                                        proxyMethodInfo.GetParameters()
+                                                                       .Select(parameterInfo => parameterInfo.ParameterType)
+                                                                       .ToArray());
 
       return result;
     }
@@ -116,7 +118,7 @@ namespace Caliburn.Micro.Contrib.Controller
                                                         BindingFlags bindingFlags,
                                                         string methodName,
                                                         Type returnType,
-                                                        ParameterInfo[] parameterInfos)
+                                                        Type[] parameterTypes)
     {
       if (controller == null)
       {
@@ -130,9 +132,9 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(returnType));
       }
-      if (parameterInfos == null)
+      if (parameterTypes == null)
       {
-        throw new ArgumentNullException(nameof(parameterInfos));
+        throw new ArgumentNullException(nameof(parameterTypes));
       }
 
       var result = controller.GetType()
@@ -149,7 +151,8 @@ namespace Caliburn.Micro.Contrib.Controller
                                               if (methodInfo.ReturnType == returnType)
                                               if (methodInfo.GetParameters()
                                                             .Skip(1)
-                                                            .SequenceEqual(parameterInfos))
+                                                            .Select(parameterInfo => parameterInfo.ParameterType)
+                                                            .SequenceEqual(parameterTypes))
                                               {
                                                 return true;
                                               }
