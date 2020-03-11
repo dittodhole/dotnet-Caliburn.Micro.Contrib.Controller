@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -113,12 +113,12 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
           }
 
           var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
-          if (screenMethodInfo != null)
+
+          if (screenMethodInfo != null) // is the method mixed in (via interfaces)?
+          if (!screenMethodInfo.IsAbstract) // how should abstract mehods run? ^^
+          if (screenMethodInfo.ReturnType != typeof(Task)) // tasks are not executed here, no intention on awaiting here!
           {
-            if (screenMethodInfo.ReturnType != typeof(Task))
-            { // tasks are not executed here, no intention on awaiting here!
-              invocation.Proceed();
-            }
+            invocation.Proceed();
           }
 
           var proxyMethodInfo = invocation.GetConcreteMethod();
