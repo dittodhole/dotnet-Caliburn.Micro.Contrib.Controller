@@ -90,6 +90,30 @@ namespace Caliburn.Micro.Contrib.Controller
     /// <exception cref="Exception"/>
     public static MethodInfo? GetInterceptingMethodInfo(IController controller,
                                                         BindingFlags bindingFlags,
+                                                        MethodInfo proxyMethodInfo)
+    {
+      if (controller == null)
+      {
+        throw new ArgumentNullException(nameof(controller));
+      }
+      if (proxyMethodInfo == null)
+      {
+        throw new ArgumentNullException(nameof(proxyMethodInfo));
+      }
+
+      var result = Controller.GetInterceptingMethodInfo(controller,
+                                                        bindingFlags,
+                                                        proxyMethodInfo.Name,
+                                                        proxyMethodInfo.ReturnType,
+                                                        proxyMethodInfo.GetParameters());
+
+      return result;
+    }
+
+    /// <exception cref="ArgumentNullException"/>
+    /// <exception cref="Exception"/>
+    public static MethodInfo? GetInterceptingMethodInfo(IController controller,
+                                                        BindingFlags bindingFlags,
                                                         string methodName,
                                                         Type returnType,
                                                         ParameterInfo[] parameterInfos)
