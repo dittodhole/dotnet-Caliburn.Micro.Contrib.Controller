@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -202,7 +202,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
       /// <inheritdoc/>
       public void DebugFormat(Exception exception,
                               string format,
-                                      params object[] args)
+                              params object[] args)
       {
         this.Log.Info(format,
                       args);
@@ -213,8 +213,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Info(format,
-                      args);
+        this.Log.Info(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -223,8 +224,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Info(format,
-                      args);
+        this.Log.Info(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -269,8 +271,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Warn(format,
-                      args);
+        this.Log.Warn(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -279,7 +282,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Error(exception);
+        this.Log.Warn(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -324,8 +329,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Warn(format,
-                      args);
+        this.Log.Warn(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -334,7 +340,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Error(exception);
+        this.Log.Warn(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -380,8 +388,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        this.Log.Info(format,
-                      args);
+        this.Log.Info(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -390,8 +399,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        this.Log.Info(format,
-                      args);
+        this.Log.Info(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -437,8 +447,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        this.Log.Warn(format,
-                      args);
+        this.Log.Warn(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -447,8 +458,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                              string format,
                              params object[] args)
       {
-        this.Log.Warn(format,
-                      args);
+        this.Log.Warn(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -494,8 +506,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Info(format,
-                      args);
+        this.Log.Info(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
@@ -504,8 +517,9 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
                               string format,
                               params object[] args)
       {
-        this.Log.Info(format,
-                      args);
+        this.Log.Info(string.Format(formatProvider,
+                                    format,
+                                    args));
       }
 
       /// <inheritdoc/>
