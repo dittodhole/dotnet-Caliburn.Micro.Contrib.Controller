@@ -112,24 +112,20 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
             throw new ArgumentNullException(nameof(invocation));
           }
 
-          var screenMethodInfo = invocation.MethodInvocationTarget;
-
-          if (screenMethodInfo != null) // is the method mixed in (via interfaces)?
-          if (!screenMethodInfo.IsAbstract) // how should abstract mehods run? ^^
-          if (screenMethodInfo.ReturnType != typeof(Task)) // tasks are not executed here, no intention on awaiting here!
+          var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
+                                                                                               BindingFlags.Instance | BindingFlags.Public,
+                                                                                               invocation.GetConcreteMethod());
+          if (interceptingMethodInfo == null)
           {
             invocation.Proceed();
           }
-
-          var proxyMethodInfo = invocation.Method;
-
-          var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
-                                                                                               BindingFlags.Default,
-                                                                                               proxyMethodInfo.Name,
-                                                                                               proxyMethodInfo.ReturnType,
-                                                                                               proxyMethodInfo.GetParameters());
-          if (interceptingMethodInfo != null)
+          else
           {
+            if (Interceptor.CanProceed(invocation.GetConcreteMethodInvocationTarget()))
+            {
+              invocation.Proceed();
+            }
+
             var parameters = new object[invocation.Arguments.Length + 1];
             parameters[0] = invocation.InvocationTarget;
 
@@ -144,6 +140,24 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
 
             invocation.ReturnValue = returnValue;
           }
+        }
+
+        private static bool CanProceed(MethodInfo? methodInfo)
+        {
+          if (methodInfo == null)
+          { // is the method mixed in (via interfaces)?
+            return false;
+          }
+          if (methodInfo.IsAbstract)
+          { // how should abstract mehods run? ^^
+            return false;
+          }
+          if (methodInfo.ReturnType == typeof(Task))
+          { // tasks are not executed here, no intention on awaiting here!
+            return false;
+          }
+
+          return true;
         }
       }
     }
