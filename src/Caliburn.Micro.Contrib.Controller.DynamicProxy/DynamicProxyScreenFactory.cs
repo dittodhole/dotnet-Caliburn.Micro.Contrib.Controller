@@ -127,7 +127,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
             }
 
             var parameters = new object[invocation.Arguments.Length + 1];
-            parameters[0] = invocation.InvocationTarget;
+            parameters[0] = invocation.Proxy;
 
             if (invocation.Arguments.Length > 0)
             {
