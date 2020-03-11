@@ -112,7 +112,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
             throw new ArgumentNullException(nameof(invocation));
           }
 
-          var screenMethodInfo = invocation.GetConcreteMethodInvocationTarget();
+          var screenMethodInfo = invocation.MethodInvocationTarget;
 
           if (screenMethodInfo != null) // is the method mixed in (via interfaces)?
           if (!screenMethodInfo.IsAbstract) // how should abstract mehods run? ^^
@@ -121,7 +121,7 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
             invocation.Proceed();
           }
 
-          var proxyMethodInfo = invocation.GetConcreteMethod();
+          var proxyMethodInfo = invocation.Method;
 
           var interceptingMethodInfo = Contrib.Controller.Controller.GetInterceptingMethodInfo(this.Controller,
                                                                                                BindingFlags.Default,
