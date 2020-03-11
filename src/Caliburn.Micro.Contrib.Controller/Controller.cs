@@ -340,10 +340,6 @@ namespace Caliburn.Micro.Contrib.Controller
       {
         throw new ArgumentNullException(nameof(screen));
       }
-      if (item == null)
-      {
-        throw new ArgumentNullException(nameof(item));
-      }
 
       foreach (var conductorControllerRoutine in this.ControllerRoutines.OfType<IConductorControllerRoutine>())
       {
