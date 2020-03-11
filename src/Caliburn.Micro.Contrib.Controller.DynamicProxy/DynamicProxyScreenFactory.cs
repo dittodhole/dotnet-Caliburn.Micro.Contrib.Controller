@@ -129,11 +129,14 @@ namespace Caliburn.Micro.Contrib.Controller.DynamicProxy
             var parameters = new object[invocation.Arguments.Length + 1];
             parameters[0] = invocation.InvocationTarget;
 
-            Array.Copy(invocation.Arguments,
-                       0,
-                       parameters,
-                       1,
-                       invocation.Arguments.Length);
+            if (invocation.Arguments.Length > 0)
+            {
+              Array.Copy(invocation.Arguments,
+                         0,
+                         parameters,
+                         1,
+                         invocation.Arguments.Length);
+            }
 
             var returnValue = interceptingMethodInfo.Invoke(this.Controller,
                                                             parameters);
