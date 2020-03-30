@@ -55,16 +55,16 @@ namespace Caliburn.Micro.Contrib.Controller.ControllerRoutines
 
     /// <exception cref="ArgumentNullException"/>
     /// <exception cref="Exception"/>
-    public IDisposable Block(ICanBeBlocked canBeBlocked)
+    public static IDisposable Block(ICanBeBlocked screen)
     {
-      if (canBeBlocked == null)
+      if (screen == null)
       {
-        throw new ArgumentNullException(nameof(canBeBlocked));
+        throw new ArgumentNullException(nameof(screen));
       }
 
-      canBeBlocked.IsBlocked = true;
+      screen.IsBlocked = true;
 
-      var result = new DisposableAction(() => canBeBlocked.IsBlocked = false);
+      var result = new DisposableAction(() => screen.IsBlocked = false);
 
       return result;
     }
